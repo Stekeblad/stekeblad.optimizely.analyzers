@@ -7,7 +7,7 @@ probably at least once forgotten that little "virtual" keyword when adding a new
 to a page or block type. You want know that something is wrong until you try to
 run the project. That is until now!
 
-![https://github.com/stekeblad/stekeblad.optimizely.analyzers/doc/ExampleWarnings.jpg](Example of analyzer warnings and a codefix preview)
+![Example of analyzer warnings and a codefix preview](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/images/ExampleWarnings.jpg)
 
 Analyzers For Optimizely CMS will also warn about when an attribute
 is expected but not found. (For example on Initializable modules.)
@@ -27,8 +27,8 @@ explain why its wrong, what may be happening in the background and how to fix
 the issue if a fix is not offered. Just click on the Analyzer id in the Error List
 tool window, the popup when hovering over the warning or code fix preview in Visual Studio to learn more.
 See for example the help documentation for
-[SOA1002](https://github.com/stekeblad/stekeblad.optimizely.analyzers/SOA1002)
-and [SOA1003](https://github.com/stekeblad/stekeblad.optimizely.analyzers/SOA1003)
+[SOA1002](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1002.md)
+and [SOA1003](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1003md)
 
 ## How to get
 
