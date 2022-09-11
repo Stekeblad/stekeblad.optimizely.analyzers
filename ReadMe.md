@@ -4,8 +4,8 @@
 
 If you have been working with Optimizely CMS (previously Episerver) you have
 probably at least once forgotten that little "virtual" keyword when adding a new property
-to a page or block type. You want know that something is wrong until you try to
-run the project. That is until now!
+to a page or block type. You wont know that something is wrong until you try to
+run the project. That was true, until now!
 
 ![Example of analyzer warnings and a codefix preview](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/images/ExampleWarnings.jpg)
 
@@ -28,7 +28,7 @@ the issue if a fix is not offered. Just click on the Analyzer id in the Error Li
 tool window, the popup when hovering over the warning or code fix preview in Visual Studio to learn more.
 See for example the help documentation for
 [SOA1002](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1002.md)
-and [SOA1003](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1003md)
+and [SOA1003](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1003.md)
 
 ## How to get
 
