@@ -3,6 +3,8 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Stekeblad.Optimizely.Analyzers.Extensions;
 using System;
 using System.Collections.Immutable;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 
 namespace Stekeblad.Optimizely.Analyzers.Analyzers
@@ -36,18 +38,18 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers
 
 			context.RegisterCompilationStartAction(startContext =>
 			{
-				INamedTypeSymbol contentDataSymbol = startContext.Compilation.GetTypeByMetadataName(
-					 "EPiServer.Core.ContentData");
-				INamedTypeSymbol contentTypeAttributeSymbol = startContext.Compilation.GetTypeByMetadataName(
-					  "EPiServer.DataAnnotations.ContentTypeAttribute");
+					INamedTypeSymbol contentDataSymbol = startContext.Compilation.GetTypeByMetadataName(
+							"EPiServer.Core.ContentData");
+					INamedTypeSymbol contentTypeAttributeSymbol = startContext.Compilation.GetTypeByMetadataName(
+							"EPiServer.DataAnnotations.ContentTypeAttribute");
 
-				if (contentDataSymbol != null
-					&& contentTypeAttributeSymbol != null)
-				{
-					startContext.RegisterSymbolAction(
-						nodeContext => AnalyzeNamedTypeSymbol(nodeContext, contentDataSymbol, contentTypeAttributeSymbol),
-						SymbolKind.NamedType);
-				}
+					if (contentDataSymbol != null
+						&& contentTypeAttributeSymbol != null)
+					{
+						startContext.RegisterSymbolAction(
+							nodeContext => AnalyzeNamedTypeSymbol(nodeContext, contentDataSymbol, contentTypeAttributeSymbol),
+							SymbolKind.NamedType);
+					}
 			});
 		}
 
@@ -56,10 +58,10 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers
 			INamedTypeSymbol contentDataSymbol,
 			INamedTypeSymbol contentTypeAttributeSymbol)
 		{
-			var analyzedSymbol = (INamedTypeSymbol)context.Symbol;
+			var analyzedSymbol = context.Symbol as INamedTypeSymbol;
 
 			//Check if auto-generated, abstract or not a class.
-			if (analyzedSymbol.IsImplicitlyDeclared
+			if (analyzedSymbol?.IsImplicitlyDeclared != false
 				|| analyzedSymbol.TypeKind != TypeKind.Class
 				|| analyzedSymbol.IsAbstract)
 			{
@@ -73,6 +75,9 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers
 			if (analyzedSymbol.IsDerivedFrom(contentDataSymbol)
 				&& !analyzedSymbol.TryGetAttributeOrDerivedAttribute(contentTypeAttributeSymbol, out foundAttributeData))
 			{
+				if (analyzedSymbol.Locations.Length == 0)
+					throw new Exception("Locations is empty!");
+
 				var diagnostic = Diagnostic.Create(Rule, analyzedSymbol.Locations[0], analyzedSymbol.Name);
 				context.ReportDiagnostic(diagnostic);
 				return;
@@ -81,7 +86,7 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers
 			// TODO: Here should the location of the attribute be returned, not the class declaration,
 			// // however foundAttributeData.AttributeClass.Locations contain only 0, 0 locations
 			// It appears difficult to find exactly this attribute instance in a code fix
-			if (!foundAttributeData.NamedArguments.Any(x => x.Key.Equals("GUID", StringComparison.Ordinal)))
+			if (foundAttributeData?.NamedArguments.Any(x => x.Key.Equals("GUID", StringComparison.Ordinal)) == false)
 			{
 				var diagnostic = Diagnostic.Create(SecondRule, analyzedSymbol.Locations[0], foundAttributeData.AttributeClass.Name, analyzedSymbol.Name);
 				context.ReportDiagnostic(diagnostic);
