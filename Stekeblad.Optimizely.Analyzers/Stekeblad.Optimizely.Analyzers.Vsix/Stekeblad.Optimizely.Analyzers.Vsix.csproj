@@ -19,7 +19,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="16.8.3038" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="17.3.2094" PrivateAssets="all" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -29,6 +29,9 @@
     <Title>Analyzers For Optimizely CMS</Title>
     <Authors>Stekeblad</Authors>
     <Description>Avoid some easy misstakes when building Optimizely sites with these analyzers.</Description>
+    <PackageProjectUrl>https://github.com/Stekeblad/stekeblad.optimizely.analyzers</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Stekeblad/stekeblad.optimizely.analyzers</RepositoryUrl>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />

@@ -9,7 +9,7 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers
 	public class ContentPropertyMustBeVirtualAnalyzer : MyDiagnosticAnalyzerBase
 	{
 		public const string DiagnosticId = "SOA1003";
-		public static readonly LocalizableString Title = "Public non-static properties must be declared virutal";
+		public static readonly LocalizableString Title = "Public non-static properties must be declared virtual";
 		internal static readonly LocalizableString MessageFormat = "'{0}' must be declared as virtual or Optimizely will throw an exception during startup";
 		internal const string Category = Constants.Categories.DefiningContent;
 

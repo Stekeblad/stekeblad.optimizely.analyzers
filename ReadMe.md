@@ -32,8 +32,10 @@ and [SOA1003](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/m
 
 ## How to get
 
-Analyzers For Optimizely CMS will in a few days be available both as an
-extension to Visual Studio for use in all your projects and as a NuGet package
+You can get Analyzers For Optimizely CMS both as an
+[extension to Visual Studio 2022](https://marketplace.visualstudio.com/items?itemName=Stekeblad.optianalyzers)
+for use with all your projects and as a
+[NuGet package]()
 to bring the analyzer to everyone working on a project!
 
 ## Currently available analyzers

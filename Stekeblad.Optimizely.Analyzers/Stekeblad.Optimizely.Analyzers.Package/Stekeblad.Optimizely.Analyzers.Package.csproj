@@ -9,11 +9,9 @@
 
   <PropertyGroup>
     <PackageId>Stekeblad.Optimizely.Analyzers</PackageId>
-    <PackageVersion>1.0.0.0</PackageVersion>
+    <PackageVersion>1.0.1.0</PackageVersion>
     <Authors>Stekeblad</Authors>
-    <PackageLicenseUrl>http://LICENSE_URL_HERE_OR_DELETE_THIS_LINE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/Stekeblad/stekeblad.optimizely.analyzers</PackageProjectUrl>
-    <PackageIconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</PackageIconUrl>
     <RepositoryUrl>https://github.com/Stekeblad/stekeblad.optimizely.analyzers</RepositoryUrl>
     <Description>Avoid some easy misstakes when building Optimizely sites with these analyzers.</Description>
     <PackageReleaseNotes></PackageReleaseNotes>
@@ -27,6 +25,8 @@
     <Title>Analyzers For Optimizely CMS</Title>
 
     <ToolCommandName>Stekeblad.Optimizely.Analyzers</ToolCommandName>
+
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
