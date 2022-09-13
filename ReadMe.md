@@ -18,7 +18,7 @@ Analyzers For Optimizely CMS will not error if no Optimizely packages are
 present, it does not require any specific version.
 In fact, the analyzers SOA1001 to SOA1005 have been tested to work
 with CMS 12.6, 11.12 and even 8.11! While newer analyzers may work on very old versions,
-focus will only be on supporting CMS 11 and newer.
+focus will only be on supporting CMS 11 and later.
 
 ## Learn from the analyzers
 
@@ -35,7 +35,7 @@ and [SOA1003](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/m
 You can get Analyzers For Optimizely CMS both as an
 [extension to Visual Studio 2022](https://marketplace.visualstudio.com/items?itemName=Stekeblad.optianalyzers)
 for use with all your projects and as a
-[NuGet package]()
+[NuGet package](https://nuget.optimizely.com/package/?id=Stekeblad.Optimizely.Analyzers)
 to bring the analyzer to everyone working on a project!
 
 ## Currently available analyzers
