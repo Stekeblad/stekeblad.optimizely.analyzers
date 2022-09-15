@@ -13,7 +13,13 @@
     <Authors>Stekeblad</Authors>
     <PackageProjectUrl>https://github.com/Stekeblad/stekeblad.optimizely.analyzers</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Stekeblad/stekeblad.optimizely.analyzers</RepositoryUrl>
-    <Description>Avoid some easy misstakes when building Optimizely sites with these analyzers.</Description>
+    <Description>
+      Avoid some easy misstakes when building Optimizely sites with these analyzers.
+      
+      We have all at least once forgotten to add virtual to a page och block property and not realising it before Optimizely is trying to start, with this package you will quickly get a warning in your IDE pointing it out. The package also comes with code fixes for several of the reported issues and documentation on all analyzers trying to explain why your code is wrong.
+      
+      To see what more analyzers are available please go to the project page. If you want the analyzers to run for all your project you can find the Visual Studio extension from the project page.
+    </Description>
     <PackageReleaseNotes></PackageReleaseNotes>
     <Copyright>Copyright</Copyright>
     <PackageTags>analyzers; codefix; optimizely; episerver; stekeblad</PackageTags>
