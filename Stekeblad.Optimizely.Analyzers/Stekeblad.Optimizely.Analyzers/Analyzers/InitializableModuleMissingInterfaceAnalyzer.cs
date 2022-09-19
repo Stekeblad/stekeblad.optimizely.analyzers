@@ -57,7 +57,7 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers
 				return;
 			}
 
-			// If neither InitializationModuleAttribute or ModuleDependencyAttribute is implemented then abort.
+			// If neither InitializationModuleAttribute or ModuleDependencyAttribute is present then abort.
 			if (!analyzedSymbol.TryGetAttributeOrDerivedAttribute(initModuleAttributeSymbol, out AttributeData attributeData)
 				&& !analyzedSymbol.TryGetAttributeOrDerivedAttribute(moduleDependsAttributeSymbol, out attributeData))
 			{

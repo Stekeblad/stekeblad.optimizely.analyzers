@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Stekeblad.Optimizely.Analyzers.Analyzers;
+using Stekeblad.Optimizely.Analyzers.Test.Util;
 using System.Threading.Tasks;
 using VerifyCS = Stekeblad.Optimizely.Analyzers.Test.CSharpAnalyzerVerifier<
 	Stekeblad.Optimizely.Analyzers.Analyzers.InitializableModuleMissingInterfaceAnalyzer>;
@@ -31,7 +32,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test
 			var expected = VerifyCS.Diagnostic(InitializableModuleMissingInterfaceAnalyzer.DiagnosticId)
 				.WithLocation(0)
 				.WithArguments("TestModule", "InitializableModuleAttribute");
-			await VerifyCS.VerifyAnalyzerAsync(test, expected);
+			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected);
 		}
 
 		[TestMethod]
@@ -56,7 +57,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test
 			var expected = VerifyCS.Diagnostic(InitializableModuleMissingInterfaceAnalyzer.DiagnosticId)
 				.WithLocation(0)
 				.WithArguments("TestModule", "ModuleDependencyAttribute");
-			await VerifyCS.VerifyAnalyzerAsync(test, expected);
+			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected);
 		}
 	}
 }

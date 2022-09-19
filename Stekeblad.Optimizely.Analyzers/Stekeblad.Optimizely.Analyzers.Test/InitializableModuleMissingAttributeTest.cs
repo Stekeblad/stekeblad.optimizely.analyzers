@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Stekeblad.Optimizely.Analyzers.Analyzers;
+using Stekeblad.Optimizely.Analyzers.Test.Util;
 using System.Threading.Tasks;
 using VerifyCS = Stekeblad.Optimizely.Analyzers.Test.CSharpAnalyzerVerifier<
 	Stekeblad.Optimizely.Analyzers.Analyzers.InitializableModuleMissingAttributeAnalyzer>;
@@ -26,7 +27,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test
 					}
 				}";
 
-			await VerifyCS.VerifyAnalyzerAsync(test);
+			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
 		}
 
 		[TestMethod]
@@ -48,7 +49,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test
 					}
 				}";
 
-			await VerifyCS.VerifyAnalyzerAsync(test);
+			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
 		}
 
 		[TestMethod]
@@ -69,7 +70,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test
 					}
 				}";
 
-			await VerifyCS.VerifyAnalyzerAsync(test);
+			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
 		}
 
 		[TestMethod]
@@ -91,11 +92,11 @@ namespace Stekeblad.Optimizely.Analyzers.Test
 					}
 				}";
 
-			await VerifyCS.VerifyAnalyzerAsync(test);
+			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
 		}
 
 		[TestMethod]
-		public async Task IConfigurableInteraceNoAttr_Match()
+		public async Task IConfigurableInterfaceNoAttr_Match()
 		{
 			const string test = @"
 				using EPiServer.Framework;
@@ -115,11 +116,11 @@ namespace Stekeblad.Optimizely.Analyzers.Test
 			var expected = VerifyCS.Diagnostic(InitializableModuleMissingAttributeAnalyzer.DiagnosticId)
 				.WithLocation(0)
 				.WithArguments("TestModule");
-			await VerifyCS.VerifyAnalyzerAsync(test, expected);
+			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected);
 		}
 
 		[TestMethod]
-		public async Task IInitInteraceNoAttr_Match()
+		public async Task IInitInterfaceNoAttr_Match()
 		{
 			const string test = @"
 				using EPiServer.Framework;
@@ -137,7 +138,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test
 			var expected = VerifyCS.Diagnostic(InitializableModuleMissingAttributeAnalyzer.DiagnosticId)
 				.WithLocation(0)
 				.WithArguments("TestModule");
-			await VerifyCS.VerifyAnalyzerAsync(test, expected);
+			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected);
 		}
 	}
 }

@@ -7,7 +7,7 @@ using System.Collections.Immutable;
 using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
-using Analyzer = Stekeblad.Optimizely.Analyzers.Analyzers.UseContentTypeAttributeAnalyzer;
+using Analyzer = Stekeblad.Optimizely.Analyzers.Analyzers.Content.UseContentTypeAttributeAnalyzer;
 
 namespace Stekeblad.Optimizely.Analyzers.CodeFixes
 {

@@ -3,7 +3,6 @@ using Microsoft.CodeAnalysis.CSharp.Testing;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Testing.Verifiers;
-using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -24,15 +23,12 @@ namespace Stekeblad.Optimizely.Analyzers.Test
 		public static DiagnosticResult Diagnostic(DiagnosticDescriptor descriptor)
 			=> CSharpAnalyzerVerifier<TAnalyzer, MSTestVerifier>.Diagnostic(descriptor);
 
-		/// <inheritdoc cref="AnalyzerVerifier{TAnalyzer, TTest, TVerifier}.VerifyAnalyzerAsync(string, DiagnosticResult[])"/>
-		public static async Task VerifyAnalyzerAsync(string source, params DiagnosticResult[] expected)
+		public static async Task VerifyAnalyzerAsync(string source, ReferenceAssemblies projectDependencies, params DiagnosticResult[] expected)
 		{
 			var test = new Test
 			{
 				TestCode = source,
-				ReferenceAssemblies = ReferenceAssemblies.Default.AddPackages(
-					ImmutableArray.Create(
-						   new PackageIdentity("EPiServer.CMS.Core", "11.1.0")))
+				ReferenceAssemblies = projectDependencies
 			};
 
 			test.ExpectedDiagnostics.AddRange(expected);

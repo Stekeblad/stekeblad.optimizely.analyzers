@@ -4,7 +4,6 @@ using Microsoft.CodeAnalysis.CSharp.Testing;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Testing.Verifiers;
-using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -27,14 +26,12 @@ namespace Stekeblad.Optimizely.Analyzers.Test
 			=> CSharpCodeFixVerifier<TAnalyzer, TCodeFix, MSTestVerifier>.Diagnostic(descriptor);
 
 		/// <inheritdoc cref="CodeFixVerifier{TAnalyzer, TCodeFix, TTest, TVerifier}.VerifyAnalyzerAsync(string, DiagnosticResult[])"/>
-		public static async Task VerifyAnalyzerAsync(string source, params DiagnosticResult[] expected)
+		public static async Task VerifyAnalyzerAsync(string source, ReferenceAssemblies projectDependencies, params DiagnosticResult[] expected)
 		{
 			var test = new Test
 			{
 				TestCode = source,
-				ReferenceAssemblies = ReferenceAssemblies.Default.AddPackages(
-					ImmutableArray.Create(
-						   new PackageIdentity("EPiServer.CMS.Core", "11.1.0")))
+				ReferenceAssemblies = projectDependencies
 			};
 
 			test.ExpectedDiagnostics.AddRange(expected);
@@ -42,23 +39,21 @@ namespace Stekeblad.Optimizely.Analyzers.Test
 		}
 
 		/// <inheritdoc cref="CodeFixVerifier{TAnalyzer, TCodeFix, TTest, TVerifier}.VerifyCodeFixAsync(string, string)"/>
-		public static async Task VerifyCodeFixAsync(string source, string fixedSource)
-			=> await VerifyCodeFixAsync(source, DiagnosticResult.EmptyDiagnosticResults, fixedSource);
+		public static async Task VerifyCodeFixAsync(string source, ReferenceAssemblies projectDependencies, string fixedSource)
+			=> await VerifyCodeFixAsync(source, projectDependencies, DiagnosticResult.EmptyDiagnosticResults, fixedSource);
 
 		/// <inheritdoc cref="CodeFixVerifier{TAnalyzer, TCodeFix, TTest, TVerifier}.VerifyCodeFixAsync(string, DiagnosticResult, string)"/>
-		public static async Task VerifyCodeFixAsync(string source, DiagnosticResult expected, string fixedSource)
-			=> await VerifyCodeFixAsync(source, new[] { expected }, fixedSource);
+		public static async Task VerifyCodeFixAsync(string source, ReferenceAssemblies projectDependencies, DiagnosticResult expected, string fixedSource)
+			=> await VerifyCodeFixAsync(source, projectDependencies, new[] { expected }, fixedSource);
 
 		/// <inheritdoc cref="CodeFixVerifier{TAnalyzer, TCodeFix, TTest, TVerifier}.VerifyCodeFixAsync(string, DiagnosticResult[], string)"/>
-		public static async Task VerifyCodeFixAsync(string source, DiagnosticResult[] expected, string fixedSource)
+		public static async Task VerifyCodeFixAsync(string source, ReferenceAssemblies projectDependencies, DiagnosticResult[] expected, string fixedSource)
 		{
 			var test = new Test
 			{
 				TestCode = source,
 				FixedCode = fixedSource,
-				ReferenceAssemblies = ReferenceAssemblies.Default.AddPackages(
-					ImmutableArray.Create(
-						   new PackageIdentity("EPiServer.CMS.Core", "11.1.0")))
+				ReferenceAssemblies = projectDependencies
 			};
 			test.ExpectedDiagnostics.AddRange(expected);
 			await test.RunAsync(CancellationToken.None);

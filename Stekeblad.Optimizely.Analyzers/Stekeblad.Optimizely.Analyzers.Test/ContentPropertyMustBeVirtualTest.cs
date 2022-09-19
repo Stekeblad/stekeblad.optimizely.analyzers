@@ -1,13 +1,14 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Stekeblad.Optimizely.Analyzers.Analyzers;
+using Stekeblad.Optimizely.Analyzers.Analyzers.Content;
+using Stekeblad.Optimizely.Analyzers.Test.Util;
 using System.Threading.Tasks;
 using VerifyCS = Stekeblad.Optimizely.Analyzers.Test.CSharpCodeFixVerifier<
-	Stekeblad.Optimizely.Analyzers.Analyzers.ContentPropertyMustBeVirtualAnalyzer,
-	Stekeblad.Optimizely.Analyzers.CodeFixes.ContentPropertyMustBeVirtualCodeFixProvider>;
+    Stekeblad.Optimizely.Analyzers.Analyzers.Content.ContentPropertyMustBeVirtualAnalyzer,
+    Stekeblad.Optimizely.Analyzers.CodeFixes.Content.ContentPropertyMustBeVirtualCodeFixProvider>;
 
 namespace Stekeblad.Optimizely.Analyzers.Test
 {
-	[TestClass]
+    [TestClass]
 	public class ContentPropertyMustBeVirtualTest
 	{
 		[TestMethod]
@@ -19,7 +20,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test
 					public class ArticlePage : EPiServer.Core.PageData {}
 				}";
 
-			await VerifyCS.VerifyAnalyzerAsync(test);
+			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
 		}
 
 		[TestMethod]
@@ -34,7 +35,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test
 					}
 				}";
 
-			await VerifyCS.VerifyAnalyzerAsync(test);
+			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
 		}
 
 		[TestMethod]
@@ -61,7 +62,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test
 			var expected = VerifyCS.Diagnostic(ContentPropertyMustBeVirtualAnalyzer.DiagnosticId)
 				.WithLocation(0)
 				.WithArguments("Heading");
-			await VerifyCS.VerifyCodeFixAsync(test, expected, fixTest);
+			await VerifyCS.VerifyCodeFixAsync(test, PackageCollections.Core_11, expected, fixTest);
 		}
 
 		[TestMethod]
@@ -80,7 +81,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test
 					}
 				}";
 
-			await VerifyCS.VerifyAnalyzerAsync(test);
+			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
 		}
 
 		[TestMethod]
@@ -95,7 +96,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test
 					}
 				}";
 
-			await VerifyCS.VerifyAnalyzerAsync(test);
+			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
 		}
 
 		[TestMethod]
@@ -110,7 +111,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test
 					}
 				}";
 
-			await VerifyCS.VerifyAnalyzerAsync(test);
+			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
 		}
 
 		[TestMethod]
@@ -137,7 +138,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test
 			var expected = VerifyCS.Diagnostic(ContentPropertyMustBeVirtualAnalyzer.DiagnosticId)
 				.WithLocation(0)
 				.WithArguments("Heading");
-			await VerifyCS.VerifyCodeFixAsync(test, expected, fixTest);
+			await VerifyCS.VerifyCodeFixAsync(test, PackageCollections.Core_11, expected, fixTest);
 		}
 
 		[TestMethod]
@@ -152,7 +153,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test
 					}
 				}";
 
-			await VerifyCS.VerifyAnalyzerAsync(test);
+			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
 		}
 	}
 }

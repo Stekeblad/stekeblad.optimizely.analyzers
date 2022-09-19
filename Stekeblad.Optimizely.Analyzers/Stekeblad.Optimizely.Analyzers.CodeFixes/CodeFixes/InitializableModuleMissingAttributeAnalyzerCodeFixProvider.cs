@@ -53,7 +53,7 @@ namespace Stekeblad.Optimizely.Analyzers.CodeFixes
 		{
 			var syntaxRoot = (CompilationUnitSyntax)await document
 				.GetSyntaxRootAsync(cancellationToken)
-			.ConfigureAwait(false);
+				.ConfigureAwait(false);
 
 			CodeFixHelpers.AddAttributeDeclaration(ref document, ref syntaxRoot, typeDecl,
 				"InitializableModule");
@@ -67,7 +67,7 @@ namespace Stekeblad.Optimizely.Analyzers.CodeFixes
 		{
 			var syntaxRoot = (CompilationUnitSyntax)await document
 				.GetSyntaxRootAsync(cancellationToken)
-			.ConfigureAwait(false);
+				.ConfigureAwait(false);
 
 			CodeFixHelpers.AddAttributeDeclaration(ref document, ref syntaxRoot, typeDecl,
 				"ModuleDependency", "typeof(EPiServer.Web.InitializationModule)");

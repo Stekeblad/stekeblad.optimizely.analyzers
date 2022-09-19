@@ -1,8 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Stekeblad.Optimizely.Analyzers.Analyzers;
+using Stekeblad.Optimizely.Analyzers.Analyzers.Content;
+using Stekeblad.Optimizely.Analyzers.Test.Util;
 using System.Threading.Tasks;
 using VerifyCS = Stekeblad.Optimizely.Analyzers.Test.CSharpCodeFixVerifier<
-	Stekeblad.Optimizely.Analyzers.Analyzers.UseContentTypeAttributeAnalyzer,
+	Stekeblad.Optimizely.Analyzers.Analyzers.Content.UseContentTypeAttributeAnalyzer,
 	Stekeblad.Optimizely.Analyzers.CodeFixes.UseContentTypeAttributeCodeFixProvider>;
 
 namespace Stekeblad.Optimizely.Analyzers.Test
@@ -15,7 +16,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test
 		{
 			const string test = "";
 
-			await VerifyCS.VerifyAnalyzerAsync(test);
+			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
 		}
 
 		[TestMethod]
@@ -30,7 +31,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test
 					public class ArticlePage : EPiServer.Core.PageData {}
 				}";
 
-			await VerifyCS.VerifyAnalyzerAsync(test);
+			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
 		}
 
 		[TestMethod]
@@ -42,7 +43,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test
 					public abstract class ArticlePage : EPiServer.Core.PageData {}
 				}";
 
-			await VerifyCS.VerifyAnalyzerAsync(test);
+			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
 		}
 
 		[TestMethod]
@@ -57,7 +58,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test
 			var expected = VerifyCS.Diagnostic(UseContentTypeAttributeAnalyzer.DiagnosticId)
 				.WithLocation(0)
 				.WithArguments("ArticlePage");
-			await VerifyCS.VerifyAnalyzerAsync(test, expected);
+			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected);
 		}
 
 		[TestMethod]
@@ -73,7 +74,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test
 			var expected = VerifyCS.Diagnostic(UseContentTypeAttributeAnalyzer.SecondRule)
 				.WithLocation(0)
 				.WithArguments("ContentTypeAttribute", "ArticlePage");
-			await VerifyCS.VerifyAnalyzerAsync(test, expected);
+			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected);
 		}
 	}
 }
