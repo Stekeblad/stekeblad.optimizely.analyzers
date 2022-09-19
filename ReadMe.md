@@ -47,6 +47,8 @@ to bring the analyzer to everyone working on a project!
 
 More will come!
 
+[Overview of available analyzers](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/Stekeblad.Optimizely.Analyzers/Stekeblad.Optimizely.Analyzers/AnalyzerReleases.Shipped.md)
+
 ## Contribute
 
 Contributions of different kinds are wellcome!

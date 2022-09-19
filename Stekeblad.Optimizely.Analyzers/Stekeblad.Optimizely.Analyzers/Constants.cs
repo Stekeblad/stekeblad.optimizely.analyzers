@@ -6,6 +6,7 @@
 		{
 			public const string DefiningContent = "Defining content";
 			public const string InitializationModules = "Initialization modules";
+			public const string ScheduledJobs = "Scheduled jobs";
 		}
 	}
 }
