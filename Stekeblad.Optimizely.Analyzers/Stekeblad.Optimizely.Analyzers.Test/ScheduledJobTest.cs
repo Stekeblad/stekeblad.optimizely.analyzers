@@ -117,5 +117,26 @@ namespace tests
 
 			await JobHasNoBaseVerifier.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected);
 		}
+
+		[TestMethod]
+		public async Task CompleteJobButImplementingInterface_NoMatch()
+		{
+			const string test = @"
+				using EPiServer.PlugIn;
+				using EPiServer.Scheduler.Internal;
+				using System;
+				
+				namespace tests
+				{
+					[ScheduledPlugIn(DisplayName = ""TestJob"", GUID = ""I AM A VALID GUID"")]
+					public class MyTestScheduledJob : IScheduledJob
+					{
+						public Guid ID { get; }
+						public string Execute() => ""Job finished sucessfully"";
+					}
+				}";
+
+			await JobHasNoBaseVerifier.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
+		}
 	}
 }
