@@ -2,7 +2,7 @@
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
     <Identity Id="Stekeblad.Optimizely.Analyzers.41be7d9a-0896-45f0-9ee1-c0c3d376927f"
-              Version="1.0.2"
+              Version="1.1.0"
               Language="en-US"
               Publisher="Stekeblad"/>
     <DisplayName>Analyzers For Optimizely CMS</DisplayName>

@@ -31,7 +31,7 @@
     <Description>Avoid some easy misstakes when building Optimizely sites with these analyzers.</Description>
     <PackageProjectUrl>https://github.com/Stekeblad/stekeblad.optimizely.analyzers</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Stekeblad/stekeblad.optimizely.analyzers</RepositoryUrl>
-    <Version>1.0.2</Version>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
@@ -39,8 +39,8 @@
   <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="Exists('$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets')" />
 
   <ItemGroup>
-    <ProjectReference Include="..\Stekeblad.Optimizely.Analyzers.CodeFixes\Stekeblad.Optimizely.Analyzers.CodeFixes.csproj" />
-    <ProjectReference Include="..\Stekeblad.Optimizely.Analyzers\Stekeblad.Optimizely.Analyzers.csproj" />
+    <ProjectReference Include="..\CodeFixes\Stekeblad.Optimizely.Analyzers.CodeFixes.csproj" />
+    <ProjectReference Include="..\Analyzers\Stekeblad.Optimizely.Analyzers.csproj" />
   </ItemGroup>
 
   <ItemGroup>

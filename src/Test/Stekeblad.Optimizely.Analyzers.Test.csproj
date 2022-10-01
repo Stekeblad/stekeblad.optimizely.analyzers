@@ -21,8 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Stekeblad.Optimizely.Analyzers.CodeFixes\Stekeblad.Optimizely.Analyzers.CodeFixes.csproj" />
-    <ProjectReference Include="..\Stekeblad.Optimizely.Analyzers\Stekeblad.Optimizely.Analyzers.csproj" />
+    <ProjectReference Include="..\CodeFixes\Stekeblad.Optimizely.Analyzers.CodeFixes.csproj" />
+    <ProjectReference Include="..\Analyzers\Stekeblad.Optimizely.Analyzers.csproj" />
   </ItemGroup>
 
 </Project>

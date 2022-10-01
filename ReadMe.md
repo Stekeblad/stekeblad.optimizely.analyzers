@@ -10,7 +10,8 @@ run the project. That was true, until now!
 ![Example of analyzer warnings and a codefix preview](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/images/ExampleWarnings.jpg)
 
 Analyzers For Optimizely CMS will also warn about when an attribute
-is expected but not found. (For example on Initializable modules.)
+is expected but not found. (For example on Initializable modules, content types, scheduled jobs.)
+Read more on available analyzers below.
 
 ## No hard dependencies
 
@@ -24,7 +25,7 @@ focus will only be on supporting CMS 11 and later.
 
 My goal is for all analyzers to not just tell you what you did wrong but also
 explain why its wrong, what may be happening in the background and how to fix
-the issue if a fix is not offered. Just click on the Analyzer id in the Error List
+the issue if a fix is not offered as a code fix. Just click on the Analyzer id in the Error List
 tool window, the popup when hovering over the warning or code fix preview in Visual Studio to learn more.
 See for example the help documentation for
 [SOA1002](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1002.md)
@@ -40,18 +41,20 @@ to bring the analyzer to everyone working on a project!
 
 ## Currently available analyzers
 
-- Content types without ContentTypeAttribute or the attribute is missing the GUID property
+- Content types without inheriting base class,
+being decorated with ContentTypeAttribute or the attribute is missing the GUID property
 - Properties in content types that lacks the virtual keyword
 - Incomplete definition of Initializable modules
 (needs to both implement interface and decorate with attribute)
+- Incomplete definition of Scheduled jobs
 
 More will come!
 
-[Overview of available analyzers](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/Stekeblad.Optimizely.Analyzers/Stekeblad.Optimizely.Analyzers/AnalyzerReleases.Shipped.md)
+[Overview of available analyzers](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/src/Analyzers/AnalyzerReleases.Shipped.md)
 
 ## Contribute
 
-Contributions of different kinds are wellcome!
+Contributions of different kinds are welcome!
 - Suggestions for new analyzers and fixes
 - Implementations of new analyzers, fixes and testcases
 - Improvements to analyzer documentation
