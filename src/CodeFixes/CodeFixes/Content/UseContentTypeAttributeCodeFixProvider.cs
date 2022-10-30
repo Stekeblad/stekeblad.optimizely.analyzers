@@ -39,7 +39,7 @@ namespace Stekeblad.Optimizely.Analyzers.CodeFixes
 			// Register a code action that will invoke the fix.
 			CodeAction action = CodeAction.Create(
 				title: Analyzer.Title.ToString(),
-				createChangedDocument: c => AddContentTypeAttribute(context.Document, declaration, root, c),
+				createChangedDocument: _ => AddContentTypeAttribute(context.Document, declaration, root),
 				equivalenceKey: Analyzer.DiagnosticId);
 
 			context.RegisterCodeFix(action, diagnostic);
@@ -47,8 +47,7 @@ namespace Stekeblad.Optimizely.Analyzers.CodeFixes
 
 		private Task<Document> AddContentTypeAttribute(Document document,
 			TypeDeclarationSyntax typeDecl,
-			CompilationUnitSyntax syntaxRoot,
-			CancellationToken cancellationToken)
+			CompilationUnitSyntax syntaxRoot)
 		{
 			CodeFixHelpers.AddAttributeDeclaration(ref document, ref syntaxRoot, typeDecl,
 				"ContentType", @"GroupName = ""Content""");

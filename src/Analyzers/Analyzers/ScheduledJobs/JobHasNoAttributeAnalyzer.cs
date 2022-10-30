@@ -11,7 +11,7 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.ScheduledJobs
 	{
 		public const string DiagnosticId = "SOA1007";
 		public static readonly LocalizableString Title = "Decorate with ScheduledPluginAttribute";
-		internal static readonly LocalizableString MessageFormat = "The scheduled job '{0}' is not decorated with ScheduledPlugInAttribute";
+		internal static readonly LocalizableString MessageFormat = "The scheduled job '{0}' should be decorated with ScheduledPlugInAttribute or be declared abstract";
 		internal const string Category = Constants.Categories.ScheduledJobs;
 
 		internal static DiagnosticDescriptor Rule =

@@ -14,7 +14,7 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.Content
     {
         public const string DiagnosticId = "SOA1001";
         public static readonly LocalizableString Title = "Use ContentTypeAttribute";
-        internal static readonly LocalizableString MessageFormat = "Content type '{0}' should be decorated with ContentTypeAttribute";
+        internal static readonly LocalizableString MessageFormat = "Content type '{0}' should be decorated with ContentTypeAttribute or be declared abstract";
         internal const string Category = Constants.Categories.DefiningContent;
 
         internal static DiagnosticDescriptor Rule =

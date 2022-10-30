@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Stekeblad.Optimizely.Analyzers.Extensions;
 using System.Collections.Immutable;
 using System.Linq;
+using System;
 
 namespace Stekeblad.Optimizely.Analyzers.Analyzers.ScheduledJobs
 {
@@ -34,10 +35,7 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.ScheduledJobs
 				{
 					// The GUID parameter on ScheduledPlugInAttribute was added in EPiServer version 10.3
 					// Do not register any action on lower versions
-					var assemblyIdentity = startContext.Compilation.ReferencedAssemblyNames.FirstOrDefault(
-						assem => assem.Name.Equals("EPiServer"));
-
-					if (assemblyIdentity != null && assemblyIdentity.Version >= new System.Version(10, 3))
+					if (startContext.Compilation.HasReferenceAssembly("EPiServer", new Version(10, 3)))
 					{
 						startContext.RegisterSymbolAction(
 							nodeContext => AnalyzeJobDefinition(nodeContext, attribtuteSymbol),

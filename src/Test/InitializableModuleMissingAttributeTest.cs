@@ -96,6 +96,27 @@ namespace Stekeblad.Optimizely.Analyzers.Test
 		}
 
 		[TestMethod]
+		public async Task IInitInteraceAbstract_NoMatch()
+		{
+			const string test = @"
+				using EPiServer.Framework;
+				using EPiServer.Framework.Initialization;
+				using EPiServer.ServiceLocation;
+
+				namespace tests
+				{
+					public abstract class TestModule : IInitializableModule
+					{
+						public void Initialize(InitializationEngine context) {}
+						public void Uninitialize(InitializationEngine context) {}
+						public void ConfigureContainer(ServiceConfigurationContext context) {}
+					}
+				}";
+
+			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
+		}
+
+		[TestMethod]
 		public async Task IConfigurableInterfaceNoAttr_Match()
 		{
 			const string test = @"
