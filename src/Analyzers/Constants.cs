@@ -4,9 +4,10 @@
 	{
 		public static class Categories
 		{
-			public const string DefiningContent = "Defining content";
-			public const string InitializationModules = "Initialization modules";
-			public const string ScheduledJobs = "Scheduled jobs";
+			public const string DataFactory = nameof(DataFactory);
+			public const string DefiningContent = nameof(DefiningContent);
+			public const string InitializationModules = nameof(InitializationModules);
+			public const string ScheduledJobs = nameof(ScheduledJobs);
 		}
 	}
 }

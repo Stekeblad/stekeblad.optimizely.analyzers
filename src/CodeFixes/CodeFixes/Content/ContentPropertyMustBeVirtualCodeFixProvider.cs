@@ -32,11 +32,6 @@ namespace Stekeblad.Optimizely.Analyzers.CodeFixes.Content
             var diagnostic = context.Diagnostics[0];
             var diagnosticSpan = diagnostic.Location.SourceSpan;
 
-            foreach (var x in context.Document.Project.MetadataReferences)
-            {
-                Debug.WriteLine(x.Display);
-            }
-
             // Find the type declaration identified by the diagnostic.
             var declaration = root.FindToken(diagnosticSpan.Start).Parent as PropertyDeclarationSyntax;
 
