@@ -155,5 +155,21 @@ namespace Stekeblad.Optimizely.Analyzers.Test
 
 			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
 		}
+
+		[TestMethod]
+		public async Task ExcludePopertyWithIgnoreAttribute_NoMatch()
+		{
+			const string test = @"
+				namespace tests
+				{
+					public class ArticlePage : EPiServer.Core.PageData
+					{
+						[EPiServer.DataAnnotations.Ignore]
+						public /*virtual*/ string Heading { get; set; }
+					}
+				}";
+
+			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
+		}
 	}
 }
