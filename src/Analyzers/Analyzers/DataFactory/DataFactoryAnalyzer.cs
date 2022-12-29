@@ -1,5 +1,4 @@
 ﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 using Stekeblad.Optimizely.Analyzers.Extensions;
@@ -36,16 +35,14 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.DataFactory
 		{
 			var operation = (IInvocationOperation)context.Operation;
 
-			// TODO: Figure out if I can make this work with extension methods.
-			// This method on DataFactory is detected and reported:
-			// ContentReference Copy(ContentReference, ContentReference, AccessLevel, AccessLevel, bool)
-			// But this extension method when used as a method on DataFactory is not recognized:
-			// ContentReference Copy(this IContentRepository, ContentReference, ContentReference)
-			// Another OperationKind analysis may be needed and executed after this one, identifying
-			// all DataFactory usages but only reporting on those not reported by the code below?
-
+			// Finds calls to DataFactory instance method both referenced directly through the static accessor and
+			//when first assigning a DataFactory instance to a variable (like "var df = DataFactory.Instance")
+			// Finds calls to extension methods using DataFactory if referenced like DataFactory.Instance.Copy(...)
+			// but not when using a DataFactory variable like df.Copy(...)
+			// Will however also create false positives for non-Optimizely DataFactory.Instance method invocations
+			// if the called method is in the switch block below.
 			if (!SymbolEqualityComparer.Default.Equals(operation.TargetMethod?.ContainingType, dataFactorySymbol)
-				&& !operation.Syntax.GetText().Lines[0].ToString().Contains("DataFactory.Instance"))
+				&& !operation.Syntax.ToString().Contains("DataFactory.Instance"))
 			{
 				return;
 			}
