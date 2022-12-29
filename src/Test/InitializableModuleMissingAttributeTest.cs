@@ -2,8 +2,10 @@
 using Stekeblad.Optimizely.Analyzers.Analyzers.InitializableModules;
 using Stekeblad.Optimizely.Analyzers.Test.Util;
 using System.Threading.Tasks;
-using VerifyCS = Stekeblad.Optimizely.Analyzers.Test.CSharpAnalyzerVerifier<
+using VerifyAttributeCS = Stekeblad.Optimizely.Analyzers.Test.CSharpAnalyzerVerifier<
 	Stekeblad.Optimizely.Analyzers.Analyzers.InitializableModules.InitializableModuleMissingAttributeAnalyzer>;
+using VerifyInterfaceCS = Stekeblad.Optimizely.Analyzers.Test.CSharpAnalyzerVerifier<
+	Stekeblad.Optimizely.Analyzers.Analyzers.InitializableModules.InitializableModuleMissingInterfaceAnalyzer>;
 
 namespace Stekeblad.Optimizely.Analyzers.Test
 {
@@ -27,10 +29,10 @@ namespace Stekeblad.Optimizely.Analyzers.Test
 					}
 				}";
 
-			var expected = VerifyCS.Diagnostic(InitializableModuleMissingInterfaceAnalyzer.DiagnosticId)
+			var expected = VerifyInterfaceCS.Diagnostic(InitializableModuleMissingInterfaceAnalyzer.DiagnosticId)
 				.WithLocation(0)
 				.WithArguments("TestModule", "InitializableModuleAttribute");
-			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected);
+			await VerifyInterfaceCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected);
 		}
 
 		[TestMethod]
@@ -52,10 +54,10 @@ namespace Stekeblad.Optimizely.Analyzers.Test
 					}
 				}";
 
-			var expected = VerifyCS.Diagnostic(InitializableModuleMissingInterfaceAnalyzer.DiagnosticId)
+			var expected = VerifyInterfaceCS.Diagnostic(InitializableModuleMissingInterfaceAnalyzer.DiagnosticId)
 				.WithLocation(0)
 				.WithArguments("TestModule", "ModuleDependencyAttribute");
-			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected);
+			await VerifyInterfaceCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected);
 		}
 
 		[TestMethod]
@@ -75,7 +77,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test
 					}
 				}";
 
-			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
+			await VerifyAttributeCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
 		}
 
 		[TestMethod]
@@ -97,7 +99,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test
 					}
 				}";
 
-			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
+			await VerifyAttributeCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
 		}
 
 		[TestMethod]
@@ -118,7 +120,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test
 					}
 				}";
 
-			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
+			await VerifyAttributeCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
 		}
 
 		[TestMethod]
@@ -140,7 +142,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test
 					}
 				}";
 
-			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
+			await VerifyAttributeCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
 		}
 
 		[TestMethod]
@@ -161,7 +163,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test
 					}
 				}";
 
-			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
+			await VerifyAttributeCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
 		}
 
 		[TestMethod]
@@ -182,10 +184,10 @@ namespace Stekeblad.Optimizely.Analyzers.Test
 					}
 				}";
 
-			var expected = VerifyCS.Diagnostic(InitializableModuleMissingAttributeAnalyzer.DiagnosticId)
+			var expected = VerifyAttributeCS.Diagnostic(InitializableModuleMissingAttributeAnalyzer.DiagnosticId)
 				.WithLocation(0)
 				.WithArguments("TestModule");
-			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected);
+			await VerifyAttributeCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected);
 		}
 
 		[TestMethod]
@@ -204,10 +206,10 @@ namespace Stekeblad.Optimizely.Analyzers.Test
 					}
 				}";
 
-			var expected = VerifyCS.Diagnostic(InitializableModuleMissingAttributeAnalyzer.DiagnosticId)
+			var expected = VerifyAttributeCS.Diagnostic(InitializableModuleMissingAttributeAnalyzer.DiagnosticId)
 				.WithLocation(0)
 				.WithArguments("TestModule");
-			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected);
+			await VerifyAttributeCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected);
 		}
 	}
 }
