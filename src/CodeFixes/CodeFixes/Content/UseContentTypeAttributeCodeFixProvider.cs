@@ -16,7 +16,7 @@ namespace Stekeblad.Optimizely.Analyzers.CodeFixes
 	{
 		public sealed override ImmutableArray<string> FixableDiagnosticIds
 		{
-			get { return ImmutableArray.Create(Analyzer.DiagnosticId); }
+			get { return ImmutableArray.Create(Analyzer.MissingAttributeDiagnosticId); }
 		}
 
 		public sealed override FixAllProvider GetFixAllProvider()
@@ -38,9 +38,9 @@ namespace Stekeblad.Optimizely.Analyzers.CodeFixes
 
 			// Register a code action that will invoke the fix.
 			CodeAction action = CodeAction.Create(
-				title: Analyzer.Title.ToString(),
+				title: Analyzer.Title,
 				createChangedDocument: _ => AddContentTypeAttribute(context.Document, declaration, root),
-				equivalenceKey: Analyzer.DiagnosticId);
+				equivalenceKey: Analyzer.MissingAttributeDiagnosticId);
 
 			context.RegisterCodeFix(action, diagnostic);
 		}

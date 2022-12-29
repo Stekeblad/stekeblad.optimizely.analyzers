@@ -5,8 +5,8 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.DataFactory
 {
 	public partial class DataFactoryAnalyzer
 	{
-		public static readonly LocalizableString Title = "DataFactoy is considered legacy";
-		internal static readonly LocalizableString MessageFormat = "Use '{0}' instead of '{1}'";
+		public const string Title = "DataFactoy is considered legacy";
+		internal const string MessageFormat = "Use '{0}' instead of '{1}'";
 		internal const string Category = Constants.Categories.DataFactory;
 
 		private static DiagnosticDescriptor CreateRule(string id) =>

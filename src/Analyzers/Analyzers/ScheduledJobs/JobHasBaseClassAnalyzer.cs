@@ -9,8 +9,8 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.ScheduledJobs
     public class JobHasBaseClassAnalyzer : MyDiagnosticAnalyzerBase
     {
         public const string DiagnosticId = "SOA1006";
-        public static readonly LocalizableString Title = "Inherit from ScheduledJobBase";
-        internal static readonly LocalizableString MessageFormat = "The scheduled job '{0}' does not inherit from ScheduledJobBase";
+        public const string Title = "Inherit from ScheduledJobBase";
+        internal const string MessageFormat = "The scheduled job '{0}' does not inherit from ScheduledJobBase";
         internal const string Category = Constants.Categories.ScheduledJobs;
 
         internal static DiagnosticDescriptor Rule =
@@ -53,7 +53,7 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.ScheduledJobs
             }
 
             // Test for ScheduledPlugInAttribute and if not present then abort.
-            if (!analyzedSymbol.TryGetAttributeOrDerivedAttribute(attribtuteSymbol, out _))
+            if (!analyzedSymbol.TryGetAttributeDerivedFrom(attribtuteSymbol, out _))
             {
                 return;
             }

@@ -8,16 +8,16 @@ using System.Collections.Immutable;
 using System.Composition;
 using System.Threading;
 using System.Threading.Tasks;
-using Analyzer = Stekeblad.Optimizely.Analyzers.Analyzers.ScheduledJobs.JobHasNoAttributeAnalyzer;
+using Analyzer = Stekeblad.Optimizely.Analyzers.Analyzers.ScheduledJobs.UseScheduledPluginAttributeAnalyzer;
 
 namespace Stekeblad.Optimizely.Analyzers.CodeFixes.ScheduledJobs
 {
-	[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(JobHasNoAttributeAnalyzer)), Shared]
+	[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UseScheduledPluginAttributeAnalyzer)), Shared]
 	public class JobHasNoAttributeCodeFixProvider : MyCodeFixProviderBase<Analyzer>
 	{
 		public sealed override ImmutableArray<string> FixableDiagnosticIds
 		{
-			get { return ImmutableArray.Create(Analyzer.DiagnosticId); }
+			get { return ImmutableArray.Create(Analyzer.MissingAttributeDiagnosticId); }
 		}
 
 		public sealed override FixAllProvider GetFixAllProvider()
@@ -39,9 +39,9 @@ namespace Stekeblad.Optimizely.Analyzers.CodeFixes.ScheduledJobs
 
 			// Register a code action that will invoke the fix.
 			CodeAction action = CodeAction.Create(
-				title: Analyzer.Title.ToString(),
+				title: Analyzer.MissingAttributeTitle,
 				createChangedDocument: c => AddAttributeFix(context.Document, declaration, c),
-				equivalenceKey: Analyzer.DiagnosticId);
+				equivalenceKey: Analyzer.MissingAttributeDiagnosticId);
 
 			context.RegisterCodeFix(action, diagnostic);
 		}
