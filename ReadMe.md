@@ -41,12 +41,15 @@ to bring the analyzer to everyone working on a project!
 
 ## Currently available analyzers
 
-- Content types without inheriting base class,
-being decorated with ContentTypeAttribute or the attribute is missing the GUID property
+- Content types without inheriting base class or
+being decorated with ContentTypeAttribute, the attribute is missing
+the GUID property, the GUID is invallid or used on multiple content types
 - Properties in content types that lacks the virtual keyword
 - Incomplete definition of Initializable modules
 (needs to both implement interface and decorate with attribute)
-- Incomplete definition of Scheduled jobs
+- Incomplete definition of Scheduled jobs (needs both base type and attribute)
+- Incorrect usage of selection factories (e.g. SelectOne/SelectManyAttribute)
+- Usage of the legacy DataFactory class (Only CMS version 10+)
 
 More will come!
 
