@@ -19,8 +19,8 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.Content
 				DiagnosticSeverity.Warning, true, helpLinkUri: HelpUrl(MultipleAttributesDiagnosticId));
 
 		public const string UnsupportedPropTypeDiagnosticId = "SOA1014";
-		public const string UnsupportedPropTypeTitle = "Properties decorated with one of the attributes SelectOne, SelectMany or AutoSuggestSelection (or deriving attributes) must be of the type string or int for the selection to work";
-		internal const string UnsupportedPropTypeMessageFormat = "{0} is decorated with {1} an should therefore be of type string or int";
+		public const string UnsupportedPropTypeTitle = "Type may not work with the attributes SelectOne, SelectMany or AutoSuggestSelection (or deriving attributes)";
+		internal const string UnsupportedPropTypeMessageFormat = "{0} is of a type {1} that may not work with {2}";
 
 		internal static DiagnosticDescriptor UnsupportedPropTypeRule =
 			new DiagnosticDescriptor(UnsupportedPropTypeDiagnosticId, UnsupportedPropTypeTitle, UnsupportedPropTypeMessageFormat, Category,
@@ -133,10 +133,11 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.Content
 				return;
 			}
 
-			// Properties with these attributes must be ints or strings (selectmany may however not work with int when selecting multiple options)
-			if (!"String".Equals(aProp.Type.Name) && !"Int32".Equals(aProp.Type.Name))
+			// Properties with these attributes must be ints or strings (SelectMany may however not work with int when selecting multiple options)
+			// Enums are sort of a collection of integers with nice names assigned to them. Optimizely provides an abstract EnumSelectionFactory.
+			if (!"String".Equals(aProp.Type.Name) && !"Int32".Equals(aProp.Type.Name) && aProp.Type.TypeKind != TypeKind.Enum)
 			{
-				var diagnostic = Diagnostic.Create(UnsupportedPropTypeRule, aProp.Locations[0], aProp.Name,
+				var diagnostic = Diagnostic.Create(UnsupportedPropTypeRule, aProp.Locations[0], aProp.Name, aProp.Type.Name,
 					(selectOneAttr ?? selectManyAttr ?? autoSuggestionAttr).AttributeClass.Name);
 				context.ReportDiagnostic(diagnostic);
 				return;

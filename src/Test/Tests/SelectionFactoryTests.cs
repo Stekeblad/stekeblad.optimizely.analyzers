@@ -51,6 +51,32 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests
 						}
 					}";
 
+		private const string GoodEnumSelectionFactoryImplementation = @"
+					public enum ColorEnum
+					{
+						Red = 1, Green = 2, Blue = 3
+					}
+
+					public class EnumFactory : EnumSelectionFactory
+					{
+						public EnumFactory(LocalizationService localizationService) : base(localizationService) { }
+
+						public EnumFactory() : this(LocalizationService.Current) { }
+
+						protected override Type EnumType => typeof(ColorEnum);
+
+						protected override string GetStringForEnumValue(int value)
+						{
+							switch (value)
+							{
+								case (int)ColorEnum.Red: return ""Red"";
+								case (int)ColorEnum.Green: return ""Green"";
+								case (int)ColorEnum.Blue: return ""Blue"";
+								default: return null;
+							}
+						}
+					}";
+
 		/// <summary>
 		/// <c>{|#0:text|}</c> where 0 is the value of locationNr and text is the value of text
 		/// </summary>
@@ -108,12 +134,17 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests
 		{
 			string test = $@"
 				using EPiServer.Shell.ObjectEditing;
+				using EPiServer.Framework.Localization;
+				using EPiServer.Cms.Shell.UI.ObjectEditing.EditorDescriptors.SelectionFactories;
+				using System;
 
 				namespace tests
 				{{
 					{GoodISelectionFactoryImplementation}
 
 					{GoodISelectionQueryImplementation}
+
+					{GoodEnumSelectionFactoryImplementation}
 
 					public class MyBlock : EPiServer.Core.BlockData {{ }}
 
@@ -126,6 +157,9 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests
 						[SelectOne(SelectionFactoryType = typeof(SelectionFactory))]
 						public virtual int OneInt {{ get; set; }}
 
+						[SelectOne(SelectionFactoryType = typeof(EnumFactory))]
+						public virtual ColorEnum OneEnum {{ get; set; }}
+
 						[SelectOne(SelectionFactoryType = typeof(SelectionFactory))]
 						public virtual double {Highlight(0, "OneDouble")} {{ get; set; }}
 
@@ -137,6 +171,9 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests
 
 						[SelectMany(SelectionFactoryType = typeof(SelectionFactory))]
 						public virtual int ManyInt {{ get; set; }}
+
+						[SelectMany(SelectionFactoryType = typeof(EnumFactory))]
+						public virtual ColorEnum ManyEnum {{ get; set; }}
 
 						[SelectMany(SelectionFactoryType = typeof(SelectionFactory))]
 						public virtual double {Highlight(2, "ManyDouble")} {{ get; set; }}
@@ -160,27 +197,27 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests
 
 			var expected0 = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.UnsupportedPropTypeDiagnosticId)
 				.WithLocation(0)
-				.WithArguments("OneDouble", "SelectOneAttribute");
+				.WithArguments("OneDouble", "Double", "SelectOneAttribute");
 
 			var expected1 = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.UnsupportedPropTypeDiagnosticId)
 				.WithLocation(1)
-				.WithArguments("OneBlock", "SelectOneAttribute");
+				.WithArguments("OneBlock", "MyBlock", "SelectOneAttribute");
 
 			var expected2 = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.UnsupportedPropTypeDiagnosticId)
 				.WithLocation(2)
-				.WithArguments("ManyDouble", "SelectManyAttribute");
+				.WithArguments("ManyDouble", "Double", "SelectManyAttribute");
 
 			var expected3 = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.UnsupportedPropTypeDiagnosticId)
 				.WithLocation(3)
-				.WithArguments("ManyBlock", "SelectManyAttribute");
+				.WithArguments("ManyBlock", "MyBlock", "SelectManyAttribute");
 
 			var expected4 = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.UnsupportedPropTypeDiagnosticId)
 				.WithLocation(4)
-				.WithArguments("QueryDouble", "AutoSuggestSelectionAttribute");
+				.WithArguments("QueryDouble", "Double", "AutoSuggestSelectionAttribute");
 
 			var expected5 = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.UnsupportedPropTypeDiagnosticId)
 				.WithLocation(5)
-				.WithArguments("QueryBlock", "AutoSuggestSelectionAttribute");
+				.WithArguments("QueryBlock", "MyBlock", "AutoSuggestSelectionAttribute");
 
 			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11,
 				expected0, expected1, expected2, expected3, expected4, expected5);
