@@ -18,7 +18,7 @@ Read more on available analyzers below.
 Analyzers For Optimizely CMS will not error if no Optimizely packages are
 present, it does not require any specific version.
 In fact, the analyzers SOA1001 to SOA1005 have been tested to work
-with CMS 12.6, 11.12 and even 8.11! While newer analyzers may work on very old versions,
+with CMS 12.6, 11.12 and even 8.11! While analyzers may work on very old versions,
 focus will only be on supporting CMS 11 and later.
 
 ## Learn from the analyzers
@@ -37,16 +37,18 @@ You can get Analyzers For Optimizely CMS both as an
 [extension to Visual Studio 2022](https://marketplace.visualstudio.com/items?itemName=Stekeblad.optianalyzers)
 for use with all your projects and as a
 [NuGet package](https://nuget.optimizely.com/package/?id=Stekeblad.Optimizely.Analyzers)
-to bring the analyzer to everyone working on a project!
+to bring the analyzer to everyone working on a project.
 
-## Currently available analyzers
+## Available analyzers
+
+Here are a quick overview of some of the things the analyzers test for:
 
 - Content types without inheriting base class or
 being decorated with ContentTypeAttribute, the attribute is missing
 the GUID property, the GUID is invallid or used on multiple content types
 - Properties in content types that lacks the virtual keyword
 - Incomplete definition of Initializable modules
-(needs to both implement interface and decorate with attribute)
+(needs to both implement interface and be decorated with attribute)
 - Incomplete definition of Scheduled jobs (needs both base type and attribute)
 - Incorrect usage of selection factories (e.g. SelectOne/SelectManyAttribute)
 - Usage of the legacy DataFactory class (Only CMS version 10+)
@@ -57,7 +59,8 @@ More will come!
 
 ## Contribute
 
-Contributions of different kinds are welcome!
-- Suggestions for new analyzers and fixes
-- Implementations of new analyzers, fixes and testcases
-- Improvements to analyzer documentation
+Do you want to report a bug or suggest a feature?
+Do you see something in the documentation that can be improved?
+Do you want to help creating new analyzers, tests or writing documentation?
+[Create an issue](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/issues/new/choose)
+and let us take it from there.

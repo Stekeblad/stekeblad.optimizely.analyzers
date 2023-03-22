@@ -95,3 +95,11 @@ SOA1014 | DefiningContent | Warning | [Properties decorated with one of the attr
 SOA1015 | DefiningContent | Warning | [Attribute is missing the SelectionFactoryType parameter](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1015.md)
 SOA1016 | DefiningContent | Warning | [SelectionFactoryType does not implement ISelectionFactory or is declared abstract](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1016.md)
 SOA1017 | DefiningContent | Warning | [SelectionFactoryType does not implement ISelectionQuery or is declared abstract](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1017.md)
+
+## Release 1.3.1
+
+### Changed Rules
+
+Rule ID | Category | Severity | Notes
+--------|----------|----------|-------
+SOA1014 | DefiningContent | Warning | Title was changed to [Type may not work with the attributes SelectOne, SelectMany or AutoSuggestSelection (or deriving attributes)](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1014.md) and `enum`s is now considered an allowed type

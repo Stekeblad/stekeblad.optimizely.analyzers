@@ -28,10 +28,16 @@
     <StartArguments>/rootsuffix $(VSSDKTargetPlatformRegRootSuffix)</StartArguments>
     <Title>Analyzers For Optimizely CMS</Title>
     <Authors>Stekeblad</Authors>
-    <Description>Avoid some easy misstakes when building Optimizely sites with these analyzers.</Description>
+    <Description>
+      Avoid some easy misstakes when building Optimizely sites with these analyzers.
+
+      We have all at least once forgotten to add virtual to a page or block property and not realising it before Optimizely is trying to start up, with this extension you will quickly get warnings in your IDE pointing out this and many other misstake so they can be fixed before you even try to start the website. All analyzers comes with documentation explaining why your code is wrong.
+
+      To see what more analyzers are available please go to the project page. If you want the analyzers to run for everyone in your team you can find the nuget package from the project page.
+    </Description>
     <PackageProjectUrl>https://github.com/Stekeblad/stekeblad.optimizely.analyzers</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Stekeblad/stekeblad.optimizely.analyzers</RepositoryUrl>
-    <Version>1.3.0</Version>
+    <Version>1.3.1</Version>
   </PropertyGroup>
 
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
