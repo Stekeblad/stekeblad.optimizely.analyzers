@@ -28,7 +28,7 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.Content
 
 		public const string MissingFactoryTypeParamDiagnosticId = "SOA1015";
 		public const string MissingFactoryTypeParamTitle = "Attribute is missing the SelectionFactoryType parameter";
-		internal const string MissingFactoryTypeParamMessageFormat = "{0} on {1} is missing the SelectionFactoryType paramter";
+		internal const string MissingFactoryTypeParamMessageFormat = "{0} on {1} is missing the SelectionFactoryType parameter";
 
 		internal static DiagnosticDescriptor MissingFactoryTypeParamRule =
 			new DiagnosticDescriptor(MissingFactoryTypeParamDiagnosticId, MissingFactoryTypeParamTitle, MissingFactoryTypeParamMessageFormat, Category,

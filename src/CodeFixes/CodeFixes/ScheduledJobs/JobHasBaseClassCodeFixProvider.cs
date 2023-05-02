@@ -38,7 +38,7 @@ namespace Stekeblad.Optimizely.Analyzers.CodeFixes.ScheduledJobs
 
 			// Register a code action that will invoke the fix.
 			CodeAction action = CodeAction.Create(
-				title: Analyzer.Title.ToString(),
+				title: Analyzer.Title,
 				createChangedDocument: c => AddBaseClassFix(context.Document, declaration, c),
 				equivalenceKey: Analyzer.DiagnosticId);
 

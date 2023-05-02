@@ -37,7 +37,7 @@ namespace Stekeblad.Optimizely.Analyzers.CodeFixes.Content
 
             // Register a code action that will invoke the fix.
             CodeAction action = CodeAction.Create(
-                title: Analyzer.Title.ToString(),
+                title: Analyzer.Title,
                 createChangedDocument: c => AddVirtualKeyword(context.Document, declaration, c),
                 equivalenceKey: Analyzer.DiagnosticId);
 
