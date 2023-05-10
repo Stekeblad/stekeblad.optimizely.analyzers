@@ -26,12 +26,12 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.DataFactory
 					&& startContext.Compilation.HasReferenceAssembly("EPiServer", new Version(10, 0)))
 				{
 					startContext.RegisterOperationAction(operationContext =>
-						DataFacoryAction(operationContext, dataFactorySymbol), OperationKind.Invocation);
+						DataFactoryAction(operationContext, dataFactorySymbol), OperationKind.Invocation);
 				}
 			});
 		}
 
-		private void DataFacoryAction(OperationAnalysisContext context, INamedTypeSymbol dataFactorySymbol)
+		private void DataFactoryAction(OperationAnalysisContext context, INamedTypeSymbol dataFactorySymbol)
 		{
 			var operation = (IInvocationOperation)context.Operation;
 

@@ -12,7 +12,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests
     public class ContentPropertyMustBeVirtualTest
     {
         [TestMethod]
-        public async Task PageTypeWithNoPropertties_NoMatch()
+        public async Task PageTypeWithNoProperties_NoMatch()
         {
             const string test = @"
 				namespace tests
@@ -66,7 +66,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests
         }
 
         [TestMethod]
-        public async Task PageTypeWithOverridenVirtualProperty_NoMatch()
+        public async Task PageTypeWithOverriddenVirtualProperty_NoMatch()
         {
             const string test = @"
 				namespace tests
@@ -142,7 +142,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests
         }
 
         [TestMethod]
-        public async Task ExcludePopertyWithoutSetter_NoMatch()
+        public async Task ExcludePropertyWithoutSetter_NoMatch()
         {
             const string test = @"
 				namespace tests
@@ -157,7 +157,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests
         }
 
         [TestMethod]
-        public async Task ExcludePopertyWithIgnoreAttribute_NoMatch()
+        public async Task ExcludePropertyWithIgnoreAttribute_NoMatch()
         {
             const string test = @"
 				namespace tests

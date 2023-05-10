@@ -4,7 +4,7 @@ using Stekeblad.Optimizely.Analyzers.Test.Util;
 using System.Threading.Tasks;
 using VerifyCS = Stekeblad.Optimizely.Analyzers.Test.CSharpCodeFixVerifier<
     Stekeblad.Optimizely.Analyzers.Analyzers.Content.UseContentTypeAttributeAnalyzer,
-    Stekeblad.Optimizely.Analyzers.CodeFixes.UseContentTypeAttributeCodeFixProvider>;
+    Stekeblad.Optimizely.Analyzers.CodeFixes.Content.UseContentTypeAttributeCodeFixProvider>;
 
 namespace Stekeblad.Optimizely.Analyzers.Test.Tests
 {

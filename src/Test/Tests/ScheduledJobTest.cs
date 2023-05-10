@@ -26,7 +26,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests
 					[ScheduledPlugIn(DisplayName = ""TestJob"", GUID = ""01234567-89ab-cdef-0123-456789abcdef"")]
 					public class MyTestScheduledJob : ScheduledJobBase
 					{
-						public override string Execute() => ""Job finished sucessfully"";
+						public override string Execute() => ""Job finished successfully"";
 					}
 				}";
 
@@ -48,7 +48,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests
 					public class MyTestScheduledJob : IScheduledJob
 					{
 						public Guid ID { get; }
-						public string Execute() => ""Job finished sucessfully"";
+						public string Execute() => ""Job finished successfully"";
 					}
 				}";
 
@@ -67,19 +67,19 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests
 					[ScheduledPlugIn(DisplayName = ""TestJob"", GUID = ""11111111-1111-1111-1111-111111111111"")]
 					public class MyTestScheduledJob1 : ScheduledJobBase
 					{
-						public override string Execute() => ""Job finished sucessfully"";
+						public override string Execute() => ""Job finished successfully"";
 					}
 
 					[ScheduledPlugIn(DisplayName = ""TestJob"", GUID = ""22222222-2222-2222-2222-222222222222"")]
 					public class MyTestScheduledJob2 : ScheduledJobBase
 					{
-						public override string Execute() => ""Job finished sucessfully"";
+						public override string Execute() => ""Job finished successfully"";
 					}
 
 					[ScheduledPlugIn(DisplayName = ""TestJob"", GUID = ""33333333-3333-3333-3333-333333333333"")]
 					public class MyTestScheduledJob3 : ScheduledJobBase
 					{
-						public override string Execute() => ""Job finished sucessfully"";
+						public override string Execute() => ""Job finished successfully"";
 					}
 				}";
 
@@ -96,22 +96,9 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests
 				{
 					public class {|#0:MyTestScheduledJob|} : ScheduledJobBase
 					{
-						public override string Execute() => ""Job finished sucessfully"";
+						public override string Execute() => ""Job finished successfully"";
 					}
 				}";
-
-            //const string fixTest =
-            //@"using EPiServer.Scheduler;
-            //using EPiServer.PlugIn;
-
-            //namespace tests
-            //{
-            //    [ScheduledPlugIn]
-            //    public class {|#0:MyTestScheduledJob|} : ScheduledJobBase
-            //    {
-            //        public override string Execute() => ""Job finished sucessfully"";
-            //    }
-            //}";
 
             var expected = JobHasNoAttributeVerifier.Diagnostic(UseScheduledPluginAttributeAnalyzer.MissingAttributeDiagnosticId)
                 .WithLocation(0)
@@ -132,7 +119,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests
 					[{|#0:ScheduledPlugIn(DisplayName = ""TestJob"")|}]
 					public class MyTestScheduledJob : ScheduledJobBase
 					{
-						public override string Execute() => ""Job finished sucessfully"";
+						public override string Execute() => ""Job finished successfully"";
 					}
 				}";
 
@@ -158,7 +145,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests
 					[ScheduledPlugIn]
 					public class {|#0:MyTestScheduledJob|}
 					{
-						public string Execute() => ""Job finished sucessfully"";
+						public string Execute() => ""Job finished successfully"";
 					}
 				}";
 
@@ -181,7 +168,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests
 					[{|#0:ScheduledPlugIn(DisplayName = ""TestJob"", GUID = """")|}]
 					public class MyTestScheduledJob : ScheduledJobBase
 					{
-						public override string Execute() => ""Job finished sucessfully"";
+						public override string Execute() => ""Job finished successfully"";
 					}
 				}";
 
@@ -204,7 +191,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests
 					[{|#0:ScheduledPlugIn(DisplayName = ""TestJob"", GUID = ""I AM A VALID GUID"")|}]
 					public class MyTestScheduledJob : ScheduledJobBase
 					{
-						public override string Execute() => ""Job finished sucessfully"";
+						public override string Execute() => ""Job finished successfully"";
 					}
 				}";
 
@@ -227,13 +214,13 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests
 					[{|#0:ScheduledPlugIn(DisplayName = ""TestJob"", GUID = ""01234567-89ab-cdef-0123-456789abcdef"")|}]
 					public class MyTestScheduledJob : ScheduledJobBase
 					{
-						public override string Execute() => ""Job finished sucessfully"";
+						public override string Execute() => ""Job finished successfully"";
 					}
 
 					[{|#1:ScheduledPlugIn(DisplayName = ""TestJob"", GUID = ""01234567-89ab-cdef-0123-456789abcdef"")|}]
 					public class MySecondJob : ScheduledJobBase
 					{
-						public override string Execute() => ""Job finished sucessfully"";
+						public override string Execute() => ""Job finished successfully"";
 					}
 				}";
 

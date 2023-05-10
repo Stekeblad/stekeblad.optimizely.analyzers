@@ -15,26 +15,26 @@ namespace Stekeblad.Optimizely.Analyzers.Helpers
 		/// <param name="compilationUnitSyntax">The compilation unit / syntax root of the document</param>
 		/// <param name="memberOrType">The member or type to add the attribute to</param>
 		/// <param name="attributeName">Name of the new attribute</param>
-		/// <param name="attributeParamters">Atribute parameters as a normal string, example: <c>@"GroupName = ""Content"""</c></param>
+		/// <param name="attributeParameters">Attribute parameters as a normal string, example: <c>@"GroupName = ""Content"""</c></param>
 		/// <returns></returns>
 		public static Document AddAttributeDeclaration(ref Document document,
 			ref CompilationUnitSyntax compilationUnitSyntax,
 			MemberDeclarationSyntax memberOrType,
 			string attributeName,
-			string attributeParamters = null)
+			string attributeParameters = null)
 		{
 			// Create the syntax for the new Attribute
 			var attributeNameSyntax = SyntaxFactory.ParseName(attributeName);
 			AttributeSyntax attribute;
 
 			// Add parameters, if provided
-			if (attributeParamters == null)
+			if (attributeParameters == null)
 			{
 				attribute = SyntaxFactory.Attribute(attributeNameSyntax);
 			}
 			else
 			{
-				var attributeArguments = SyntaxFactory.ParseAttributeArgumentList($"({attributeParamters})");
+				var attributeArguments = SyntaxFactory.ParseAttributeArgumentList($"({attributeParameters})");
 				attribute = SyntaxFactory.Attribute(attributeNameSyntax, attributeArguments);
 			}
 
