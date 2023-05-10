@@ -103,3 +103,11 @@ SOA1017 | DefiningContent | Warning | [SelectionFactoryType does not implement I
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
 SOA1014 | DefiningContent | Warning | Title was changed to [Type may not work with the attributes SelectOne, SelectMany or AutoSuggestSelection (or deriving attributes)](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1014.md) and `enum`s is now considered an allowed type
+
+## Release 1.4.0
+
+### New Rules
+
+Rule ID | Category | Severity | Notes
+--------|----------|----------|-------
+SOA1018| BadMethods | Information | [Cast UrlBuilder to string instead of calling ToString method'](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/1018.md)
