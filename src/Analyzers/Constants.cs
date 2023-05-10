@@ -8,6 +8,7 @@
 			public const string DefiningContent = nameof(DefiningContent);
 			public const string InitializationModules = nameof(InitializationModules);
 			public const string ScheduledJobs = nameof(ScheduledJobs);
+			public const string BadMethods = nameof(BadMethods);
 		}
 	}
 }
