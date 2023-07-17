@@ -26,7 +26,7 @@ SOA1008 | Scheduled jobs | Info | [ScheduledPluginAttribute has no GUID](https:/
 
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
-SOA1101 | DataFactory | Warning | [Use 'IContentRepository.Copy'](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/1101.md)
+SOA1101 | DataFactory | Warning | [Use 'IContentRepository.Copy'](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1101.md)
 SOA1102 | DataFactory | Warning | [Use 'IContentRepository.CreateLanguageBranch'](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1102.md)
 SOA1103 | DataFactory | Warning | [Use 'IContentRepository.Delete'](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1103.md)
 SOA1104 | DataFactory | Warning | [Use IContentRepository.DeleteChildren](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1104.md)
@@ -110,4 +110,4 @@ SOA1014 | DefiningContent | Warning | Title was changed to [Type may not work wi
 
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
-SOA1018| BadMethods | Information | [Cast UrlBuilder to string instead of calling ToString method'](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/1018.md)
+SOA1018 | BadMethods | Information | [Cast UrlBuilder to string instead of calling ToString method'](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1018.md)
