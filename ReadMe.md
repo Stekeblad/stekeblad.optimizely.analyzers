@@ -55,12 +55,14 @@ the GUID property, the GUID is invallid or used on multiple content types
 
 More will come!
 
-[Overview of available analyzers](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/src/Analyzers/AnalyzerReleases.Shipped.md)
+[List of available analyzers](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/src/Analyzers/AnalyzerReleases.Shipped.md)
 
 ## Contribute
 
 Do you want to report a bug or suggest a feature?
+
 Do you see something in the documentation that can be improved?
+
 Do you want to help creating new analyzers, tests or writing documentation?
 [Create an issue](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/issues/new/choose)
 and let us take it from there.
