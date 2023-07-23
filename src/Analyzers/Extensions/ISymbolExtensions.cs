@@ -84,5 +84,44 @@ namespace Stekeblad.Optimizely.Analyzers.Extensions
 			foundAttributeData = null;
 			return false;
 		}
+
+		/// <summary>
+		/// Test if a symbol is a valid Optimizely content property. Tests include if the symbol is a property,
+		/// how it is defined and that it's containing type is derived from EPiServer.Core.ContentData
+		/// </summary>
+		/// <param name="symbol">Symbol to test</param>
+		/// <param name="compilation">The current compilation information, to locate and test presence of Optimizely types</param>
+		/// <returns>True if symbol meets all criteria for a content property (except for being virtual, that is covered by SOA1003), false otherwise</returns>
+		public static bool IsOptiContentProperty(this ISymbol symbol, Compilation compilation)
+		{
+			// Make sure the symbol is a property and not a field, method, class etc.
+			if (!(symbol is IPropertySymbol prop))
+				return false;
+
+			// The property must be inside a class that at some point derives from ContentData
+			var contentDataSymbol = compilation.GetTypeByMetadataName(
+					"EPiServer.Core.ContentData");
+
+			if (contentDataSymbol == null || !symbol.ContainingType.IsDerivedFrom(contentDataSymbol))
+				return false;
+
+			// Inspect the keywords used to define the property
+			if (prop.DeclaredAccessibility == Accessibility.Public
+				&& !prop.IsImplicitlyDeclared // skip autogen props
+				&& !prop.IsStatic // must be instance member
+				//&& (prop.IsVirtual || prop.IsOverride) // ensured by SOA1003 ContentPropertyMustBeVirtual
+				&& prop.SetMethod != null) // Property must have a setter
+			{
+				// properties decorated with IgnoreAttribute does not show up in the CMS and should be ignored
+				var ignoreAttributeSymbol = compilation.GetTypeByMetadataName(
+				"EPiServer.DataAnnotations.IgnoreAttribute");
+
+				// return true if IgnoreAttribute is not present
+				return ignoreAttributeSymbol == null || !prop.HasAttributeDerivedFrom(ignoreAttributeSymbol);
+			}
+
+			// not a content property
+			return false;
+		}
 	}
 }

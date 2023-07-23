@@ -2,7 +2,6 @@
 using Microsoft.CodeAnalysis.Diagnostics;
 using Stekeblad.Optimizely.Analyzers.Extensions;
 using System.Collections.Immutable;
-using System.Linq;
 
 namespace Stekeblad.Optimizely.Analyzers.Analyzers.Content
 {
@@ -30,21 +29,16 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.Content
                 INamedTypeSymbol contentDataSymbol = startContext.Compilation.GetTypeByMetadataName(
                     "EPiServer.Core.ContentData");
 
-					INamedTypeSymbol ignoreAttributeSymbol = startContext.Compilation.GetTypeByMetadataName(
-                        "EPiServer.DataAnnotations.IgnoreAttribute");
-
-				if (contentDataSymbol != null && ignoreAttributeSymbol != null)
+				if (contentDataSymbol != null)
 				{
 					startContext.RegisterSymbolAction(
-						nodeContext => AnalyzeNamedTypeSymbol(nodeContext, contentDataSymbol, ignoreAttributeSymbol),
+						nodeContext => AnalyzeNamedTypeSymbol(nodeContext, contentDataSymbol),
 						SymbolKind.NamedType);
 				}
 			});
         }
 
-        private static void AnalyzeNamedTypeSymbol(SymbolAnalysisContext context,
-            INamedTypeSymbol contentDataSymbol,
-			INamedTypeSymbol ignoreAttributeSymbol)
+        private static void AnalyzeNamedTypeSymbol(SymbolAnalysisContext context, INamedTypeSymbol contentDataSymbol)
         {
             var analyzedSymbol = (INamedTypeSymbol)context.Symbol;
 
@@ -53,14 +47,7 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.Content
 
             foreach (var prop in analyzedSymbol.GetMembers().OfType<IPropertySymbol>())
             {
-                if (prop.DeclaredAccessibility == Accessibility.Public
-                    && !prop.IsImplicitlyDeclared // skip autogen props
-                    && !prop.IsStatic
-                    && !prop.IsVirtual
-                    && !prop.IsOverride // assume overridden prop is valid or reported when base type is analyzed
-                    && prop.SetMethod != null // valid example from Alloy: public string ContentAreaCssClass => "teaserblock";
-                    // properties decorated with IgnoreAttribute does not show up in the CMS and can be ignored by this analyzer
-                    && !prop.HasAttributeDerivedFrom(ignoreAttributeSymbol))
+                if (prop.IsOptiContentProperty(context.Compilation) && !prop.IsVirtual && !prop.IsOverride)
                 {
                     var diagnostic = Diagnostic.Create(Rule, prop.Locations[0], prop.Name);
                     context.ReportDiagnostic(diagnostic);
