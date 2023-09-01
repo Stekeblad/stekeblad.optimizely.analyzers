@@ -61,7 +61,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests
         }
 
         [TestMethod]
-        public async Task IInitInteraceInitModuleAttr_NoMatch()
+        public async Task IInitInterfaceInitModuleAttr_NoMatch()
         {
             const string test = @"
 				using EPiServer.Framework;
@@ -81,7 +81,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests
         }
 
         [TestMethod]
-        public async Task IConfigurableInteraceInitModuleAttr_NoMatch()
+        public async Task IConfigurableInterfaceInitModuleAttr_NoMatch()
         {
             const string test = @"
 				using EPiServer.Framework;
@@ -103,7 +103,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests
         }
 
         [TestMethod]
-        public async Task IInitInteraceModuleDependAttr_NoMatch()
+        public async Task IInitInterfaceModuleDependAttr_NoMatch()
         {
             const string test = @"
 				using EPiServer.Framework;
@@ -124,7 +124,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests
         }
 
         [TestMethod]
-        public async Task IConfigurableInteraceModuleDependAttr_NoMatch()
+        public async Task IConfigurableInterfaceModuleDependAttr_NoMatch()
         {
             const string test = @"
 				using EPiServer.Framework;
@@ -146,7 +146,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests
         }
 
         [TestMethod]
-        public async Task IInitInteraceAbstract_NoMatch()
+        public async Task IInitInterfaceAbstract_NoMatch()
         {
             const string test = @"
 				using EPiServer.Framework;
