@@ -72,7 +72,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests
 								case (int)ColorEnum.Red: return ""Red"";
 								case (int)ColorEnum.Green: return ""Green"";
 								case (int)ColorEnum.Blue: return ""Blue"";
-								default: return null;
+								default: return ""No color selected"";
 							}
 						}
 					}";
@@ -224,6 +224,51 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests
 		}
 
 		[TestMethod]
+		public async Task SelectionPropertyNullableTypeTests()
+		{
+            string test = $@"
+				using EPiServer.Shell.ObjectEditing;
+				using EPiServer.Framework.Localization;
+				using EPiServer.Cms.Shell.UI.ObjectEditing.EditorDescriptors.SelectionFactories;
+				using System;
+
+               #nullable enable
+				namespace tests
+				{{
+					{GoodISelectionFactoryImplementation}
+
+					{GoodISelectionQueryImplementation}
+
+					{GoodEnumSelectionFactoryImplementation}
+
+					public class MyBlock : EPiServer.Core.BlockData {{ }}
+
+					[EPiServer.DataAnnotations.ContentTypeAttribute(GroupName = ""Content"")]
+					public class TestPage : EPiServer.Core.PageData
+					{{
+						[SelectOne(SelectionFactoryType = typeof(SelectionFactory))]
+						public virtual string? OneStr {{ get; set; }}
+
+						[SelectOne(SelectionFactoryType = typeof(SelectionFactory))]
+						public virtual int? OneInt {{ get; set; }}
+
+						[SelectOne(SelectionFactoryType = typeof(EnumFactory))]
+						public virtual ColorEnum? OneEnum {{ get; set; }}
+
+                      [SelectOne(SelectionFactoryType = typeof(SelectionFactory))]
+						public virtual MyBlock? {Highlight(0, "OneBlock")} {{ get; set; }}
+					}}
+				}}
+              #nullable restore";
+
+            var expected = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.UnsupportedPropTypeDiagnosticId)
+                .WithLocation(0)
+                .WithArguments("OneBlock", "MyBlock?", "SelectOneAttribute");
+
+            await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected);
+        }
+
+        [TestMethod]
 		public async Task SelectionFactoryTypeParameterTest()
 		{
 			string test = $@"

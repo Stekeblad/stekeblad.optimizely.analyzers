@@ -85,12 +85,16 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.Content
 				INamedTypeSymbol iSelectionQuerySymbol = startContext.Compilation.GetTypeByMetadataName(
 					"EPiServer.Shell.ObjectEditing.ISelectionQuery");
 
-				if (selectOneAttrSymbol != null)
+                INamedTypeSymbol systemInt32Symbol = startContext.Compilation.GetSpecialType(SpecialType.System_Int32);
+
+                INamedTypeSymbol systemStringSymbol = startContext.Compilation.GetSpecialType(SpecialType.System_String);
+
+                if (selectOneAttrSymbol != null)
 				{
 					startContext.RegisterSymbolAction(
 						nodeContext => AnalyzeProperty(nodeContext,
 							selectOneAttrSymbol, selectManyAttrSymbol, AutoSuggestionAttrSymbol,
-							iSelectionFactorySymbol, iSelectionQuerySymbol),
+							iSelectionFactorySymbol, iSelectionQuerySymbol, systemInt32Symbol, systemStringSymbol),
 						SymbolKind.Property);
 				}
 			});
@@ -102,7 +106,9 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.Content
 			INamedTypeSymbol selectManyAttrSymbol,
 			INamedTypeSymbol autoSuggestionAttrSymbol,
 			INamedTypeSymbol iSelectionFactorySymbol,
-			INamedTypeSymbol iSelectionQuerySymbol)
+			INamedTypeSymbol iSelectionQuerySymbol,
+			INamedTypeSymbol systemInt32Symbol,
+			INamedTypeSymbol systemStringSymbol)
 		{
 			var aProp = context.Symbol as IPropertySymbol;
 
@@ -135,9 +141,24 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.Content
 
 			// Properties with these attributes must be ints or strings (SelectMany may however not work with int when selecting multiple options)
 			// Enums are sort of a collection of integers with nice names assigned to them. Optimizely provides an abstract EnumSelectionFactory.
-			if (!"String".Equals(aProp.Type.Name) && !"Int32".Equals(aProp.Type.Name) && aProp.Type.TypeKind != TypeKind.Enum)
+			// Nullable variants of the above is also allowed
+			var typeSymbol = aProp.Type as INamedTypeSymbol;
+			bool nullable = typeSymbol.NullableAnnotation == NullableAnnotation.Annotated;
+
+			// Check if a nullable type and get the inner/real type
+			if (nullable && typeSymbol.Arity == 1)
 			{
-				var diagnostic = Diagnostic.Create(UnsupportedPropTypeRule, aProp.Locations[0], aProp.Name, aProp.Type.Name,
+                typeSymbol = typeSymbol.TypeArguments[0] as INamedTypeSymbol;
+				nullable = true;
+			}
+
+            if (typeSymbol.TypeKind != TypeKind.Enum
+                && !SymbolEqualityComparer.Default.Equals(typeSymbol, systemStringSymbol)
+				&& !SymbolEqualityComparer.Default.Equals(typeSymbol, systemInt32Symbol))
+			{
+				var name = typeSymbol.Name + (nullable ? "?" : string.Empty);
+
+                var diagnostic = Diagnostic.Create(UnsupportedPropTypeRule, aProp.Locations[0], aProp.Name, name,
 					(selectOneAttr ?? selectManyAttr ?? autoSuggestionAttr).AttributeClass.Name);
 				context.ReportDiagnostic(diagnostic);
 				return;
