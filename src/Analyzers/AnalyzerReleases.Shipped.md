@@ -110,4 +110,18 @@ SOA1014 | DefiningContent | Warning | Title was changed to [Type may not work wi
 
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
-SOA1018 | BadMethods | Information | [Cast UrlBuilder to string instead of calling ToString method'](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1018.md)
+SOA1018 | BadMethods | Information | [Cast UrlBuilder to string instead of calling ToString method](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1018.md)
+
+## Release 1.5.0
+
+### New Rules
+
+Rule ID | Category | Severity | Notes
+--------|----------|----------|-------
+SOA1019 | DefiningContent | Warning | [Initialize property inside SetDefaultValues](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1019.md) instead of using property initialization
+
+### Changed Rules
+
+Rule ID | Category | Severity | Notes
+--------|----------|----------|-------
+SOA1014 | DefiningContent | Warning | [Type may not work with the attributes SelectOne, SelectMany or AutoSuggestSelection (or deriving attributes)](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1014.md) now supports nullable int string and enums
