@@ -2,8 +2,9 @@
 using Microsoft.CodeAnalysis.Diagnostics;
 using Stekeblad.Optimizely.Analyzers.Extensions;
 using System;
-using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 
 namespace Stekeblad.Optimizely.Analyzers.Analyzers.Content
 {
@@ -30,7 +31,7 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.Content
 
 		public const string GuidReusedDiagnosticId = "SOA1009";
 		public const string GuidReusedTitle = "Multiple content types must not share GUID";
-		public const string GuidReusedMessageFormat = "Content type {0} has the same GUID as {1}";
+		public const string GuidReusedMessageFormat = "The following content types have the same GUID: {0}";
 
 		internal static DiagnosticDescriptor GuidReusedRule =
 			new DiagnosticDescriptor(GuidReusedDiagnosticId, GuidReusedTitle, GuidReusedMessageFormat, Category,
@@ -49,10 +50,12 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.Content
 			get { return ImmutableArray.Create(MissingAttributeRule, MissingGuidRule, GuidReusedRule, InvalidGuidRule); }
 		}
 
+#pragma warning disable RS1026 // Enable concurrent execution
 		public override void Initialize(AnalysisContext context)
+#pragma warning restore RS1026 // Enable concurrent execution
 		{
-			context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
-			context.EnableConcurrentExecution();
+			context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze);
+			//context.EnableConcurrentExecution(); // This analyzer is not thread safe, adds to a analysis context shared list
 
 			context.RegisterCompilationStartAction(startContext =>
 			{
@@ -64,12 +67,14 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.Content
 				if (contentDataSymbol != null
 					&& contentTypeAttributeSymbol != null)
 				{
-					ConcurrentDictionary<Guid, (INamedTypeSymbol Type, AttributeData Attribute)> contentTypeGuids =
-						new ConcurrentDictionary<Guid, (INamedTypeSymbol Type, AttributeData Attribute)>();
+					List<(Guid Guid, INamedTypeSymbol Type, AttributeData Attribute)> guidTypeAtributeList =
+						new List<(Guid Guid, INamedTypeSymbol Type, AttributeData Attribute)>();
 
 					startContext.RegisterSymbolAction(
-						nodeContext => AnalyzeNamedTypeSymbol(nodeContext, contentDataSymbol, contentTypeAttributeSymbol, contentTypeGuids),
+						nodeContext => AnalyzeNamedTypeSymbol(nodeContext, contentDataSymbol, contentTypeAttributeSymbol, guidTypeAtributeList),
 						SymbolKind.NamedType);
+
+					startContext.RegisterCompilationEndAction(x => Summarize(x, guidTypeAtributeList));
 				}
 			});
 		}
@@ -78,7 +83,7 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.Content
 			SymbolAnalysisContext context,
 			INamedTypeSymbol contentDataSymbol,
 			INamedTypeSymbol contentTypeAttributeSymbol,
-			ConcurrentDictionary<Guid, (INamedTypeSymbol Type, AttributeData Attribute)> contentTypeGuids)
+			List<(Guid Guid, INamedTypeSymbol Type, AttributeData Attribute)> guidTypeAtributeList)
 		{
 			var analyzedSymbol = context.Symbol as INamedTypeSymbol;
 
@@ -124,20 +129,28 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.Content
 				return;
 			}
 
-			// Two content types must not have the same GUID, make sure it is unique
-			var (existingType, existingAttribute) = contentTypeGuids.GetOrAdd(guidValue, (analyzedSymbol, foundAttributeData));
-			if (!SymbolEqualityComparer.Default.Equals(existingType, analyzedSymbol))
+			// All conditions except if it is unique or not has been checked.
+			// Save details about this location and check uniqueness after all types has been analyzed
+			guidTypeAtributeList.Add((guidValue, analyzedSymbol, foundAttributeData));
+		}
+
+		public void Summarize(CompilationAnalysisContext context, List<(Guid Guid, INamedTypeSymbol Type, AttributeData Attribute)> guidTypeAttributeList)
+		{
+			foreach (var typesAttributesWithGuid in guidTypeAttributeList.GroupBy(x => x.Guid))
 			{
-				var diagnostic1 = Diagnostic.Create(GuidReusedRule,
-					foundAttributeData.GetLocation(),
-					analyzedSymbol.Name, existingType.Name);
+				if (typesAttributesWithGuid.Count() > 1)
+				{
+					// The type names are sorted to have a determined order in the test cases
+					var typeNames = string.Join(", ", typesAttributesWithGuid.Select(x => x.Type.Name).OrderBy(x => x));
+					foreach (var typeAttr in typesAttributesWithGuid)
+					{
+						var diagnostic = Diagnostic.Create(GuidReusedRule,
+						typeAttr.Attribute.GetLocation(),
+						typeNames);
 
-				var diagnostic2 = Diagnostic.Create(GuidReusedRule,
-					existingAttribute.GetLocation(),
-					existingType.Name, analyzedSymbol.Name);
-
-				context.ReportDiagnostic(diagnostic1);
-				context.ReportDiagnostic(diagnostic2);
+						context.ReportDiagnostic(diagnostic);
+					}
+				}
 			}
 		}
 	}
