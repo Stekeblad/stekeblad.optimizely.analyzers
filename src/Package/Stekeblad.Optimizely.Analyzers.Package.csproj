@@ -9,16 +9,16 @@
 
   <PropertyGroup>
     <PackageId>Stekeblad.Optimizely.Analyzers</PackageId>
-    <PackageVersion>1.5.0.0</PackageVersion>
+    <PackageVersion>1.6.0</PackageVersion>
     <Authors>Stekeblad</Authors>
     <PackageProjectUrl>https://github.com/Stekeblad/stekeblad.optimizely.analyzers</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Stekeblad/stekeblad.optimizely.analyzers</RepositoryUrl>
     <Description>
       Avoid some easy misstakes when building Optimizely sites with these analyzers.
-      
+
       We have all at least once forgotten to add virtual to a page or block property and not realising it before Optimizely is trying to start up, with this package you will quickly get warnings in your IDE pointing out this and many other misstake so they can be fixed before you even try to start the website. All analyzers comes with documentation explaining why your code is wrong.
-      
-      To see what more analyzers are available please go to the project page. If you want the analyzers to run for all your project you can find the Visual Studio extension from the project page.
+
+      To see what more analyzers are available please go to the project page. If you want the analyzers to run for all your project you can get the Visual Studio extension "Analyzers For Optimizely CMS" in the Visual Studio Marketplace.
     </Description>
     <PackageReleaseNotes></PackageReleaseNotes>
     <Copyright>Copyright</Copyright>
@@ -32,7 +32,7 @@
 
     <ToolCommandName>Stekeblad.Optimizely.Analyzers</ToolCommandName>
 
-    <Version>1.5.0</Version>
+    <Version>1.6.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

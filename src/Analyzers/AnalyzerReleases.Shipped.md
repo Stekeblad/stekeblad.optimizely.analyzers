@@ -124,4 +124,16 @@ SOA1019 | DefiningContent | Warning | [Initialize property inside SetDefaultValu
 
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
-SOA1014 | DefiningContent | Warning | [Type may not work with the attributes SelectOne, SelectMany or AutoSuggestSelection (or deriving attributes)](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1014.md) now supports nullable int string and enums
+SOA1014 | DefiningContent | Warning | [Type may not work with the attributes SelectOne, SelectMany or AutoSuggestSelection (or deriving attributes)](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1014.md) now supports nullable int, string and enums
+
+## Release 1.6.0
+
+### New Rules
+
+Rule ID | Category | Severity | Notes
+--------|----------|----------|-------
+SOA1020 | DefiningContent | Warning | [Missing MediaDescriptorAttribute](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1020.md)
+SOA1021 | DefiningContent | Warning | [Unexpected usage of MediaDescriptorAttribute](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1021.md)
+SOA1022 | DefiningContent | Warning | [File extension associated with multiple content types](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1022.md)
+SOA1023 | DefiningContent | Information | [Unexpected base type for file extension](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1023.md)
+SOA1024 | DefiningContent | Error | [Missing arguments on MediaDescriptorAttribute](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1024.md)

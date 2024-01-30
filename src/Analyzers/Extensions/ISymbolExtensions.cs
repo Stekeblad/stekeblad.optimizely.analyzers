@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 
 namespace Stekeblad.Optimizely.Analyzers.Extensions
@@ -27,19 +28,19 @@ namespace Stekeblad.Optimizely.Analyzers.Extensions
 		}
 
 		/// <summary>
-		/// Checks if <c>analyzedSymbol</c> is decorated with the attribute <c>attributeToFind</c>
+		/// Checks if <paramref name="analyzedSymbol"/> is decorated with the attribute <paramref name="attributeToFind"/>
 		/// or any attribute deriving from <c>attributeToFind</c>. Base types of <c>analyzedSymbol</c> is NOT
 		/// examined when searching for attributes.
 		/// To not get derived attributes, use <see cref="TryGetAttribute(ISymbol, INamedTypeSymbol, out AttributeData)" />
 		/// </summary>
-		/// <param name="analyzedSymbol">The symbol that may be decorated with <c>attributeToFind</c></param>
-		/// <param name="attributeToFind">The attribute to test for on <c>analyzedSymbol</c></param>
-		/// <param name="foundAttributeData">Will be set to the first found matching attribute, or null if
+		/// <param name="analyzedSymbol">The symbol that may be decorated with <paramref name="attributeToFind"/></param>
+		/// <param name="attributeToFind">The attribute to test for</param>
+		/// <param name="foundAttribute">Will be set to the first found matching attribute, or null if
 		/// no matching attribute was found.</param>
 		/// <returns>true if the attribute was found on the analyzed symbol, false otherwise</returns>
 		public static bool TryGetAttributeDerivedFrom(this ISymbol analyzedSymbol,
 			INamedTypeSymbol attributeToFind,
-			out AttributeData foundAttributeData)
+			out AttributeData foundAttribute)
 		{
 			ImmutableArray<AttributeData> attributes = analyzedSymbol.GetAttributes();
 
@@ -47,28 +48,28 @@ namespace Stekeblad.Optimizely.Analyzers.Extensions
 			{
 				if (attributes[i].AttributeClass.IsDerivedFrom(attributeToFind))
 				{
-					foundAttributeData = attributes[i];
+					foundAttribute = attributes[i];
 					return true;
 				}
 			}
 
-			foundAttributeData = null;
+			foundAttribute = null;
 			return false;
 		}
 
 		/// <summary>
-		/// Checks if <c>analyzedSymbol</c> is decorated with the attribute <c>attributeToFind</c>
+		/// Checks if <paramref name="analyzedSymbol"/> is decorated with the attribute <paramref name="attributeToFind"/>
 		/// If you want to include derived attributes aswell,
 		/// use <see cref="TryGetAttributeDerivedFrom(ISymbol, INamedTypeSymbol, out AttributeData)" />
 		/// </summary>
-		/// <param name="analyzedSymbol">The symbol that may be decorated with <c>attributeToFind</c></param>
-		/// <param name="attributeToFind">The attribute to test for on <c>analyzedSymbol</c></param>
-		/// <param name="foundAttributeData">Will be set to the first found matching attribute, or null if
+		/// <param name="analyzedSymbol">The symbol that may be decorated with <paramref name="attributeToFind"/></param>
+		/// <param name="attributeToFind">The attribute to test for</param>
+		/// <param name="foundAttribute">Will be set to the first found matching attribute, or null if
 		/// no matching attribute was found.</param>
 		/// <returns>true if the attribute was found on the analyzed symbol, false otherwise</returns>
 		public static bool TryGetAttribute(this ISymbol analyzedSymbol,
 			INamedTypeSymbol attributeToFind,
-			out AttributeData foundAttributeData)
+			out AttributeData foundAttribute)
 		{
 			ImmutableArray<AttributeData> attributes = analyzedSymbol.GetAttributes();
 
@@ -76,23 +77,78 @@ namespace Stekeblad.Optimizely.Analyzers.Extensions
 			{
 				if (SymbolEqualityComparer.Default.Equals(attributeToFind, attributes[i].AttributeClass))
 				{
-					foundAttributeData = attributes[i];
+					foundAttribute = attributes[i];
 					return true;
 				}
 			}
 
-			foundAttributeData = null;
+			foundAttribute = null;
 			return false;
 		}
 
-		/// <summary>
-		/// Test if a symbol is a valid Optimizely content property. Tests include if the symbol is a property,
-		/// how it is defined and that it's containing type is derived from EPiServer.Core.ContentData
-		/// </summary>
-		/// <param name="symbol">Symbol to test</param>
-		/// <param name="compilation">The current compilation information, to locate and test presence of Optimizely types</param>
-		/// <returns>True if symbol meets all criteria for a content property (except for being virtual, that is covered by SOA1003), false otherwise</returns>
-		public static bool IsOptiContentProperty(this ISymbol symbol, Compilation compilation)
+        /// <summary>
+        /// Checks if <paramref name="analyzedSymbol"/> is decorated with the attribute <paramref name="attributeToFind"/>
+        /// or any attribute deriving from it. Base types of <paramref name="analyzedSymbol"/> is NOT
+        /// examined when searching for attributes.
+        /// To not get derived attributes, use <see cref="TryGetAttributesOfType(ISymbol, INamedTypeSymbol, out List{AttributeData})" />
+        /// </summary>
+        /// <param name="analyzedSymbol">The symbol that may be decorated with <paramref name="attributeToFind"/> or a deriving attribute</param>
+        /// <param name="attributeToFind">The attribute to test for</param>
+        /// <param name="foundAttributes">A list of found attributes, or null if no matching attribute was found.</param>
+        /// <returns>true if atleast one matching attribute was found on the analyzed symbol, false otherwise</returns>
+        public static bool TryGetAttributesDerivedFrom(this ISymbol analyzedSymbol,
+            INamedTypeSymbol attributeToFind,
+            out List<AttributeData> foundAttributes)
+        {
+            ImmutableArray<AttributeData> attributes = analyzedSymbol.GetAttributes();
+            foundAttributes = null;
+
+            for (int i = 0; i < attributes.Length; i++)
+            {
+                if (attributes[i].AttributeClass.IsDerivedFrom(attributeToFind))
+                {
+                    (foundAttributes ?? (foundAttributes = new List<AttributeData>())).Add(attributes[i]);
+                }
+            }
+
+            return foundAttributes != null;
+        }
+
+        /// <summary>
+        /// Checks if <paramref name="analyzedSymbol"/> is decorated with the attribute<paramref name="attributeToFind"/>
+        /// If you want to include derived attributes as well,
+        /// use <see cref="TryGetAttributeDerivedFrom(ISymbol, INamedTypeSymbol, out AttributeData)" />
+        /// </summary>
+        /// <param name="analyzedSymbol">The symbol that may be decorated with <paramref name="attributeToFind"/></param>
+        /// <param name="attributeToFind">The attribute to test for</param>
+        /// <param name="foundAttributes">A list of found attributes, or null if no matching attribute was found.</param>
+        /// <returns>true if atleast one matching attribute was found on the analyzed symbol, false otherwise</returns>
+        public static bool TryGetAttributesOfType(this ISymbol analyzedSymbol,
+            INamedTypeSymbol attributeToFind,
+            out List<AttributeData> foundAttributes)
+        {
+            ImmutableArray<AttributeData> attributes = analyzedSymbol.GetAttributes();
+            foundAttributes = null;
+
+            for (int i = 0; i < attributes.Length; i++)
+            {
+                if (SymbolEqualityComparer.Default.Equals(attributeToFind, attributes[i].AttributeClass))
+                {
+                    (foundAttributes ?? (foundAttributes = new List<AttributeData>())).Add(attributes[i]);
+                }
+            }
+
+            return foundAttributes != null;
+        }
+
+        /// <summary>
+        /// Test if a symbol is a valid Optimizely content property. Tests include if the symbol is a property,
+        /// how it is defined and that it's containing type is derived from EPiServer.Core.ContentData
+        /// </summary>
+        /// <param name="symbol">Symbol to test</param>
+        /// <param name="compilation">The current compilation information, to locate and test presence of Optimizely types</param>
+        /// <returns>True if symbol meets all criteria for a content property (except for being virtual, that is covered by SOA1003), false otherwise</returns>
+        public static bool IsOptiContentProperty(this ISymbol symbol, Compilation compilation)
 		{
 			// Make sure the symbol is a property and not a field, method, class etc.
 			if (!(symbol is IPropertySymbol prop))

@@ -7,15 +7,15 @@ namespace Stekeblad.Optimizely.Analyzers.Extensions
 	public static class AttributeDataExtensions
 	{
 		/// <summary>
-		/// Tries to find a "NamedArgument" called <c>argumentName</c> on the attribute
-		/// in source referenced by <c>attribute</c>. If an argument with the given name
-		/// is found it's returned in the <c>argument</c> parameter and the method returns
-		/// true. If an argument is not found the method returns false.
+		/// Tries to find a "NamedArgument" called <paramref name="argumentName"/> on the attribute
+		/// <paramref name="attribute"/>. If an argument with the given name
+		/// is found it's returned in the <paramref name="argument"/> out parameter and the method returns
+		/// true. If the argument is not found the method returns false.
 		/// </summary>
 		/// <param name="attribute">The attribute to find an argument on</param>
 		/// <param name="argumentName">name of the argument to find</param>
 		/// <param name="argument">out parameter with the argument, if found</param>
-		/// <returns>true if the argumemt was found, false otherwise</returns>
+		/// <returns>true if the argument was found, false otherwise</returns>
 		public static bool TryGetArgument(this AttributeData attribute, string argumentName, out TypedConstant argument)
 		{
 			for (int i = 0; i < attribute.NamedArguments.Length; i++)

@@ -33,11 +33,11 @@
 
       We have all at least once forgotten to add virtual to a page or block property and not realising it before Optimizely is trying to start up, with this extension you will quickly get warnings in your IDE pointing out this and many other misstake so they can be fixed before you even try to start the website. All analyzers comes with documentation explaining why your code is wrong.
 
-      To see what more analyzers are available please go to the project page. If you want the analyzers to run for everyone in your team you can find the nuget package from the project page.
+      To see what more analyzers are available please go to the project page. If you want the analyzers to run for everyone in your team and your CI/CD you can get the nuget package Stekeblad.Optimizely.Analyzers from Optimizely's nuget feed.
     </Description>
     <PackageProjectUrl>https://github.com/Stekeblad/stekeblad.optimizely.analyzers</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Stekeblad/stekeblad.optimizely.analyzers</RepositoryUrl>
-    <Version>1.5.0</Version>
+    <Version>1.6.0</Version>
   </PropertyGroup>
 
   <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.targets" />
