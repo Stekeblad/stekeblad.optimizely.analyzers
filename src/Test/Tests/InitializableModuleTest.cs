@@ -10,7 +10,7 @@ using VerifyInterfaceCS = Stekeblad.Optimizely.Analyzers.Test.CSharpAnalyzerVeri
 namespace Stekeblad.Optimizely.Analyzers.Test.Tests
 {
     [TestClass]
-    public class InitializableModuleMissingAttributeTest
+    public class InitializableModuleTest
     {
         [TestMethod]
         public async Task InitializbleAttributeNoInterface_Match()
@@ -209,6 +209,124 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests
             var expected = VerifyAttributeCS.Diagnostic(InitializableModuleMissingAttributeAnalyzer.DiagnosticId)
                 .WithLocation(0)
                 .WithArguments("TestModule");
+            await VerifyAttributeCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected);
+        }
+
+        [TestMethod]
+        public async Task ModuleDependency_EmptyDependencyList_NoMatch()
+        {
+            const string test = @"
+				using EPiServer.Framework;
+				using EPiServer.Framework.Initialization;
+				using EPiServer.ServiceLocation;
+
+				namespace tests
+				{
+					[ModuleDependency]
+					public class TestModule : IInitializableModule
+					{
+						public void Initialize(InitializationEngine context) {}
+						public void Uninitialize(InitializationEngine context) {}
+					}
+				}";
+
+            await VerifyAttributeCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
+        }
+
+        [TestMethod]
+        public async Task ModuleDependency_MultipleDependencies_NoMatch()
+        {
+            const string test = @"
+				using EPiServer.Framework;
+				using EPiServer.Framework.Initialization;
+				using EPiServer.ServiceLocation;
+
+				namespace tests
+				{
+					[ModuleDependency(typeof(ServiceContainerInitialization), typeof(ServiceContainerInitialization))]
+					public class TestModule : IInitializableModule
+					{
+						public void Initialize(InitializationEngine context) {}
+						public void Uninitialize(InitializationEngine context) {}
+					}
+				}";
+
+            await VerifyAttributeCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
+        }
+
+        [TestMethod]
+        public async Task ModuleDependency_SingleBadDependency_Match()
+        {
+            const string test = @"
+				using EPiServer.Framework;
+				using EPiServer.Framework.Initialization;
+				using EPiServer.ServiceLocation;
+               using EPiServer.Shell.ObjectEditing;
+
+				namespace tests
+				{
+					[{|#0:ModuleDependency(typeof(SelectOneAttribute))|}]
+					public class TestModule : IInitializableModule
+					{
+						public void Initialize(InitializationEngine context) {}
+						public void Uninitialize(InitializationEngine context) {}
+					}
+				}";
+
+            var expected = VerifyAttributeCS.Diagnostic(InitializableModuleMissingAttributeAnalyzer.BadTypeDiagnosticId)
+                .WithLocation(0)
+                .WithArguments("TestModule", "SelectOneAttribute");
+            await VerifyAttributeCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected);
+        }
+
+        [TestMethod]
+        public async Task ModuleDependency_TwoDependencyAttributesOneBeingBad_Match()
+        {
+            const string test = @"
+				using EPiServer.Framework;
+				using EPiServer.Framework.Initialization;
+				using EPiServer.ServiceLocation;
+               using EPiServer.Shell.ObjectEditing;
+
+				namespace tests
+				{
+					[ModuleDependency(typeof(ServiceContainerInitialization))]
+					[{|#0:ModuleDependency(typeof(SelectOneAttribute))|}]
+					public class TestModule : IInitializableModule
+					{
+						public void Initialize(InitializationEngine context) {}
+						public void Uninitialize(InitializationEngine context) {}
+					}
+				}";
+
+            var expected = VerifyAttributeCS.Diagnostic(InitializableModuleMissingAttributeAnalyzer.BadTypeDiagnosticId)
+                .WithLocation(0)
+                .WithArguments("TestModule", "SelectOneAttribute");
+            await VerifyAttributeCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected);
+        }
+
+        [TestMethod]
+        public async Task ModuleDependency_DependencyListContainsBadDependency_Match()
+        {
+            const string test = @"
+				using EPiServer.Framework;
+				using EPiServer.Framework.Initialization;
+				using EPiServer.ServiceLocation;
+               using EPiServer.Shell.ObjectEditing;
+
+				namespace tests
+				{
+					[{|#0:ModuleDependency(typeof(ServiceContainerInitialization), typeof(SelectOneAttribute))|}]
+					public class TestModule : IInitializableModule
+					{
+						public void Initialize(InitializationEngine context) {}
+						public void Uninitialize(InitializationEngine context) {}
+					}
+				}";
+
+            var expected = VerifyAttributeCS.Diagnostic(InitializableModuleMissingAttributeAnalyzer.BadTypeDiagnosticId)
+                .WithLocation(0)
+                .WithArguments("TestModule", "SelectOneAttribute");
             await VerifyAttributeCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected);
         }
     }
