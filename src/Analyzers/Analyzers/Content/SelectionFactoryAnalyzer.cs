@@ -76,7 +76,7 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.Content
 				INamedTypeSymbol selectManyAttrSymbol = startContext.Compilation.GetTypeByMetadataName(
 						"EPiServer.Shell.ObjectEditing.SelectManyAttribute");
 
-				INamedTypeSymbol AutoSuggestionAttrSymbol = startContext.Compilation.GetTypeByMetadataName(
+				INamedTypeSymbol autoSuggestionAttrSymbol = startContext.Compilation.GetTypeByMetadataName(
 						"EPiServer.Shell.ObjectEditing.AutoSuggestSelectionAttribute");
 
 				INamedTypeSymbol iSelectionFactorySymbol = startContext.Compilation.GetTypeByMetadataName(
@@ -93,7 +93,7 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.Content
 				{
 					startContext.RegisterSymbolAction(
 						nodeContext => AnalyzeProperty(nodeContext,
-							selectOneAttrSymbol, selectManyAttrSymbol, AutoSuggestionAttrSymbol,
+							selectOneAttrSymbol, selectManyAttrSymbol, autoSuggestionAttrSymbol,
 							iSelectionFactorySymbol, iSelectionQuerySymbol, systemInt32Symbol, systemStringSymbol),
 						SymbolKind.Property);
 				}
