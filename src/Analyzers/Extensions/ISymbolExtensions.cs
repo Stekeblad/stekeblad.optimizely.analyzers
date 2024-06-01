@@ -147,7 +147,10 @@ namespace Stekeblad.Optimizely.Analyzers.Extensions
         /// </summary>
         /// <param name="symbol">Symbol to test</param>
         /// <param name="compilation">The current compilation information, to locate and test presence of Optimizely types</param>
-        /// <returns>True if symbol meets all criteria for a content property (except for being virtual, that is covered by SOA1003), false otherwise</returns>
+        /// <returns>
+        /// True if symbol meets all criteria for a content property (except for being virtual,
+        /// that is <see cref="Analyzers.Content.ContentPropertyMustBeVirtualAnalyzer.AnalyzeNamedTypeSymbol">covered by SOA1003</see>), false otherwise
+        /// </returns>
         public static bool IsOptiContentProperty(this ISymbol symbol, Compilation compilation)
 		{
 			// Make sure the symbol is a property and not a field, method, class etc.

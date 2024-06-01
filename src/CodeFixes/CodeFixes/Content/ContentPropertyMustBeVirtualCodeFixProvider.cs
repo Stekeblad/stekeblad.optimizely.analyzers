@@ -5,14 +5,13 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Immutable;
 using System.Composition;
-using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Analyzer = Stekeblad.Optimizely.Analyzers.Analyzers.Content.ContentPropertyMustBeVirtualAnalyzer;
 
 namespace Stekeblad.Optimizely.Analyzers.CodeFixes.Content
 {
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ContentPropertyMustBeVirtualCodeFixProvider)), Shared]
+	[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ContentPropertyMustBeVirtualCodeFixProvider)), Shared]
     public class ContentPropertyMustBeVirtualCodeFixProvider : MyCodeFixProviderBase<Analyzer>
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds
