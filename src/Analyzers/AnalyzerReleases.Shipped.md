@@ -137,3 +137,13 @@ SOA1021 | DefiningContent | Warning | [Unexpected usage of MediaDescriptorAttrib
 SOA1022 | DefiningContent | Warning | [File extension associated with multiple content types](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1022.md)
 SOA1023 | DefiningContent | Information | [Unexpected base type for file extension](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1023.md)
 SOA1024 | DefiningContent | Error | [Missing arguments on MediaDescriptorAttribute](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1024.md)
+
+## Release 1.7.0
+
+### New Rules
+
+Rule ID | Category | Severity | Notes
+--------|----------|----------|-------
+SOA1025 | InitializationModules | Error | [Dependencies to initializable modules must be initializable modules](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1025.md)
+SOA1026 | BadMethods | Warning | [Use IContentRepository.GetDefault\<T>()](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1026.md)
+SOA1027 | DefiningContent | Hidden | [Convert to full Optimizely property](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1027.md)

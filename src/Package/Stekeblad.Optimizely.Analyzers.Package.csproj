@@ -9,7 +9,7 @@
 
   <PropertyGroup>
     <PackageId>Stekeblad.Optimizely.Analyzers</PackageId>
-    <PackageVersion>1.6.0</PackageVersion>
+    <PackageVersion>1.7.0</PackageVersion>
     <Authors>Stekeblad</Authors>
     <PackageProjectUrl>https://github.com/Stekeblad/stekeblad.optimizely.analyzers</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Stekeblad/stekeblad.optimizely.analyzers</RepositoryUrl>
@@ -32,7 +32,7 @@
 
     <ToolCommandName>Stekeblad.Optimizely.Analyzers</ToolCommandName>
 
-    <Version>1.6.0</Version>
+    <Version>1.7.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
