@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using VerifyCS = Stekeblad.Optimizely.Analyzers.Test.CSharpAnalyzerVerifier<
     Stekeblad.Optimizely.Analyzers.Analyzers.Content.MediaDescriptorAttributeAnalyzer>;
 
-namespace Stekeblad.Optimizely.Analyzers.Test.Tests
+namespace Stekeblad.Optimizely.Analyzers.Test.Tests.Content
 {
     [TestClass]
     public class MediaDescriptorAttributeTest

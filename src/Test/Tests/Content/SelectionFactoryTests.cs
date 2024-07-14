@@ -3,16 +3,16 @@ using Stekeblad.Optimizely.Analyzers.Analyzers.Content;
 using Stekeblad.Optimizely.Analyzers.Test.Util;
 using System.Threading.Tasks;
 using VerifyCS = Stekeblad.Optimizely.Analyzers.Test.CSharpAnalyzerVerifier<
-	Stekeblad.Optimizely.Analyzers.Analyzers.Content.SelectionFactoryAnalyzer>;
+    Stekeblad.Optimizely.Analyzers.Analyzers.Content.SelectionFactoryAnalyzer>;
 
-namespace Stekeblad.Optimizely.Analyzers.Test.Tests
+namespace Stekeblad.Optimizely.Analyzers.Test.Tests.Content
 {
-	[TestClass]
-	public class SelectionFactoryTests
-	{
-		/*    Code snippets for reuse    */
+    [TestClass]
+    public class SelectionFactoryTests
+    {
+        /*    Code snippets for reuse    */
 
-		private const string GoodISelectionFactoryImplementation = @"
+        private const string GoodISelectionFactoryImplementation = @"
 					public class SelectionFactory : ISelectionFactory
 					{
 						public System.Collections.Generic.IEnumerable<ISelectItem> GetSelections(ExtendedMetadata metadata)
@@ -26,7 +26,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests
 						}
 					}";
 
-		private const string GoodISelectionQueryImplementation = @"
+        private const string GoodISelectionQueryImplementation = @"
 					public class SelectionQuery : ISelectionQuery
 					{
 						SelectItem[] _items;
@@ -51,7 +51,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests
 						}
 					}";
 
-		private const string GoodEnumSelectionFactoryImplementation = @"
+        private const string GoodEnumSelectionFactoryImplementation = @"
 					public enum ColorEnum
 					{
 						Red = 1, Green = 2, Blue = 3
@@ -77,20 +77,20 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests
 						}
 					}";
 
-		/// <summary>
-		/// <c>{|#0:text|}</c> where 0 is the value of locationNr and text is the value of text
-		/// </summary>
-		private string Highlight(int locationNr, string text)
-		{
-			return $"{{|#{locationNr}:{text}|}}";
-		}
+        /// <summary>
+        /// <c>{|#0:text|}</c> where 0 is the value of locationNr and text is the value of text
+        /// </summary>
+        private string Highlight(int locationNr, string text)
+        {
+            return $"{{|#{locationNr}:{text}|}}";
+        }
 
-		/*    Tests starts here    */
+        /*    Tests starts here    */
 
-		[TestMethod]
-		public async Task NoSelectionAttribute_NoMatch()
-		{
-			const string test = @"
+        [TestMethod]
+        public async Task NoSelectionAttribute_NoMatch()
+        {
+            const string test = @"
 				namespace tests
 				{
 					[EPiServer.DataAnnotations.ContentTypeAttribute(GroupName = ""Content"")]
@@ -100,13 +100,13 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests
 					}
 				}";
 
-			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
-		}
+            await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
+        }
 
-		[TestMethod]
-		public async Task MultipleValidSelectionAttributes_Match()
-		{
-			string test = $@"
+        [TestMethod]
+        public async Task MultipleValidSelectionAttributes_Match()
+        {
+            string test = $@"
 				using EPiServer.Shell.ObjectEditing;
 
 				namespace tests
@@ -122,17 +122,17 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests
 					}}
 				}}";
 
-			var expected = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.MultipleAttributesDiagnosticId)
-				.WithLocation(0)
-				.WithArguments("Heading");
+            var expected = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.MultipleAttributesDiagnosticId)
+                .WithLocation(0)
+                .WithArguments("Heading");
 
-			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected);
-		}
+            await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected);
+        }
 
-		[TestMethod]
-		public async Task SelectionPropertyTypeTests()
-		{
-			string test = $@"
+        [TestMethod]
+        public async Task SelectionPropertyTypeTests()
+        {
+            string test = $@"
 				using EPiServer.Shell.ObjectEditing;
 				using EPiServer.Framework.Localization;
 				using EPiServer.Cms.Shell.UI.ObjectEditing.EditorDescriptors.SelectionFactories;
@@ -195,37 +195,37 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests
 					}}
 				}}";
 
-			var expected0 = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.UnsupportedPropTypeDiagnosticId)
-				.WithLocation(0)
-				.WithArguments("OneDouble", "Double", "SelectOneAttribute");
+            var expected0 = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.UnsupportedPropTypeDiagnosticId)
+                .WithLocation(0)
+                .WithArguments("OneDouble", "Double", "SelectOneAttribute");
 
-			var expected1 = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.UnsupportedPropTypeDiagnosticId)
-				.WithLocation(1)
-				.WithArguments("OneBlock", "MyBlock", "SelectOneAttribute");
+            var expected1 = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.UnsupportedPropTypeDiagnosticId)
+                .WithLocation(1)
+                .WithArguments("OneBlock", "MyBlock", "SelectOneAttribute");
 
-			var expected2 = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.UnsupportedPropTypeDiagnosticId)
-				.WithLocation(2)
-				.WithArguments("ManyDouble", "Double", "SelectManyAttribute");
+            var expected2 = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.UnsupportedPropTypeDiagnosticId)
+                .WithLocation(2)
+                .WithArguments("ManyDouble", "Double", "SelectManyAttribute");
 
-			var expected3 = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.UnsupportedPropTypeDiagnosticId)
-				.WithLocation(3)
-				.WithArguments("ManyBlock", "MyBlock", "SelectManyAttribute");
+            var expected3 = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.UnsupportedPropTypeDiagnosticId)
+                .WithLocation(3)
+                .WithArguments("ManyBlock", "MyBlock", "SelectManyAttribute");
 
-			var expected4 = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.UnsupportedPropTypeDiagnosticId)
-				.WithLocation(4)
-				.WithArguments("QueryDouble", "Double", "AutoSuggestSelectionAttribute");
+            var expected4 = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.UnsupportedPropTypeDiagnosticId)
+                .WithLocation(4)
+                .WithArguments("QueryDouble", "Double", "AutoSuggestSelectionAttribute");
 
-			var expected5 = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.UnsupportedPropTypeDiagnosticId)
-				.WithLocation(5)
-				.WithArguments("QueryBlock", "MyBlock", "AutoSuggestSelectionAttribute");
+            var expected5 = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.UnsupportedPropTypeDiagnosticId)
+                .WithLocation(5)
+                .WithArguments("QueryBlock", "MyBlock", "AutoSuggestSelectionAttribute");
 
-			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11,
-				expected0, expected1, expected2, expected3, expected4, expected5);
-		}
+            await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11,
+                expected0, expected1, expected2, expected3, expected4, expected5);
+        }
 
-		[TestMethod]
-		public async Task SelectionPropertyNullableTypeTests()
-		{
+        [TestMethod]
+        public async Task SelectionPropertyNullableTypeTests()
+        {
             string test = $@"
 				using EPiServer.Shell.ObjectEditing;
 				using EPiServer.Framework.Localization;
@@ -269,9 +269,9 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests
         }
 
         [TestMethod]
-		public async Task SelectionFactoryTypeParameterTest()
-		{
-			string test = $@"
+        public async Task SelectionFactoryTypeParameterTest()
+        {
+            string test = $@"
 				using EPiServer.Shell.ObjectEditing;
 
 				namespace tests
@@ -311,38 +311,38 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests
 					}}
 				}}";
 
-			var expected0 = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.InvalidFactoryTypeDiagnosticId)
-				.WithLocation(0)
-				.WithArguments("Clazz");
+            var expected0 = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.InvalidFactoryTypeDiagnosticId)
+                .WithLocation(0)
+                .WithArguments("Clazz");
 
-			var expected1 = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.InvalidFactoryTypeDiagnosticId)
-				.WithLocation(1)
-				.WithArguments("AbstractFactory");
+            var expected1 = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.InvalidFactoryTypeDiagnosticId)
+                .WithLocation(1)
+                .WithArguments("AbstractFactory");
 
-			var expected2 = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.MissingFactoryTypeParamDiagnosticId)
-				.WithLocation(2)
-				.WithArguments("SelectOneAttribute", "OneMissing");
+            var expected2 = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.MissingFactoryTypeParamDiagnosticId)
+                .WithLocation(2)
+                .WithArguments("SelectOneAttribute", "OneMissing");
 
-			var expected3 = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.InvalidFactoryTypeDiagnosticId)
-				.WithLocation(3)
-				.WithArguments("Clazz");
+            var expected3 = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.InvalidFactoryTypeDiagnosticId)
+                .WithLocation(3)
+                .WithArguments("Clazz");
 
-			var expected4 = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.InvalidFactoryTypeDiagnosticId)
-				.WithLocation(4)
-				.WithArguments("AbstractFactory");
+            var expected4 = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.InvalidFactoryTypeDiagnosticId)
+                .WithLocation(4)
+                .WithArguments("AbstractFactory");
 
-			var expected5 = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.MissingFactoryTypeParamDiagnosticId)
-				.WithLocation(5)
-				.WithArguments("SelectManyAttribute", "ManyMissing");
+            var expected5 = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.MissingFactoryTypeParamDiagnosticId)
+                .WithLocation(5)
+                .WithArguments("SelectManyAttribute", "ManyMissing");
 
-			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11,
-				expected0, expected1, expected2, expected3, expected4, expected5);
-		}
+            await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11,
+                expected0, expected1, expected2, expected3, expected4, expected5);
+        }
 
-		[TestMethod]
-		public async Task SelectionQueryTypeParameterTest()
-		{
-			string test = $@"
+        [TestMethod]
+        public async Task SelectionQueryTypeParameterTest()
+        {
+            string test = $@"
 				using EPiServer.Shell.ObjectEditing;
 
 				namespace tests
@@ -367,21 +367,21 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests
 					}}
 				}}";
 
-			var expected0 = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.InvalidSelectionQueryTypeDiagnosticId)
-				.WithLocation(0)
-				.WithArguments("Clazz");
+            var expected0 = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.InvalidSelectionQueryTypeDiagnosticId)
+                .WithLocation(0)
+                .WithArguments("Clazz");
 
-			var expected1 = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.InvalidSelectionQueryTypeDiagnosticId)
-				.WithLocation(1)
-				.WithArguments("AbstractQuery");
+            var expected1 = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.InvalidSelectionQueryTypeDiagnosticId)
+                .WithLocation(1)
+                .WithArguments("AbstractQuery");
 
-			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected0, expected1);
-		}
+            await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected0, expected1);
+        }
 
-		[TestMethod]
-		public async Task CustomSelectionAttribute()
-		{
-			string test = $@"
+        [TestMethod]
+        public async Task CustomSelectionAttribute()
+        {
+            string test = $@"
 				using EPiServer.Shell.ObjectEditing;
 
 				namespace tests
@@ -454,19 +454,19 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests
 					}}
 				}}";
 
-			var expected0 = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.InvalidFactoryTypeDiagnosticId)
-				.WithLocation(0)
-				.WithArguments("Clazz");
+            var expected0 = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.InvalidFactoryTypeDiagnosticId)
+                .WithLocation(0)
+                .WithArguments("Clazz");
 
-			var expected1 = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.InvalidFactoryTypeDiagnosticId)
-				.WithLocation(1)
-				.WithArguments("Clazz");
+            var expected1 = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.InvalidFactoryTypeDiagnosticId)
+                .WithLocation(1)
+                .WithArguments("Clazz");
 
-			var expected2 = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.InvalidSelectionQueryTypeDiagnosticId)
-				.WithLocation(2)
-				.WithArguments("Clazz");
+            var expected2 = VerifyCS.Diagnostic(SelectionFactoryAnalyzer.InvalidSelectionQueryTypeDiagnosticId)
+                .WithLocation(2)
+                .WithArguments("Clazz");
 
-			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected0, expected1, expected2);
-		}
-	}
+            await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected0, expected1, expected2);
+        }
+    }
 }

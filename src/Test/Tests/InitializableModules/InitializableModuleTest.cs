@@ -7,7 +7,7 @@ using VerifyAttributeCS = Stekeblad.Optimizely.Analyzers.Test.CSharpAnalyzerVeri
 using VerifyInterfaceCS = Stekeblad.Optimizely.Analyzers.Test.CSharpAnalyzerVerifier<
     Stekeblad.Optimizely.Analyzers.Analyzers.InitializableModules.InitializableModuleMissingInterfaceAnalyzer>;
 
-namespace Stekeblad.Optimizely.Analyzers.Test.Tests
+namespace Stekeblad.Optimizely.Analyzers.Test.Tests.InitializableModules
 {
     [TestClass]
     public class InitializableModuleTest

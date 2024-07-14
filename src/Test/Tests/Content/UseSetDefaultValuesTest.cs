@@ -4,18 +4,18 @@ using Stekeblad.Optimizely.Analyzers.Test.Util;
 using System.Threading.Tasks;
 
 using VerifyCS = Stekeblad.Optimizely.Analyzers.Test.CSharpCodeFixVerifier<
-	Stekeblad.Optimizely.Analyzers.Analyzers.Content.UseSetDefaultValuesAnalyzer,
-	Stekeblad.Optimizely.Analyzers.CodeFixes.Content.UseSetDefaultValuesCodeFixProvider>;
+    Stekeblad.Optimizely.Analyzers.Analyzers.Content.UseSetDefaultValuesAnalyzer,
+    Stekeblad.Optimizely.Analyzers.CodeFixes.Content.UseSetDefaultValuesCodeFixProvider>;
 
-namespace Stekeblad.Optimizely.Analyzers.Test.Tests
+namespace Stekeblad.Optimizely.Analyzers.Test.Tests.Content
 {
-	[TestClass]
-	public class UseSetDefaultValuesTest
-	{
-		[TestMethod]
-		public async Task DefaultValuesTest_DiagnoseOnly()
-		{
-			const string test = @"using EPiServer.Core;
+    [TestClass]
+    public class UseSetDefaultValuesTest
+    {
+        [TestMethod]
+        public async Task DefaultValuesTest_DiagnoseOnly()
+        {
+            const string test = @"using EPiServer.Core;
 using EPiServer.DataAnnotations;
 using EPiServer.DataAbstraction;
 
@@ -41,19 +41,19 @@ namespace tests
 	}
 }";
 
-			var expected = VerifyCS.Diagnostic(UseSetDefaultValuesAnalyzer.DiagnosticID)
-				.WithLocation(0)
-				.WithArguments("B");
+            var expected = VerifyCS.Diagnostic(UseSetDefaultValuesAnalyzer.DiagnosticID)
+                .WithLocation(0)
+                .WithArguments("B");
 
-			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_10, expected);
-			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected);
-			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_12, expected);
-		}
+            await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_10, expected);
+            await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected);
+            await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_12, expected);
+        }
 
-		[TestMethod]
-		public async Task CreateMissingSetDefaultValuesMethodWhenFixing()
-		{
-			const string test = @"
+        [TestMethod]
+        public async Task CreateMissingSetDefaultValuesMethodWhenFixing()
+        {
+            const string test = @"
 using EPiServer.Core;
 using EPiServer.DataAnnotations;
 
@@ -67,7 +67,7 @@ namespace tests
     }
 }";
 
-			const string fixTest = @"
+            const string fixTest = @"
 using EPiServer.Core;
 using EPiServer.DataAnnotations;
 using EPiServer.DataAbstraction;
@@ -88,19 +88,19 @@ namespace tests
     }
 }";
 
-			var expected = VerifyCS.Diagnostic(UseSetDefaultValuesAnalyzer.DiagnosticID)
-				.WithLocation(0)
-				.WithArguments("B");
+            var expected = VerifyCS.Diagnostic(UseSetDefaultValuesAnalyzer.DiagnosticID)
+                .WithLocation(0)
+                .WithArguments("B");
 
-			await VerifyCS.VerifyCodeFixAsync(test, PackageCollections.Core_10, expected, fixTest);
-			await VerifyCS.VerifyCodeFixAsync(test, PackageCollections.Core_11, expected, fixTest);
-			await VerifyCS.VerifyCodeFixAsync(test, PackageCollections.Core_12, expected, fixTest);
-		}
+            await VerifyCS.VerifyCodeFixAsync(test, PackageCollections.Core_10, expected, fixTest);
+            await VerifyCS.VerifyCodeFixAsync(test, PackageCollections.Core_11, expected, fixTest);
+            await VerifyCS.VerifyCodeFixAsync(test, PackageCollections.Core_12, expected, fixTest);
+        }
 
-		[TestMethod]
-		public async Task AddAssignmentIfNotPresentWhenFixing()
-		{
-			const string test = @"
+        [TestMethod]
+        public async Task AddAssignmentIfNotPresentWhenFixing()
+        {
+            const string test = @"
 using EPiServer.Core;
 using EPiServer.DataAnnotations;
 using EPiServer.DataAbstraction;
@@ -120,7 +120,7 @@ namespace tests
     }
 }";
 
-			const string fixTest = @"
+            const string fixTest = @"
 using EPiServer.Core;
 using EPiServer.DataAnnotations;
 using EPiServer.DataAbstraction;
@@ -140,19 +140,19 @@ namespace tests
     }
 }";
 
-			var expected = VerifyCS.Diagnostic(UseSetDefaultValuesAnalyzer.DiagnosticID)
-				.WithLocation(0)
-				.WithArguments("B");
+            var expected = VerifyCS.Diagnostic(UseSetDefaultValuesAnalyzer.DiagnosticID)
+                .WithLocation(0)
+                .WithArguments("B");
 
-			await VerifyCS.VerifyCodeFixAsync(test, PackageCollections.Core_10, expected, fixTest);
-			await VerifyCS.VerifyCodeFixAsync(test, PackageCollections.Core_11, expected, fixTest);
-			await VerifyCS.VerifyCodeFixAsync(test, PackageCollections.Core_12, expected, fixTest);
-		}
+            await VerifyCS.VerifyCodeFixAsync(test, PackageCollections.Core_10, expected, fixTest);
+            await VerifyCS.VerifyCodeFixAsync(test, PackageCollections.Core_11, expected, fixTest);
+            await VerifyCS.VerifyCodeFixAsync(test, PackageCollections.Core_12, expected, fixTest);
+        }
 
-		[TestMethod]
-		public async Task UpdateExistingAssignmentIfPresentWhenFixing()
-		{
-			const string test = @"
+        [TestMethod]
+        public async Task UpdateExistingAssignmentIfPresentWhenFixing()
+        {
+            const string test = @"
 using EPiServer.Core;
 using EPiServer.DataAnnotations;
 using EPiServer.DataAbstraction;
@@ -173,7 +173,7 @@ namespace tests
     }
 }";
 
-			const string fixTest = @"
+            const string fixTest = @"
 using EPiServer.Core;
 using EPiServer.DataAnnotations;
 using EPiServer.DataAbstraction;
@@ -193,14 +193,14 @@ namespace tests
     }
 }";
 
-			var expected = VerifyCS.Diagnostic(UseSetDefaultValuesAnalyzer.DiagnosticID)
-				.WithLocation(0)
-				.WithArguments("B");
+            var expected = VerifyCS.Diagnostic(UseSetDefaultValuesAnalyzer.DiagnosticID)
+                .WithLocation(0)
+                .WithArguments("B");
 
-			await VerifyCS.VerifyCodeFixAsync(test, PackageCollections.Core_10, expected, fixTest);
-			await VerifyCS.VerifyCodeFixAsync(test, PackageCollections.Core_11, expected, fixTest);
-			await VerifyCS.VerifyCodeFixAsync(test, PackageCollections.Core_12, expected, fixTest);
-		}
+            await VerifyCS.VerifyCodeFixAsync(test, PackageCollections.Core_10, expected, fixTest);
+            await VerifyCS.VerifyCodeFixAsync(test, PackageCollections.Core_11, expected, fixTest);
+            await VerifyCS.VerifyCodeFixAsync(test, PackageCollections.Core_12, expected, fixTest);
+        }
 
         [TestMethod]
         public async Task CanDiagnoseAndFixBlockData()

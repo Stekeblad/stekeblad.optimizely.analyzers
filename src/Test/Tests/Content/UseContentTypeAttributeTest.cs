@@ -6,7 +6,7 @@ using VerifyCS = Stekeblad.Optimizely.Analyzers.Test.CSharpCodeFixVerifier<
     Stekeblad.Optimizely.Analyzers.Analyzers.Content.UseContentTypeAttributeAnalyzer,
     Stekeblad.Optimizely.Analyzers.CodeFixes.Content.UseContentTypeAttributeCodeFixProvider>;
 
-namespace Stekeblad.Optimizely.Analyzers.Test.Tests
+namespace Stekeblad.Optimizely.Analyzers.Test.Tests.Content
 {
     [TestClass]
     public class UseContentTypeAttributeTest
@@ -152,13 +152,13 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests
             var expected0 = VerifyCS.Diagnostic(UseContentTypeAttributeAnalyzer.GuidReusedDiagnosticId)
                 .WithLocation(0)
                 .WithArguments("ArticlePage, ArticlePage2, ArticlePage3");
-			var expected1 = VerifyCS.Diagnostic(UseContentTypeAttributeAnalyzer.GuidReusedDiagnosticId)
-				.WithLocation(1)
-				.WithArguments("ArticlePage, ArticlePage2, ArticlePage3");
-			var expected2 = VerifyCS.Diagnostic(UseContentTypeAttributeAnalyzer.GuidReusedDiagnosticId)
-				.WithLocation(2)
-				.WithArguments("ArticlePage, ArticlePage2, ArticlePage3");
-			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, new[] { expected0, expected1, expected2 });
+            var expected1 = VerifyCS.Diagnostic(UseContentTypeAttributeAnalyzer.GuidReusedDiagnosticId)
+                .WithLocation(1)
+                .WithArguments("ArticlePage, ArticlePage2, ArticlePage3");
+            var expected2 = VerifyCS.Diagnostic(UseContentTypeAttributeAnalyzer.GuidReusedDiagnosticId)
+                .WithLocation(2)
+                .WithArguments("ArticlePage, ArticlePage2, ArticlePage3");
+            await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, new[] { expected0, expected1, expected2 });
         }
     }
 }

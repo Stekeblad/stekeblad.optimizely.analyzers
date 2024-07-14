@@ -6,7 +6,7 @@ using VerifyCS = Stekeblad.Optimizely.Analyzers.Test.CSharpCodeFixVerifier<
     Stekeblad.Optimizely.Analyzers.Analyzers.Content.ContentPropertyMustBeVirtualAnalyzer,
     Stekeblad.Optimizely.Analyzers.CodeFixes.Content.ContentPropertyMustBeVirtualCodeFixProvider>;
 
-namespace Stekeblad.Optimizely.Analyzers.Test.Tests
+namespace Stekeblad.Optimizely.Analyzers.Test.Tests.Content
 {
     [TestClass]
     public class ContentPropertyMustBeVirtualTest

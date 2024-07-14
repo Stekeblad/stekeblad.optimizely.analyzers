@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Stekeblad.Optimizely.Analyzers.Analyzers;
+using Stekeblad.Optimizely.Analyzers.Analyzers.BadMethods;
 using Stekeblad.Optimizely.Analyzers.Analyzers.ScheduledJobs;
 using Stekeblad.Optimizely.Analyzers.Test.Util;
 using System;
@@ -8,10 +8,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using VerifyCS = Stekeblad.Optimizely.Analyzers.Test.CSharpCodeFixVerifier<
-    Stekeblad.Optimizely.Analyzers.Analyzers.UrlBuilderToStringAnalyzer,
-    Stekeblad.Optimizely.Analyzers.CodeFixes.UrlBuilderToStringCodeFixProvider>;
+    Stekeblad.Optimizely.Analyzers.Analyzers.BadMethods.UrlBuilderToStringAnalyzer,
+    Stekeblad.Optimizely.Analyzers.CodeFixes.BadMethods.UrlBuilderToStringCodeFixProvider>;
 
-namespace Stekeblad.Optimizely.Analyzers.Test.Tests
+namespace Stekeblad.Optimizely.Analyzers.Test.Tests.BadMethods
 {
     [TestClass]
     public class UrlBuilderToStringTest
@@ -20,7 +20,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests
         public async Task ReplaceUrlBuilderToStringWithCastTest()
         {
             const string test =
-				@"using EPiServer;
+                @"using EPiServer;
 namespace test
 {
     public class C
@@ -34,7 +34,7 @@ namespace test
 }";
 
             const string fixTest =
-				@"using EPiServer;
+                @"using EPiServer;
 namespace test
 {
     public class C
