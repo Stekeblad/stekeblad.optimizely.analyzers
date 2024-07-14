@@ -2,12 +2,12 @@
 
 namespace Stekeblad.Optimizely.Analyzers.Extensions
 {
-	public static class INamedTypeSymbolExtensions
+	public static class ITypeSymbolExtensions
 	{
 		/// <summary>
 		/// Like <c>if (aClass is MyClass)</c> but for two instances of INamedTypeSymbol
 		/// </summary>
-		public static bool IsDerivedFrom(this INamedTypeSymbol analyzedSymbol, INamedTypeSymbol baseTypeSymbol)
+		public static bool IsDerivedFrom(this ITypeSymbol analyzedSymbol, ITypeSymbol baseTypeSymbol)
 		{
 			if (analyzedSymbol?.SpecialType == SpecialType.None)
 			{
