@@ -11,8 +11,8 @@ using Analyzer = Stekeblad.Optimizely.Analyzers.Analyzers.InitializableModules.I
 
 namespace Stekeblad.Optimizely.Analyzers.CodeFixes.InitializableModules
 {
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(InitializableModuleMissingAttributeAnalyzer)), Shared]
-    public class InitializableModuleMissingAttributeAnalyzer : MyCodeFixProviderBase<Analyzer>
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(InitializableModuleMissingAttributeAnalyzerCodeFixProvider)), Shared]
+    public class InitializableModuleMissingAttributeAnalyzerCodeFixProvider : MyCodeFixProviderBase<Analyzer>
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {

@@ -43,11 +43,19 @@ namespace Stekeblad.Optimizely.Analyzers.Test
 			=> await VerifyCodeFixAsync(source, projectDependencies, DiagnosticResult.EmptyDiagnosticResults, fixedSource);
 
 		/// <inheritdoc cref="CodeFixVerifier{TAnalyzer, TCodeFix, TTest, TVerifier}.VerifyCodeFixAsync(string, DiagnosticResult, string)"/>
-		public static async Task VerifyCodeFixAsync(string source, ReferenceAssemblies projectDependencies, DiagnosticResult expected, string fixedSource)
-			=> await VerifyCodeFixAsync(source, projectDependencies, new[] { expected }, fixedSource);
+		public static async Task VerifyCodeFixAsync(string source,
+			ReferenceAssemblies projectDependencies,
+			DiagnosticResult expected,
+			string fixedSource,
+			string fixEquivalenceKey = null)
+			=> await VerifyCodeFixAsync(source, projectDependencies, new[] { expected }, fixedSource, fixEquivalenceKey);
 
 		/// <inheritdoc cref="CodeFixVerifier{TAnalyzer, TCodeFix, TTest, TVerifier}.VerifyCodeFixAsync(string, DiagnosticResult[], string)"/>
-		public static async Task VerifyCodeFixAsync(string source, ReferenceAssemblies projectDependencies, DiagnosticResult[] expected, string fixedSource)
+		public static async Task VerifyCodeFixAsync(string source,
+			ReferenceAssemblies projectDependencies,
+			DiagnosticResult[] expected,
+			string fixedSource,
+			string fixEquivalenceKey = null)
 		{
 			var test = new Test
 			{
@@ -56,6 +64,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test
 				ReferenceAssemblies = projectDependencies
 			};
 			test.ExpectedDiagnostics.AddRange(expected);
+			test.CodeActionEquivalenceKey = fixEquivalenceKey;
 			await test.RunAsync(CancellationToken.None);
 		}
 	}

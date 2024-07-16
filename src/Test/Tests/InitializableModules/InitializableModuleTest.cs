@@ -2,8 +2,9 @@
 using Stekeblad.Optimizely.Analyzers.Analyzers.InitializableModules;
 using Stekeblad.Optimizely.Analyzers.Test.Util;
 using System.Threading.Tasks;
-using VerifyAttributeCS = Stekeblad.Optimizely.Analyzers.Test.CSharpAnalyzerVerifier<
-    Stekeblad.Optimizely.Analyzers.Analyzers.InitializableModules.InitializableModuleMissingAttributeAnalyzer>;
+using VerifyAttributeCS = Stekeblad.Optimizely.Analyzers.Test.CSharpCodeFixVerifier<
+    Stekeblad.Optimizely.Analyzers.Analyzers.InitializableModules.InitializableModuleMissingAttributeAnalyzer,
+	Stekeblad.Optimizely.Analyzers.CodeFixes.InitializableModules.InitializableModuleMissingAttributeAnalyzerCodeFixProvider>;
 using VerifyInterfaceCS = Stekeblad.Optimizely.Analyzers.Test.CSharpAnalyzerVerifier<
     Stekeblad.Optimizely.Analyzers.Analyzers.InitializableModules.InitializableModuleMissingInterfaceAnalyzer>;
 
@@ -329,5 +330,77 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.InitializableModules
                 .WithArguments("TestModule", "SelectOneAttribute");
             await VerifyAttributeCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected);
         }
+
+		[TestMethod]
+		public async Task FixTest_AddAttribute_InitModule()
+		{
+			const string test = @"
+using EPiServer.Framework;
+using EPiServer.Framework.Initialization;
+
+namespace tests
+{
+    public class {|#0:TestModule|} : IInitializableModule
+    {
+        public void Initialize(InitializationEngine context) { }
+        public void Uninitialize(InitializationEngine context) { }
     }
+}";
+
+			const string fixTest = @"
+using EPiServer.Framework;
+using EPiServer.Framework.Initialization;
+
+namespace tests
+{
+    [InitializableModule]
+    public class TestModule : IInitializableModule
+    {
+        public void Initialize(InitializationEngine context) { }
+        public void Uninitialize(InitializationEngine context) { }
+    }
+}";
+
+			var expected = VerifyAttributeCS.Diagnostic(InitializableModuleMissingAttributeAnalyzer.DiagnosticId)
+				.WithLocation(0)
+				.WithArguments("TestModule");
+			await VerifyAttributeCS.VerifyCodeFixAsync(test, PackageCollections.Core_11, expected, fixTest, expected.Id + "a");
+		}
+
+		[TestMethod]
+		public async Task FixTest_AddAttribute_ModuleDependency()
+		{
+			const string test = @"
+using EPiServer.Framework;
+using EPiServer.Framework.Initialization;
+
+namespace tests
+{
+    public class {|#0:TestModule|} : IInitializableModule
+    {
+        public void Initialize(InitializationEngine context) { }
+        public void Uninitialize(InitializationEngine context) { }
+    }
+}";
+
+			const string fixTest = @"
+using EPiServer.Framework;
+using EPiServer.Framework.Initialization;
+
+namespace tests
+{
+    [ModuleDependency(typeof(EPiServer.Web.InitializationModule))]
+    public class TestModule : IInitializableModule
+    {
+        public void Initialize(InitializationEngine context) { }
+        public void Uninitialize(InitializationEngine context) { }
+    }
+}";
+
+			var expected = VerifyAttributeCS.Diagnostic(InitializableModuleMissingAttributeAnalyzer.DiagnosticId)
+				.WithLocation(0)
+				.WithArguments("TestModule");
+			await VerifyAttributeCS.VerifyCodeFixAsync(test, PackageCollections.Core_11, expected, fixTest, expected.Id + "b");
+		}
+	}
 }
