@@ -2,16 +2,18 @@
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
     <Identity Id="Stekeblad.Optimizely.Analyzers.41be7d9a-0896-45f0-9ee1-c0c3d376927f"
-              Version="1.7.0"
+              Version="1.8.0"
               Language="en-US"
               Publisher="Stekeblad"/>
     <DisplayName>Analyzers For Optimizely CMS</DisplayName>
     <Description xml:space="preserve">
       Avoid some easy misstakes when building Optimizely sites with these analyzers.
 
-      We have all at least once forgotten to add virtual to a page or block property and not realising it before Optimizely is trying to start up, with this extension you will quickly get warnings in your IDE pointing out this and many other misstake so they can be fixed before you even try to start the website. All analyzers comes with documentation explaining why your code is wrong.
+      We have all at least once forgotten to add virtual to a page or block property and not realising it before Optimizely is trying to start up, with this extension you will quickly get warnings in your IDE pointing out this and many other misstake so they can be fixed before you even try to start the website. All analyzers comes with documentation.
 
       To see what more analyzers are available please go to the project page. If you want the analyzers to run for everyone in your team and your CI/CD you can get the nuget package Stekeblad.Optimizely.Analyzers from Optimizely's nuget feed.
+      
+      Note that analyzers from extensions have some limitations, consider installing the nuget package instead.
     </Description>
     <MoreInfo>https://github.com/Stekeblad/stekeblad.optimizely.analyzers</MoreInfo>
     <Tags>analyzers, codefix, optimizely, episerver, stekeblad</Tags>

@@ -147,3 +147,24 @@ Rule ID | Category | Severity | Notes
 SOA1025 | InitializationModules | Error | [Dependencies to initializable modules must be initializable modules](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1025.md)
 SOA1026 | BadMethods | Warning | [Use IContentRepository.GetDefault\<T>()](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1026.md)
 SOA1027 | DefiningContent | Hidden | [Convert to full Optimizely property](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1027.md)
+
+## Release 1.8.0
+
+### New Rules
+
+Rule ID | Category | Severity | Notes
+--------|----------|----------|-------
+SOA1028 | BadMethods | Warning | [Block type is cast to IContent](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1028.md)
+SOA1029 | BadMethods | Warning | [Don't manually access content from a ContentAreaItem](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1029.md)
+SOA1030 | DefiningContent | Warning | [Missing PropertyDefinitionTypePlugInAttribute on custom property definition](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1030.md)
+SOA1031 | DefiningContent | Warning | [Missing or incompatible base class for property definition](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1031.md)
+SOA1032 | DefiningContent | Warning | [Add GUID to PropertyDefinitionTypePlugInAttribute](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1032.md)
+SOA1033 | DefiningContent | Error | [PropertyDefinitionTypePlugInAttribute has an invalid GUID](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1033.md)
+SOA1034 | DefiningContent | Error | [Multiple PropertyDefinitionTypePlugInAttributes must not share GUID](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1034.md)
+
+### Changed Rules
+
+Rule ID | Notes
+--------|------
+SOA1009 | Updated the message for [Multiple content types must not share GUID](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1009.md) to be on the same format as the new SOA1034 added in this release
+SOA1012 | Updated the message for [Multiple scheduled jobs must not share GUID](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1012.md) to be on the same format as the new SOA1034 added in this release

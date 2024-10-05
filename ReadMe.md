@@ -1,6 +1,6 @@
 # Analyzers For Optimizely CMS
 
-## Avoid some easy misstakes when building Optimizely sites with these analyzers.
+## Avoid some easy mistakes when building Optimizely sites with these analyzers.
 
 If you have been working with Optimizely CMS (previously Episerver) you have
 probably at least once forgotten that little "virtual" keyword when adding a new property
@@ -27,9 +27,6 @@ My goal is for all analyzers to not just tell you what you did wrong but also
 explain why its wrong, what may be happening in the background and how to fix
 the issue if a fix is not offered as a code fix. Just click on the Analyzer id in the Error List
 tool window, the popup when hovering over the warning or code fix preview in Visual Studio to learn more.
-See for example the help documentation for
-[SOA1002](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1002.md)
-and [SOA1003](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1003.md)
 
 ## How to get
 
@@ -39,13 +36,17 @@ for use with all your projects and as a
 [NuGet package](https://nuget.optimizely.com/package/?id=Stekeblad.Optimizely.Analyzers)
 to bring the analyzer to everyone working on a project.
 
+The nuget options is the recommended one. Installing analyzers as an extension comes
+with some limitations causing some analyzers not to work,
+one example being the checks for reused guids.
+
 ## Available analyzers
 
 Here are a quick overview of some of the things the analyzers test for:
 
 - Content types without inheriting base class or
 being decorated with ContentTypeAttribute, the attribute is missing
-the GUID property, the GUID is invallid or used on multiple content types
+the GUID property, the GUID is invalid or used on multiple content types
 - Properties in content types that lacks the virtual keyword
 - Incomplete definition of Initializable modules
 (needs to both implement interface and be decorated with attribute)
