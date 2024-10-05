@@ -25,6 +25,12 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Util
 				new PackageIdentity("EPiServer.CMS.Core", "12.1.0"),
 				new PackageIdentity("EPiServer.CMS.UI.Core", "12.1.0")));
 
+		public static readonly ReferenceAssemblies Core_12_High = ReferenceAssemblies.Net.Net60
+			.WithNuGetConfigFilePath(GetNugetConfigPath())
+			.AddPackages(ImmutableArray.Create(
+				new PackageIdentity("EPiServer.CMS.Core", "12.21.6"),
+				new PackageIdentity("EPiServer.CMS.UI.Core", "12.30.0")));
+
 		private static string GetNugetConfigPath()
 		{
 			return Path.Combine(Directory.GetParent(ThisFile())!.Parent!.FullName, "NuGet.config");
