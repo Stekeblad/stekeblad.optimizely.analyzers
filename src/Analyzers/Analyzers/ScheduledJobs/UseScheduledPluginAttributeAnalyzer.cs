@@ -3,7 +3,9 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Stekeblad.Optimizely.Analyzers.Extensions;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 
 namespace Stekeblad.Optimizely.Analyzers.Analyzers.ScheduledJobs
 {
@@ -38,7 +40,7 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.ScheduledJobs
 
 		public const string GuidReusedDiagnosticId = "SOA1012";
 		public const string GuidReusedTitle = "Multiple scheduled jobs must not share GUID";
-		public const string GuidReusedMessageFormat = "Scheduled job {0} has the same GUID as {1}";
+		public const string GuidReusedMessageFormat = "{0} does not have a unique GUID. The GUID is used by the following Scheduled jobs {1}.";
 
 		internal static DiagnosticDescriptor GuidReusedRule =
 			new DiagnosticDescriptor(GuidReusedDiagnosticId, GuidReusedTitle, GuidReusedMessageFormat, Category,
@@ -49,10 +51,12 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.ScheduledJobs
 			get { return ImmutableArray.Create(MissingAttributeRule, MissingGuidRule, InvalidGuidRule, GuidReusedRule); }
 		}
 
+#pragma warning disable RS1026 // Enable concurrent execution
 		public override void Initialize(AnalysisContext context)
+#pragma warning restore RS1026 // Enable concurrent execution
 		{
 			context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
-			context.EnableConcurrentExecution();
+			//context.EnableConcurrentExecution();
 
 			context.RegisterCompilationStartAction(startContext =>
 			{
@@ -64,24 +68,27 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.ScheduledJobs
 
 				if (attribtuteSymbol != null && interfaceTypeSymbol != null)
 				{
-					ConcurrentDictionary<Guid, (INamedTypeSymbol Type, AttributeData Attribute)> contentTypeGuids =
-						new ConcurrentDictionary<Guid, (INamedTypeSymbol Type, AttributeData Attribute)>();
+					List<(Guid Guid, INamedTypeSymbol Type, AttributeData Attribute)> guidTypeAttributeList =
+						new List<(Guid Guid, INamedTypeSymbol Type, AttributeData Attribute)>();
 
 					// The GUID parameter on ScheduledPlugInAttribute was added in EPiServer version 10.3
 					// Do not register any action on lower versions
 					bool analyzeGuids = startContext.Compilation.HasReferenceAssembly("EPiServer", new Version(10, 3));
 
 					startContext.RegisterSymbolAction(
-						nodeContext => AnalyzeJobDefinition(nodeContext, attribtuteSymbol, interfaceTypeSymbol, contentTypeGuids, analyzeGuids),
+						nodeContext => AnalyzeJobDefinition(nodeContext, attribtuteSymbol, interfaceTypeSymbol, guidTypeAttributeList, analyzeGuids),
 						SymbolKind.NamedType);
+
+					startContext.RegisterCompilationEndAction(endContext =>
+						Summarize(endContext, guidTypeAttributeList));
 				}
 			});
 		}
 
 		private static void AnalyzeJobDefinition(SymbolAnalysisContext context,
-			INamedTypeSymbol attribtuteSymbol,
+			INamedTypeSymbol attributeSymbol,
 			INamedTypeSymbol interfaceTypeSymbol,
-			ConcurrentDictionary<Guid, (INamedTypeSymbol Type, AttributeData Attribute)> contentTypeGuids,
+			List<(Guid Guid, INamedTypeSymbol Type, AttributeData Attribute)> guidTypeAttributeList,
 			bool analyzeGuids)
 		{
 			var analyzedSymbol = (INamedTypeSymbol)context.Symbol;
@@ -99,15 +106,15 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.ScheduledJobs
 				return;
 
 			// Test for ScheduledPlugInAttribute and if not present then report it as missing.
-			if (!analyzedSymbol.TryGetAttributeDerivedFrom(attribtuteSymbol, out AttributeData attributeData))
+			if (!analyzedSymbol.TryGetAttributeDerivedFrom(attributeSymbol, out AttributeData attributeData))
 			{
 				var missingAttrDiagnostic = Diagnostic.Create(MissingAttributeRule, analyzedSymbol.Locations[0], analyzedSymbol.Name);
 				context.ReportDiagnostic(missingAttrDiagnostic);
 				return;
 			}
 
-			// older versions did not have a guid attribute and all checks below depends on its existance.
-			// If intalled version is too old we return here
+			// older versions did not have a guid attribute and all checks below depends on its existence.
+			// If installed version is too old we return here
 			if (!analyzeGuids)
 				return;
 
@@ -132,20 +139,28 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.ScheduledJobs
 				return;
 			}
 
-			// Two scheduled jobs must not have the same GUID, make sure it is unique
-			var (existingType, existingAttribute) = contentTypeGuids.GetOrAdd(guidValue, (analyzedSymbol, attributeData));
-			if (!SymbolEqualityComparer.Default.Equals(existingType, analyzedSymbol))
+			// Collect information about all types, attributes and GUIDs to be able to check for duplicates in CompilationEnd phase
+			guidTypeAttributeList.Add((guidValue, analyzedSymbol, attributeData));
+		}
+
+		private void Summarize(CompilationAnalysisContext context, List<(Guid Guid, INamedTypeSymbol Type, AttributeData Attribute)> guidTypeAttributeList)
+		{
+			foreach (var typesAttributesWithGuid in guidTypeAttributeList.GroupBy(x => x.Guid))
 			{
-				var reusedGuidDiagnostic1 = Diagnostic.Create(GuidReusedRule,
-					attributeData.GetLocation(),
-					analyzedSymbol.Name, existingType.Name);
+				// Check if any of the found attributes have the same GUID
+				if (typesAttributesWithGuid.Count() > 1)
+				{
+					// The type names are sorted to have a determined order in the test cases
+					var typeNames = string.Join(", ", typesAttributesWithGuid.Select(x => x.Type.Name).OrderBy(x => x));
+					foreach (var typeAttr in typesAttributesWithGuid)
+					{
+						var diagnostic = Diagnostic.Create(GuidReusedRule,
+							typeAttr.Attribute.GetLocation(),
+							typeAttr.Type.Name, typeNames);
 
-				var reusedGuidDiagnostic2 = Diagnostic.Create(GuidReusedRule,
-					existingAttribute.GetLocation(),
-					existingType.Name, analyzedSymbol.Name);
-
-				context.ReportDiagnostic(reusedGuidDiagnostic1);
-				context.ReportDiagnostic(reusedGuidDiagnostic2);
+						context.ReportDiagnostic(diagnostic);
+					}
+				}
 			}
 		}
 	}

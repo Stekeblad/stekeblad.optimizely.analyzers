@@ -34,7 +34,28 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.ScheduledJobs
             await JobHasNoBaseVerifier.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
         }
 
-        [TestMethod]
+		[TestMethod]
+		public async Task JobWithCompleteDeclaration_guidConstant_NoMatch()
+		{
+			const string test = @"
+				using EPiServer.PlugIn;
+				using EPiServer.Scheduler;
+				
+				namespace tests
+				{
+					[ScheduledPlugIn(DisplayName = ""TestJob"", GUID = guid)]
+					public class MyTestScheduledJob : ScheduledJobBase
+					{
+						private const string guid = ""01234567-89ab-cdef-0123-456789abcdef"";
+						public override string Execute() => ""Job finished successfully"";
+					}
+				}";
+
+			await JobHasNoAttributeVerifier.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
+			await JobHasNoBaseVerifier.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
+		}
+
+		[TestMethod]
         public async Task CompleteJobButImplementingInterface_NoMatch()
         {
             const string test = @"
@@ -226,11 +247,11 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.ScheduledJobs
 
             var expected0 = JobHasNoAttributeVerifier.Diagnostic(UseScheduledPluginAttributeAnalyzer.GuidReusedDiagnosticId)
                 .WithLocation(0)
-                .WithArguments("MyTestScheduledJob", "MySecondJob");
+                .WithArguments("MyTestScheduledJob", "MySecondJob, MyTestScheduledJob");
 
             var expected1 = JobHasNoAttributeVerifier.Diagnostic(UseScheduledPluginAttributeAnalyzer.GuidReusedDiagnosticId)
                 .WithLocation(1)
-                .WithArguments("MySecondJob", "MyTestScheduledJob");
+                .WithArguments("MySecondJob", "MySecondJob, MyTestScheduledJob");
 
             await JobHasNoAttributeVerifier.VerifyAnalyzerAsync(test, PackageCollections.Core_11, new[] { expected0, expected1 });
         }

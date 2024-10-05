@@ -31,7 +31,7 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.Content
 
 		public const string GuidReusedDiagnosticId = "SOA1009";
 		public const string GuidReusedTitle = "Multiple content types must not share GUID";
-		public const string GuidReusedMessageFormat = "The following content types have the same GUID: {0}";
+		public const string GuidReusedMessageFormat = "{0} does not have a unique GUID. The GUID is used by the following content types: {1}.";
 
 		internal static DiagnosticDescriptor GuidReusedRule =
 			new DiagnosticDescriptor(GuidReusedDiagnosticId, GuidReusedTitle, GuidReusedMessageFormat, Category,
@@ -67,14 +67,14 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.Content
 				if (contentDataSymbol != null
 					&& contentTypeAttributeSymbol != null)
 				{
-					List<(Guid Guid, INamedTypeSymbol Type, AttributeData Attribute)> guidTypeAtributeList =
+					List<(Guid Guid, INamedTypeSymbol Type, AttributeData Attribute)> guidTypeAttributeList =
 						new List<(Guid Guid, INamedTypeSymbol Type, AttributeData Attribute)>();
 
 					startContext.RegisterSymbolAction(
-						nodeContext => AnalyzeNamedTypeSymbol(nodeContext, contentDataSymbol, contentTypeAttributeSymbol, guidTypeAtributeList),
+						nodeContext => AnalyzeNamedTypeSymbol(nodeContext, contentDataSymbol, contentTypeAttributeSymbol, guidTypeAttributeList),
 						SymbolKind.NamedType);
 
-					startContext.RegisterCompilationEndAction(x => Summarize(x, guidTypeAtributeList));
+					startContext.RegisterCompilationEndAction(x => Summarize(x, guidTypeAttributeList));
 				}
 			});
 		}
@@ -83,7 +83,7 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.Content
 			SymbolAnalysisContext context,
 			INamedTypeSymbol contentDataSymbol,
 			INamedTypeSymbol contentTypeAttributeSymbol,
-			List<(Guid Guid, INamedTypeSymbol Type, AttributeData Attribute)> guidTypeAtributeList)
+			List<(Guid Guid, INamedTypeSymbol Type, AttributeData Attribute)> guidTypeAttributeList)
 		{
 			var analyzedSymbol = context.Symbol as INamedTypeSymbol;
 
@@ -131,7 +131,7 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.Content
 
 			// All conditions except if it is unique or not has been checked.
 			// Save details about this location and check uniqueness after all types has been analyzed
-			guidTypeAtributeList.Add((guidValue, analyzedSymbol, foundAttributeData));
+			guidTypeAttributeList.Add((guidValue, analyzedSymbol, foundAttributeData));
 		}
 
 		public void Summarize(CompilationAnalysisContext context, List<(Guid Guid, INamedTypeSymbol Type, AttributeData Attribute)> guidTypeAttributeList)
@@ -146,7 +146,7 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.Content
 					{
 						var diagnostic = Diagnostic.Create(GuidReusedRule,
 						typeAttr.Attribute.GetLocation(),
-						typeNames);
+						typeAttr.Type.Name, typeNames);
 
 						context.ReportDiagnostic(diagnostic);
 					}

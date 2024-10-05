@@ -151,13 +151,13 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.Content
 
             var expected0 = VerifyCS.Diagnostic(UseContentTypeAttributeAnalyzer.GuidReusedDiagnosticId)
                 .WithLocation(0)
-                .WithArguments("ArticlePage, ArticlePage2, ArticlePage3");
+                .WithArguments("ArticlePage", "ArticlePage, ArticlePage2, ArticlePage3");
             var expected1 = VerifyCS.Diagnostic(UseContentTypeAttributeAnalyzer.GuidReusedDiagnosticId)
                 .WithLocation(1)
-                .WithArguments("ArticlePage, ArticlePage2, ArticlePage3");
+                .WithArguments("ArticlePage2", "ArticlePage, ArticlePage2, ArticlePage3");
             var expected2 = VerifyCS.Diagnostic(UseContentTypeAttributeAnalyzer.GuidReusedDiagnosticId)
                 .WithLocation(2)
-                .WithArguments("ArticlePage, ArticlePage2, ArticlePage3");
+                .WithArguments("ArticlePage3", "ArticlePage, ArticlePage2, ArticlePage3");
             await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, new[] { expected0, expected1, expected2 });
         }
     }
