@@ -5,7 +5,7 @@ namespace Stekeblad.Optimizely.Analyzers.Extensions
 	public static class ITypeSymbolExtensions
 	{
 		/// <summary>
-		/// Like <c>if (aClass is MyClass)</c> but for two instances of INamedTypeSymbol
+		/// Like <c>if (aClass is MyClass)</c> but for two instances of ITypeSymbol
 		/// </summary>
 		public static bool IsDerivedFrom(this ITypeSymbol analyzedSymbol, ITypeSymbol baseTypeSymbol)
 		{

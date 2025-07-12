@@ -1,8 +1,8 @@
 ﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Stekeblad.Optimizely.Analyzers.Extensions;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -46,10 +46,25 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.ScheduledJobs
 			new DiagnosticDescriptor(GuidReusedDiagnosticId, GuidReusedTitle, GuidReusedMessageFormat, Category,
 				DiagnosticSeverity.Error, true, helpLinkUri: HelpUrl(GuidReusedDiagnosticId));
 
+		public const string AttributeOnAbstractDiagnosticId = "SOA1039";
+		public const string AttributeOnAbstractTitle = "Don't register abstract ScheduledJob";
+		public const string AttributeOnAbstractMessageFormat = "Abstract type {0} should not have a ScheduledPluginAttribute";
+
+		internal static DiagnosticDescriptor AttributeOnAbstractRule =
+			new DiagnosticDescriptor(AttributeOnAbstractDiagnosticId, AttributeOnAbstractTitle, AttributeOnAbstractMessageFormat, Category,
+				DiagnosticSeverity.Error, true, helpLinkUri: HelpUrl(AttributeOnAbstractDiagnosticId));
+
+		public const string MissingNameDiagnosticId = "SOA1041";
+		public const string MissingNameTitle = "ScheduledJob has no name";
+		public const string MissingNameMessageFormat = "The scheduled job '{0}' has no DisplayName or LanguagePath parameter on ScheduledPlugInAttribute, or they are empty/null";
+
+		internal static DiagnosticDescriptor MissingNameRule =
+			new DiagnosticDescriptor(MissingNameDiagnosticId, MissingNameTitle, MissingNameMessageFormat, Category,
+				DiagnosticSeverity.Warning, true, helpLinkUri: HelpUrl(MissingNameDiagnosticId));
+
 		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-		{
-			get { return ImmutableArray.Create(MissingAttributeRule, MissingGuidRule, InvalidGuidRule, GuidReusedRule); }
-		}
+			=> ImmutableArray.Create(MissingAttributeRule, MissingGuidRule, InvalidGuidRule,
+					GuidReusedRule, AttributeOnAbstractRule, MissingNameRule);
 
 #pragma warning disable RS1026 // Enable concurrent execution
 		public override void Initialize(AnalysisContext context)
@@ -93,25 +108,40 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.ScheduledJobs
 		{
 			var analyzedSymbol = (INamedTypeSymbol)context.Symbol;
 
-			//Check if auto-generated, abstract or not a class.
-			if (analyzedSymbol.IsImplicitlyDeclared
-				|| analyzedSymbol.TypeKind != TypeKind.Class
-				|| analyzedSymbol.IsAbstract)
-			{
+			//Check if auto-generated or not a class.
+			if (analyzedSymbol.IsImplicitlyDeclared || analyzedSymbol.TypeKind != TypeKind.Class)
 				return;
-			}
 
 			// If symbol class does not implement IScheduledJob then abort.
 			if (!analyzedSymbol.AllInterfaces.Contains(interfaceTypeSymbol))
 				return;
 
 			// Test for ScheduledPlugInAttribute and if not present then report it as missing.
-			if (!analyzedSymbol.TryGetAttributeDerivedFrom(attributeSymbol, out AttributeData attributeData))
+			bool hasAttribute = analyzedSymbol.TryGetAttributeDerivedFrom(attributeSymbol, out AttributeData attributeData);
+			if (!hasAttribute)
 			{
-				var missingAttrDiagnostic = Diagnostic.Create(MissingAttributeRule, analyzedSymbol.Locations[0], analyzedSymbol.Name);
-				context.ReportDiagnostic(missingAttrDiagnostic);
+				// ... unless it's abstract
+				if (!analyzedSymbol.IsAbstract)
+				{
+					var missingAttrDiagnostic = Diagnostic.Create(MissingAttributeRule, analyzedSymbol.Locations[0], analyzedSymbol.Name);
+					context.ReportDiagnostic(missingAttrDiagnostic);
+				}
+
+				// All checks below depends on an attribute being present
 				return;
 			}
+			// If it is abstract, then report if attribute is present
+			else if (hasAttribute && analyzedSymbol.IsAbstract)
+			{
+				var syntax = analyzedSymbol.DeclaringSyntaxReferences[0].GetSyntax() as ClassDeclarationSyntax;
+				var abstractModifier = syntax.GetAbstractModifier();
+				var diagnostic = Diagnostic.Create(
+					AttributeOnAbstractRule, abstractModifier.GetLocation(), analyzedSymbol.Name);
+				context.ReportDiagnostic(diagnostic);
+			}
+
+			// Test for the name requirement (DisplayName or LanguagePath)
+			ValidateScheduleJobName(context, analyzedSymbol, attributeData);
 
 			// older versions did not have a guid attribute and all checks below depends on its existence.
 			// If installed version is too old we return here
@@ -121,13 +151,16 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.ScheduledJobs
 			// Test if the attribute has the GUID parameter and report it if missing
 			if (!attributeData.TryGetArgument("GUID", out TypedConstant guidArgument))
 			{
-				var missingGuidDiagnostic = Diagnostic.Create(MissingGuidRule, attributeData.GetLocation(), analyzedSymbol.Name);
-				context.ReportDiagnostic(missingGuidDiagnostic);
+				if (!analyzedSymbol.IsAbstract)
+				{
+					var missingGuidDiagnostic = Diagnostic.Create(MissingGuidRule, attributeData.GetLocation(), analyzedSymbol.Name);
+					context.ReportDiagnostic(missingGuidDiagnostic);
+				}
 				return;
 			}
 
 			// guidArgument.Value is of type object and can be anything
-			// // but it should be a string in the format of a guid
+			// but it should be a string in the format of a guid
 			if (!(guidArgument.Value is string guidString)
 				|| string.IsNullOrEmpty(guidString)
 				|| !Guid.TryParse(guidString, out Guid guidValue))
@@ -141,6 +174,35 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.ScheduledJobs
 
 			// Collect information about all types, attributes and GUIDs to be able to check for duplicates in CompilationEnd phase
 			guidTypeAttributeList.Add((guidValue, analyzedSymbol, attributeData));
+		}
+
+		/// <summary>
+		/// A scheduled job must have a name for it to be registered and for it's meta data to be updated.
+		/// The name is decided by either using ScheduledPluginAttribute.LanguagePath to find a string
+		/// using the LocalizationService or just using ScheduledPluginAttribute.DisplayName as is.
+		/// </summary>
+		private static void ValidateScheduleJobName(SymbolAnalysisContext context,
+			INamedTypeSymbol analyzedSymbol,
+			AttributeData attributeData)
+		{
+			if (attributeData.TryGetArgument("DisplayName", out TypedConstant displayNameArgument))
+			{
+				var displayValue = displayNameArgument.Value as string;
+				// Optimizely tests if DisplayName is null or empty when validating job name
+				if (!string.IsNullOrEmpty(displayValue))
+					return;
+			}
+
+			if (attributeData.TryGetArgument("LanguagePath", out TypedConstant languagePathArgument))
+			{
+				var languagePath = displayNameArgument.Value as string;
+				//Optimizely only checks if LanguagePath is null when validating job name
+				if (languagePath != null)
+					return;
+			}
+
+			var diagnostic = Diagnostic.Create(MissingNameRule, attributeData.GetLocation(), analyzedSymbol.Name);
+			context.ReportDiagnostic(diagnostic);
 		}
 
 		private void Summarize(CompilationAnalysisContext context, List<(Guid Guid, INamedTypeSymbol Type, AttributeData Attribute)> guidTypeAttributeList)

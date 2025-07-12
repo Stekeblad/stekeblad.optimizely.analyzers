@@ -255,5 +255,138 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.ScheduledJobs
 
             await JobHasNoAttributeVerifier.VerifyAnalyzerAsync(test, PackageCollections.Core_11, new[] { expected0, expected1 });
         }
-    }
+
+		[TestMethod]
+		public async Task AbstractJobWithoutAttribute_NoMatch()
+		{
+			const string test = @"
+				using EPiServer.PlugIn;
+				using EPiServer.Scheduler;
+				
+				namespace tests
+				{
+					public abstract class MyTestScheduledJob : ScheduledJobBase
+					{
+					}
+				}";
+
+			await JobHasNoAttributeVerifier.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
+			await JobHasNoBaseVerifier.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
+		}
+
+		[TestMethod]
+		public async Task AbstractJobWithAttribute_Match()
+		{
+			const string test = @"
+				using EPiServer.PlugIn;
+				using EPiServer.Scheduler;
+				
+				namespace tests
+				{
+					[ScheduledPlugIn(DisplayName = ""TestJob"", GUID = ""01234567-89ab-cdef-0123-456789abcdef"")]
+					public {|#0:abstract|} class MyTestScheduledJob : ScheduledJobBase
+					{
+					}
+				}";
+
+			var expected0 = JobHasNoAttributeVerifier.Diagnostic(UseScheduledPluginAttributeAnalyzer.AttributeOnAbstractDiagnosticId)
+				.WithLocation(0)
+				.WithArguments("MyTestScheduledJob");
+
+			await JobHasNoAttributeVerifier.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected0);
+			await JobHasNoBaseVerifier.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
+		}
+
+		[TestMethod]
+		public async Task AbstractJobSharingGuidWithConcreateJob_Match()
+		{
+			const string test = @"
+				using EPiServer.PlugIn;
+				using EPiServer.Scheduler;
+				
+				namespace tests
+				{
+#pragma warning disable SOA1039 // Remove attribute from abstract class
+					[{|#0:ScheduledPlugIn(DisplayName = ""AbstractTestJob"", GUID = ""01234567-89ab-cdef-0123-456789abcdef"")|}]
+					public abstract class MyAbstractTestScheduledJob : ScheduledJobBase
+					{
+					}
+#pragma warning restore SOA1039
+
+					[{|#1:ScheduledPlugIn(DisplayName = ""RealTestJob"", GUID = ""01234567-89ab-cdef-0123-456789abcdef"")|}]
+					public class MyRealTestScheduledJob : ScheduledJobBase
+					{
+						public override string Execute() => ""Job finished successfully"";
+					}
+				}";
+
+			var expected0 = JobHasNoAttributeVerifier.Diagnostic(UseScheduledPluginAttributeAnalyzer.GuidReusedDiagnosticId)
+				.WithLocation(0)
+				.WithArguments("MyAbstractTestScheduledJob", "MyAbstractTestScheduledJob, MyRealTestScheduledJob");
+
+			var expected1 = JobHasNoAttributeVerifier.Diagnostic(UseScheduledPluginAttributeAnalyzer.GuidReusedDiagnosticId)
+				.WithLocation(1)
+				.WithArguments("MyRealTestScheduledJob", "MyAbstractTestScheduledJob, MyRealTestScheduledJob");
+
+			await JobHasNoAttributeVerifier.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected0, expected1);
+			await JobHasNoBaseVerifier.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
+		}
+
+		[TestMethod]
+		public async Task JobWithInvalidName_Match()
+		{
+			const string test = @"
+				using EPiServer.PlugIn;
+				using EPiServer.Scheduler;
+				
+				namespace tests
+				{
+					[{|#0:ScheduledPlugIn(GUID = ""00000000-1111-0000-0000-000000000000"")|}]
+					public class NoNameAtAll : ScheduledJobBase
+					{ public override string Execute() => ""Job finished successfully""; }
+
+					[{|#1:ScheduledPlugIn(DisplayName = null, GUID = ""00000000-2222-0000-0000-000000000000"")|}]
+					public class NullName : ScheduledJobBase
+					{ public override string Execute() => ""Job finished successfully""; }
+
+					[{|#2:ScheduledPlugIn(DisplayName = """", GUID = ""00000000-3333-0000-0000-000000000000"")|}]
+					public class EmptyName : ScheduledJobBase
+					{ public override string Execute() => ""Job finished successfully""; }
+
+					[{|#3:ScheduledPlugIn(LanguagePath = """", GUID = ""00000000-4444-0000-0000-000000000000"")|}]
+					public class NullLangPath : ScheduledJobBase
+					{ public override string Execute() => ""Job finished successfully""; }
+
+
+
+					[ScheduledPlugIn(DisplayName = ""NameNoLang"", LanguagePath = """", GUID = ""00000000-5555-0000-0000-000000000000"")]
+					public class NameNoLang : ScheduledJobBase
+					{ public override string Execute() => ""Job finished successfully""; }
+
+					[ScheduledPlugIn(DisplayName = """", LanguagePath = ""LangNoName"", GUID = ""00000000-6666-0000-0000-000000000000"")]
+					public class LangNoName : ScheduledJobBase
+					{ public override string Execute() => ""Job finished successfully""; }
+				}";
+
+			var expected0 = JobHasNoAttributeVerifier.Diagnostic(UseScheduledPluginAttributeAnalyzer.MissingNameDiagnosticId)
+				.WithLocation(0)
+				.WithArguments("NoNameAtAll");
+
+			var expected1 = JobHasNoAttributeVerifier.Diagnostic(UseScheduledPluginAttributeAnalyzer.MissingNameDiagnosticId)
+				.WithLocation(1)
+				.WithArguments("NullName");
+
+			var expected2 = JobHasNoAttributeVerifier.Diagnostic(UseScheduledPluginAttributeAnalyzer.MissingNameDiagnosticId)
+				.WithLocation(2)
+				.WithArguments("EmptyName");
+
+			var expected3 = JobHasNoAttributeVerifier.Diagnostic(UseScheduledPluginAttributeAnalyzer.MissingNameDiagnosticId)
+				.WithLocation(3)
+				.WithArguments("NullLangPath");
+
+			await JobHasNoAttributeVerifier.VerifyAnalyzerAsync(test, PackageCollections.Core_11,
+				expected0, expected1, expected2, expected3);
+			await JobHasNoBaseVerifier.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
+		}
+	}
 }

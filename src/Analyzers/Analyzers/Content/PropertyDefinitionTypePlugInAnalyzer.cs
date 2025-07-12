@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Stekeblad.Optimizely.Analyzers.Extensions;
 using System;
@@ -66,8 +67,20 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.Content
 				GuidReusedMessageFormat, GuidReusedCategory, DiagnosticSeverity.Error,
 				true, helpLinkUri: HelpUrl(GuidReusedDiagnosticId));
 
+		// SOA1037 -- Attribute on abstract class
+		public const string AttributeOnAbstractDiagnosticsId = "SOA1037";
+		public const string AttributeOnAbstractTitle = "Don't register abstract PropertyDefinitionTypePlugIn";
+		internal const string AttributeOnAbstractMessageFormat = "Abstract type {0} can not have a PropertyDefinitionTypePlugInAttribute";
+		internal const string AttributeOnAbstractCategory = Constants.Categories.DefiningContent;
+
+		internal static DiagnosticDescriptor AttributeOnAbstractRule =
+			new DiagnosticDescriptor(AttributeOnAbstractDiagnosticsId, AttributeOnAbstractTitle,
+				AttributeOnAbstractMessageFormat, AttributeOnAbstractCategory, DiagnosticSeverity.Error,
+				true, helpLinkUri: HelpUrl(AttributeOnAbstractDiagnosticsId));
+
 		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-			=> ImmutableArray.Create(MissingAttributeRule, BadBaseClassRule, NoGuidRule, InvalidGuidRule, GuidReusedRule);
+			=> ImmutableArray.Create(MissingAttributeRule, BadBaseClassRule, NoGuidRule,
+					InvalidGuidRule, GuidReusedRule, AttributeOnAbstractRule);
 
 #pragma warning disable RS1026 // Enable concurrent execution
 		public override void Initialize(AnalysisContext context)
@@ -111,10 +124,8 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.Content
 		{
 			var analyzedSymbol = context.Symbol as INamedTypeSymbol;
 
-			//Check if auto-generated, abstract or not a class.
-			if (analyzedSymbol?.IsImplicitlyDeclared != false
-				|| analyzedSymbol.TypeKind != TypeKind.Class
-				|| analyzedSymbol.IsAbstract)
+			//Check if auto-generated or not a class.
+			if (analyzedSymbol?.IsImplicitlyDeclared != false || analyzedSymbol.TypeKind != TypeKind.Class)
 			{
 				return;
 			}
@@ -142,15 +153,29 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.Content
 
 			if (propertyDefinitionAttribute is null)
 			{
-				// Have supported base class, but not the attribute, diagnose about adding the attribute
-				var diagnostic = Diagnostic.Create(MissingAttributeRule, analyzedSymbol.Locations[0], analyzedSymbol.Name);
-				context.ReportDiagnostic(diagnostic);
-
-				//return, later tests require attribute to be present
+				// Have supported base class, but not the attribute
+				// Unless its abstract, diagnose about adding the attribute
+				if (!analyzedSymbol.IsAbstract)
+				{
+					var diagnostic = Diagnostic.Create(MissingAttributeRule, analyzedSymbol.Locations[0], analyzedSymbol.Name);
+					context.ReportDiagnostic(diagnostic);
+				}
+				// Return, later tests require attribute to be present
 				return;
 			}
 
 			// From here we know the symbol have the attribute and a base class of the correct type
+
+			if (analyzedSymbol.IsAbstract)
+			{
+				// Remove attribute from abstract class
+				var syntax = analyzedSymbol.DeclaringSyntaxReferences[0].GetSyntax() as ClassDeclarationSyntax;
+				var abstractModifier = syntax.GetAbstractModifier();
+				var diagnostic = Diagnostic.Create(
+					AttributeOnAbstractRule, abstractModifier.GetLocation(), analyzedSymbol.Name);
+				context.ReportDiagnostic(diagnostic);
+				return;
+			}
 
 			if (!isGuidParameterSupported)
 				return;

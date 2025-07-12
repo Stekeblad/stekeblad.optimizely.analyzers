@@ -14,7 +14,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.InitializableModules
     public class InitializableModuleTest
     {
         [TestMethod]
-        public async Task InitializbleAttributeNoInterface_Match()
+        public async Task InitializableAttributeNoInterface_Match()
         {
             const string test = @"
 				using EPiServer.Framework;
@@ -330,6 +330,31 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.InitializableModules
                 .WithArguments("TestModule", "SelectOneAttribute");
             await VerifyAttributeCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected);
         }
+
+		[TestMethod]
+		public async Task AttributeOnAbstract_Match()
+		{
+			const string test = @"
+				using EPiServer.Framework;
+				using EPiServer.Framework.Initialization;
+				using EPiServer.ServiceLocation;
+               using EPiServer.Shell.ObjectEditing;
+
+				namespace tests
+				{
+					[ModuleDependency(typeof(ServiceContainerInitialization))]
+					public {|#0:abstract|} class TestModule : IInitializableModule
+					{
+						public void Initialize(InitializationEngine context) {}
+						public void Uninitialize(InitializationEngine context) {}
+					}
+				}";
+
+			var expected = VerifyAttributeCS.Diagnostic(InitializableModuleMissingAttributeAnalyzer.AttributeOnAbstractDiagnosticId)
+				.WithLocation(0)
+				.WithArguments("TestModule");
+			await VerifyAttributeCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected);
+		}
 
 		[TestMethod]
 		public async Task FixTest_AddAttribute_InitModule()

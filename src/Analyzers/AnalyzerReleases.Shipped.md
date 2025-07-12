@@ -168,3 +168,17 @@ Rule ID | Notes
 --------|------
 SOA1009 | Updated the message for [Multiple content types must not share GUID](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1009.md) to be on the same format as the new SOA1034 added in this release
 SOA1012 | Updated the message for [Multiple scheduled jobs must not share GUID](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1012.md) to be on the same format as the new SOA1034 added in this release
+
+## Release 1.9.0
+
+### New Rules
+
+Rule ID | Category | Severity | Notes
+--------|----------|----------|-------
+SOA1035 | DefiningContent | Error | [Content type constructor has parameters](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1035.md)
+SOA1036 | DefiningContent | Warning | [Content property initialized inside constructor](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1036.md)
+SOA1037 | DefiningContent | Error | [Don't register abstract PropertyDefinitionTypePlugIn](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1037.md)
+SOA1038 | DefiningContent | Warning | [Don't register abstract ContentType](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1038.md)
+SOA1039 | Scheduled jobs  | Error | [Don't register abstract ScheduledJob](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1039.md)
+SOA1040 | InitializationModules | Error | [Don't register abstract Initialization module](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1040.md)
+SOA1041 | Scheduled job | Warning | [ScheduledJob has no name](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1041.md)

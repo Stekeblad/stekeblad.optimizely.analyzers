@@ -46,7 +46,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.Content
             await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
         }
 
-        [TestMethod]
+		[TestMethod]
         public async Task MultipleValidContentDefinitions_NoMatch()
         {
             const string test = @"
@@ -80,9 +80,26 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.Content
                 .WithLocation(0)
                 .WithArguments("ArticlePage");
             await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected);
-        }
+		}
 
-        [TestMethod]
+		[TestMethod]
+		public async Task AbstractPageTypeWithAttribute_Match()
+		{
+			const string test = @"
+               using EPiServer.DataAnnotations;
+				namespace tests
+				{
+                  [ContentType(GroupName = ""Content"", GUID = ""11111111-1111-1111-1111-111111111111"")]
+					public {|#0:abstract|} class ArticlePage : EPiServer.Core.PageData {}
+				}";
+
+			var expected0 = VerifyCS.Diagnostic(UseContentTypeAttributeAnalyzer.AttributeOnAbstractDiagnosticId)
+				.WithLocation(0)
+				.WithArguments("ArticlePage");
+			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected0);
+		}
+
+		[TestMethod]
         public async Task PageTypeWithAttributeButNoGuid_Match()
         {
             const string test = @"

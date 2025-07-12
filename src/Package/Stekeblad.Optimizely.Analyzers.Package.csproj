@@ -9,10 +9,12 @@
 
   <PropertyGroup>
     <PackageId>Stekeblad.Optimizely.Analyzers</PackageId>
-    <PackageVersion>1.8.0</PackageVersion>
+    <PackageVersion>1.9.0</PackageVersion>
+    <Version>1.9.0</Version>
     <Authors>Stekeblad</Authors>
     <PackageProjectUrl>https://github.com/Stekeblad/stekeblad.optimizely.analyzers</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Stekeblad/stekeblad.optimizely.analyzers</RepositoryUrl>
+    <PackageReadmeFile>ReadMe.md</PackageReadmeFile>
     <Description>
       Avoid some easy misstakes when building Optimizely sites with these analyzers.
 
@@ -25,14 +27,9 @@
     <PackageTags>analyzers; codefix; optimizely; episerver; stekeblad</PackageTags>
     <DevelopmentDependency>true</DevelopmentDependency>
     <NoPackageAnalysis>true</NoPackageAnalysis>
-
     <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_AddAnalyzersToOutput</TargetsForTfmSpecificContentInPackage>
-
     <Title>Analyzers For Optimizely CMS</Title>
-
     <ToolCommandName>Stekeblad.Optimizely.Analyzers</ToolCommandName>
-
-    <Version>1.8.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -42,6 +39,7 @@
 
   <ItemGroup>
     <None Update="tools\*.ps1" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="" />
+    <None Include="..\..\ReadMe.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <Target Name="_AddAnalyzersToOutput">

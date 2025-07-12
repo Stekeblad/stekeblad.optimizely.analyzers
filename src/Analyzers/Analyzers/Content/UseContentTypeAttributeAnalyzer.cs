@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Stekeblad.Optimizely.Analyzers.Extensions;
 using System;
@@ -45,10 +46,17 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.Content
 			new DiagnosticDescriptor(InvalidGuidDiagnosticId, InvalidGuidTitle, InvalidGuidMessageFormat, Category,
 				DiagnosticSeverity.Error, true, helpLinkUri: HelpUrl(InvalidGuidDiagnosticId));
 
+		public const string AttributeOnAbstractDiagnosticId = "SOA1038";
+		public const string AttributeOnAbstractTitle = "Don't register abstract ContentType";
+		public const string AttributeOnAbstractMessageFormat = "Abstract type {0} should not have a ContentTypeAttribute";
+
+		internal static DiagnosticDescriptor AttributeOnAbstractRule =
+			new DiagnosticDescriptor(AttributeOnAbstractDiagnosticId, AttributeOnAbstractTitle, AttributeOnAbstractMessageFormat, Category,
+				DiagnosticSeverity.Warning, true, helpLinkUri: HelpUrl(AttributeOnAbstractDiagnosticId));
+
 		public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-		{
-			get { return ImmutableArray.Create(MissingAttributeRule, MissingGuidRule, GuidReusedRule, InvalidGuidRule); }
-		}
+			=> ImmutableArray.Create(MissingAttributeRule, MissingGuidRule, GuidReusedRule, InvalidGuidRule, AttributeOnAbstractRule);
+
 
 #pragma warning disable RS1026 // Enable concurrent execution
 		public override void Initialize(AnalysisContext context)
@@ -87,10 +95,9 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.Content
 		{
 			var analyzedSymbol = context.Symbol as INamedTypeSymbol;
 
-			//Check if auto-generated, abstract or not a class. Check its a type of content (media, page or block)
+			//Check if auto-generated or not a class. Check its a type of content (media, page or block)
 			if (analyzedSymbol?.IsImplicitlyDeclared != false
 				|| analyzedSymbol.TypeKind != TypeKind.Class
-				|| analyzedSymbol.IsAbstract
 				|| !analyzedSymbol.IsDerivedFrom(contentDataSymbol))
 			{
 				return;
@@ -98,26 +105,42 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.Content
 
 			// Then check it has the ContentTypeAttribute attribute or a custom attribute deriving from that type
 			// The attribute is not checked recursively on analyzedSymbol as the attribute can not be inherited
-			if (!analyzedSymbol.TryGetAttributeDerivedFrom(contentTypeAttributeSymbol, out AttributeData foundAttributeData))
+			bool hasAttribute = analyzedSymbol.TryGetAttributeDerivedFrom(contentTypeAttributeSymbol, out AttributeData foundAttributeData);
+			if (!hasAttribute)
 			{
-				var diagnostic = Diagnostic.Create(MissingAttributeRule, analyzedSymbol.Locations[0], analyzedSymbol.Name);
+				// non-abstract types must have the attribute
+				if (!analyzedSymbol.IsAbstract)
+				{
+					var diagnostic = Diagnostic.Create(MissingAttributeRule, analyzedSymbol.Locations[0], analyzedSymbol.Name);
+					context.ReportDiagnostic(diagnostic);
+				}
+				return;
+			}
+			else if (hasAttribute && analyzedSymbol.IsAbstract)
+			{
+				// Abstract types can not have the attribute
+				var syntax = analyzedSymbol.DeclaringSyntaxReferences[0].GetSyntax() as ClassDeclarationSyntax;
+				var abstractModifier = syntax.GetAbstractModifier();
+				var diagnostic = Diagnostic.Create(
+					AttributeOnAbstractRule, abstractModifier.GetLocation(), analyzedSymbol.Name);
+
 				context.ReportDiagnostic(diagnostic);
 				return;
 			}
 
 			if (foundAttributeData?.TryGetArgument("GUID", out TypedConstant guidAttrParam) != true)
 			{
-				var diagnostic = Diagnostic.Create(MissingGuidRule,
-					foundAttributeData.GetLocation(),
-					foundAttributeData.AttributeClass.Name,
-					analyzedSymbol.Name);
+					var diagnostic = Diagnostic.Create(MissingGuidRule,
+						foundAttributeData.GetLocation(),
+						foundAttributeData.AttributeClass.Name,
+						analyzedSymbol.Name);
 
-				context.ReportDiagnostic(diagnostic);
+					context.ReportDiagnostic(diagnostic);
 				return;
 			}
 
 			// guidAttrParam.Value is of type object and can be anything
-			// // but it should be a string in the format of a guid
+			// but it should be a string in the format of a guid
 			if (!(guidAttrParam.Value is string guidString)
 				|| string.IsNullOrEmpty(guidString)
 				|| !Guid.TryParse(guidString, out Guid guidValue))

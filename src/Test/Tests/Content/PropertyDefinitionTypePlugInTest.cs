@@ -76,6 +76,29 @@ namespace Tests
 		}
 
 		[TestMethod]
+		public async Task PropDefType_Abstract_WithAttribute_Match()
+		{
+			const string test = @"
+using EPiServer.Core;
+using EPiServer.PlugIn;
+
+namespace Tests
+{
+    [PropertyDefinitionTypePlugIn]
+    public {|#0:abstract|} class C : PropertyLongString
+    {
+    }
+}";
+
+			var expected0 = VerifyCS.Diagnostic(PropertyDefinitionTypePlugInAnalyzer.AttributeOnAbstractDiagnosticsId)
+				.WithLocation(0)
+				.WithArguments("C");
+
+			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected0);
+			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_12, expected0);
+		}
+
+		[TestMethod]
 		public async Task PropDefType_MissingAttribute_Match()
 		{
 			const string test = @"
