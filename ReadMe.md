@@ -51,7 +51,9 @@ the GUID property, the GUID is invalid or used on multiple content types
 - Properties in content types that lacks the virtual keyword
 - Incomplete definition of Initializable modules
 (needs to both implement interface and be decorated with attribute)
-- Incomplete definition of Scheduled jobs (needs both base type and attribute)
+- Incomplete definition of Scheduled jobs (needs both base type and attribute,
+attribute has a valid and unique GUID (CMS 10.3+), attribute sets
+[Name or LanguagePath property](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1041.md))
 - Incorrect usage of selection factories (e.g. SelectOne/SelectManyAttribute)
 - Usage of the legacy DataFactory class (Only CMS version 10+)
 
