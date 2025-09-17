@@ -266,7 +266,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.InitializableModules
 
 				namespace tests
 				{
-					[{|#0:ModuleDependency(typeof(SelectOneAttribute))|}]
+					[ModuleDependency({|#0:typeof(SelectOneAttribute)|})]
 					public class TestModule : IInitializableModule
 					{
 						public void Initialize(InitializationEngine context) {}
@@ -292,7 +292,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.InitializableModules
 				namespace tests
 				{
 					[ModuleDependency(typeof(ServiceContainerInitialization))]
-					[{|#0:ModuleDependency(typeof(SelectOneAttribute))|}]
+					[ModuleDependency({|#0:typeof(SelectOneAttribute)|})]
 					public class TestModule : IInitializableModule
 					{
 						public void Initialize(InitializationEngine context) {}
@@ -317,7 +317,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.InitializableModules
 
 				namespace tests
 				{
-					[{|#0:ModuleDependency(typeof(ServiceContainerInitialization), typeof(SelectOneAttribute))|}]
+					[ModuleDependency(typeof(ServiceContainerInitialization), {|#0:typeof(SelectOneAttribute)|})]
 					public class TestModule : IInitializableModule
 					{
 						public void Initialize(InitializationEngine context) {}

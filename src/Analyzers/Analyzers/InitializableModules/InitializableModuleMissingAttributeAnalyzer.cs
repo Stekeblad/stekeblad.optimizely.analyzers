@@ -112,13 +112,17 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.InitializableModules
 			if (moduleDependencyAttributes != null)
 			{
 				// Local test-and-report method, called in the loop below from multiple branches
-				void AnalyzeDependency(TypedConstant dependency, AttributeData attributeData)
+				void AnalyzeDependency(TypedConstant dependency, AttributeData attributeData, int index)
 				{
 					INamedTypeSymbol dependencyType = dependency.Value as INamedTypeSymbol;
 					if (!dependencyType.AllInterfaces.Contains(initModuleInterfaceSymbol))
 					{
 						// Report, a ModuleDependencyAttribute declares this Initializable module depending on a type that is not an Initializable module
-						var diagnostic = Diagnostic.Create(BadTypeRule, attributeData.GetLocation(), analyzedSymbol.Name, dependencyType.Name);
+						var syntax = attributeData.ApplicationSyntaxReference.GetSyntax() as AttributeSyntax;
+						var argSyntax = syntax.ArgumentList.Arguments[index];
+						var diagnostic = Diagnostic.Create(
+							BadTypeRule, argSyntax.GetLocation(), analyzedSymbol.Name, dependencyType.Name);
+
 						context.ReportDiagnostic(diagnostic);
 					}
 				}
@@ -130,19 +134,20 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.InitializableModules
 
 					// The attribute has two constructors, both take one parameter.
 					// One of them accepts `Type`, the other `params Type`
+					// There is also the option to not provide an argument
 					if (attributeCtorParams.Length == 0)
 						continue;
 
 					TypedConstant dependenciesParameter = attributeCtorParams[0];
 					if (dependenciesParameter.Kind == TypedConstantKind.Type)
 					{
-						AnalyzeDependency(dependenciesParameter, attributeData);
+						AnalyzeDependency(dependenciesParameter, attributeData, 0);
 					}
 					else if (dependenciesParameter.Kind == TypedConstantKind.Array)
 					{
-						foreach (TypedConstant dependency in dependenciesParameter.Values)
+						for (int i = 0; i < dependenciesParameter.Values.Length; i++)
 						{
-							AnalyzeDependency(dependency, attributeData);
+							AnalyzeDependency(dependenciesParameter.Values[i], attributeData, i);
 						}
 					}
 				}
