@@ -9,8 +9,8 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.InitializableModules
     public class InitializableModuleMissingInterfaceAnalyzer : MyDiagnosticAnalyzerBase
     {
         public const string DiagnosticId = "SOA1005";
-        public const string Title = "Implement the interface IInitializableModule or IConfigurableModule";
-        internal const string MessageFormat = "'{0}' is decorated with {1} but does not implement the interface IInitializableModule or IConfigurableModule";
+        public const string Title = "Implement either IInitializableModule or IConfigurableModule";
+        internal const string MessageFormat = "'{0}' is decorated with {1} but does not implement either the interface IInitializableModule or IConfigurableModule";
         internal const string Category = Constants.Categories.InitializationModules;
 
         internal static DiagnosticDescriptor Rule =

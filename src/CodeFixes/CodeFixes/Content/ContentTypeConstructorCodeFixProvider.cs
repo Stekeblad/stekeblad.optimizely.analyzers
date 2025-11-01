@@ -71,7 +71,7 @@ namespace Stekeblad.Optimizely.Analyzers.CodeFixes.Content
 			MethodDeclarationSyntax defaultValuesMethod = SetDefaultValuesSyntaxFactory.FindOrCreate(
 				ref document, ref root, containingClass);
 
-			// Add (or modify) assignment to the diagnosed property inside SetDefaultValues,
+			// Add (or modify) assignment to the diagnosed property in SetDefaultValues,
 			// assign the same value it was assigned in the constructor
 			var assignmentExpr = assignment.Expression as AssignmentExpressionSyntax;
 

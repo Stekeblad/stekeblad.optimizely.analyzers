@@ -10,7 +10,7 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.Content
 	public class UseSetDefaultValuesAnalyzer : MyDiagnosticAnalyzerBase
 	{
 		public const string DiagnosticID = "SOA1019";
-		public const string Title = "Initialize property inside SetDefaultValues";
+		public const string Title = "Initialize property in SetDefaultValues";
 		internal const string MessageFormat = "{0} is assigned a value using property initialization. Content properties should be assigned a default value by overriding the method SetDefaultValues.";
 
 		internal static DiagnosticDescriptor UseSetDefaultValueRule =

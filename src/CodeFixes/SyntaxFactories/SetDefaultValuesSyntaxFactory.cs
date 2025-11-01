@@ -20,7 +20,7 @@ namespace Stekeblad.Optimizely.Analyzers.SyntaxFactories
 			string propertyName,
 			ExpressionSyntax propertyDefaultValue)
 		{
-			// Look after an existing assignment to the property inside SetDefaultValues method
+			// Look after an existing assignment to the property in SetDefaultValues method
 			ExpressionStatementSyntax propDefaultValueStatement = null;
 			foreach (var statement in defaultValuesMethod.Body.DescendantNodes()
 				.OfType<ExpressionStatementSyntax>()
@@ -35,7 +35,7 @@ namespace Stekeblad.Optimizely.Analyzers.SyntaxFactories
 				}
 			}
 
-			// Add an assignment expression for the property inside the SetDefaultValues method if one does not exist
+			// Add an assignment expression for the property in the SetDefaultValues method if one does not exist
 			// or update the existing assignment to assign the value the property is initialized with
 			if (propDefaultValueStatement == null)
 			{
