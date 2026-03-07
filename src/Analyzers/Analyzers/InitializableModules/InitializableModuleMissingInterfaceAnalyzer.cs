@@ -14,7 +14,7 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.InitializableModules
         internal const string Category = Constants.Categories.InitializationModules;
 
         internal static DiagnosticDescriptor Rule =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning,
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Error,
                 true, helpLinkUri: HelpUrl(DiagnosticId));
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get { return ImmutableArray.Create(Rule); } }
