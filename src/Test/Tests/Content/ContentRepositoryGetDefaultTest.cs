@@ -1,22 +1,20 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.CodeAnalysis.Testing;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Stekeblad.Optimizely.Analyzers.Analyzers.BadMethods;
-using Stekeblad.Optimizely.Analyzers.Test.Util;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using VerifyCS = Stekeblad.Optimizely.Analyzers.Test.CSharpAnalyzerVerifier<
-    Stekeblad.Optimizely.Analyzers.Analyzers.BadMethods.ContentRepositoryGetDefaultAnalyzer>;
+	Stekeblad.Optimizely.Analyzers.Analyzers.BadMethods.ContentRepositoryGetDefaultAnalyzer>;
 
 namespace Stekeblad.Optimizely.Analyzers.Test.Tests.Content
 {
-    [TestClass]
-    public class ContentRepositoryGetDefaultTest
-    {
-        [TestMethod]
-        public async Task NewContentType_Match()
-        {
-            const string test = @"
+	[TestClass]
+	public class ContentRepositoryGetDefaultTest : MyTestClassBase
+	{
+		[TestMethod]
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task NewContentType_Match(ReferenceAssemblies assemblies)
+		{
+			const string test = @"
 				namespace tests
 				{
 					public class ArticlePage : EPiServer.Core.PageData {}
@@ -30,17 +28,18 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.Content
 					}
 				}";
 
-            var expected = VerifyCS.Diagnostic(ContentRepositoryGetDefaultAnalyzer.UseGetDefaultDiagnosticId)
-                .WithLocation(0)
-                .WithArguments("ArticlePage");
+			var expected = VerifyCS.Diagnostic(ContentRepositoryGetDefaultAnalyzer.UseGetDefaultDiagnosticId)
+				.WithLocation(0)
+				.WithArguments("ArticlePage");
 
-            await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_12, expected);
-        }
+			await VerifyCS.VerifyAnalyzerAsync(test, assemblies, expected);
+		}
 
-        [TestMethod]
-        public async Task NewRegularType_NoMatch()
-        {
-            const string test = @"
+		[TestMethod]
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task NewRegularType_NoMatch(ReferenceAssemblies assemblies)
+		{
+			const string test = @"
 				namespace tests
 				{
 					public class ArticleCreator
@@ -52,7 +51,7 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.Content
 					}
 				}";
 
-            await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_12);
-        }
-    }
+			await VerifyCS.VerifyAnalyzerAsync(test, assemblies);
+		}
+	}
 }

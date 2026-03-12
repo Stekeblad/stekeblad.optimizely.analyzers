@@ -1,6 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.CodeAnalysis.Testing;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Stekeblad.Optimizely.Analyzers.Analyzers.BadMethods;
-using Stekeblad.Optimizely.Analyzers.Test.Util;
 using System.Threading.Tasks;
 using VerifyCS = Stekeblad.Optimizely.Analyzers.Test.CSharpAnalyzerVerifier<
 	Stekeblad.Optimizely.Analyzers.Analyzers.BadMethods.BlockToContentCastAnalyzer>;
@@ -8,10 +8,11 @@ using VerifyCS = Stekeblad.Optimizely.Analyzers.Test.CSharpAnalyzerVerifier<
 namespace Stekeblad.Optimizely.Analyzers.Test.Tests.BadMethods
 {
 	[TestClass]
-	public class BlockToContentCastTest
+	public class BlockToContentCastTest : MyTestClassBase
 	{
 		[TestMethod]
-		public async Task CastingBlockToContent_HardCast_Match()
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task CastingBlockToContent_HardCast_Match(ReferenceAssemblies assemblies)
 		{
 			const string test =
 				@"using EPiServer.Core;
@@ -41,11 +42,12 @@ namespace test
 			var expected1 = VerifyCS.Diagnostic(BlockToContentCastAnalyzer.BlockToContentCastDiagnosticId)
 				.WithLocation(1);
 
-			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_12_High, expected0, expected1);
+			await VerifyCS.VerifyAnalyzerAsync(test, assemblies, expected0, expected1);
 		}
 
 		[TestMethod]
-		public async Task CastingBlockToContent_AsCast_NoMatch()
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task CastingBlockToContent_AsCast_NoMatch(ReferenceAssemblies assemblies)
 		{
 			const string test =
 				@"using EPiServer.Core;
@@ -61,11 +63,12 @@ namespace test
     }
 }";
 
-			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_12_High);
+			await VerifyCS.VerifyAnalyzerAsync(test, assemblies);
 		}
 
 		[TestMethod]
-		public async Task CastingBlockToContent_IsCast_NoMatch()
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task CastingBlockToContent_IsCast_NoMatch(ReferenceAssemblies assemblies)
 		{
 			const string test =
 				@"using EPiServer.Core;
@@ -82,7 +85,7 @@ namespace test
     }
 }";
 
-			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_12_High);
+			await VerifyCS.VerifyAnalyzerAsync(test, assemblies);
 		}
 	}
 }

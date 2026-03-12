@@ -1,21 +1,23 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.CodeAnalysis.Testing;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Stekeblad.Optimizely.Analyzers.Analyzers.Content;
-using Stekeblad.Optimizely.Analyzers.Test.Util;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-//using VerifyCS = Stekeblad.Optimizely.Analyzers.Test.CSharpAnalyzerVerifier<
-//	Stekeblad.Optimizely.Analyzers.Analyzers.Content.PropertyDefinitionTypePlugInAnalyzer>;
-
 using VerifyCS = Stekeblad.Optimizely.Analyzers.Test.CSharpCodeFixVerifier<
 	Stekeblad.Optimizely.Analyzers.Analyzers.Content.PropertyDefinitionTypePlugInAnalyzer,
-	 Stekeblad.Optimizely.Analyzers.CodeFixes.Content.PropertyDefinitionTypePlugInCodeFixProvider>;
+	Stekeblad.Optimizely.Analyzers.CodeFixes.Content.PropertyDefinitionTypePlugInCodeFixProvider>;
 
 namespace Stekeblad.Optimizely.Analyzers.Test.Tests.Content
 {
 	[TestClass]
-	public class PropertyDefinitionTypePlugInTest
+	public class PropertyDefinitionTypePlugInTest : MyTestClassBase
 	{
+		public static readonly IEnumerable<TestDataRow<ReferenceAssemblies>> VersionsSupportingPropDefGuid =
+			[Epi11_High, Opti12, Opti12_High, Opti13];
+
 		[TestMethod]
-		public async Task PropDefType_MinimalValid_NoMatch()
+		[DynamicData(nameof(VersionsSupportingPropDefGuid))]
+		public async Task PropDefType_MinimalValid_NoMatch(ReferenceAssemblies assemblies)
 		{
 			const string test = @"
 using EPiServer.Core;
@@ -29,13 +31,12 @@ namespace Tests
     }
 }";
 
-			// Core_11 uses a version of Optimizely from before the GUID parameter was added
-			//await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
-			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_12);
+			await VerifyCS.VerifyAnalyzerAsync(test, assemblies);
 		}
 
 		[TestMethod]
-		public async Task PropDefType_AttributeOnBadType_Match()
+		[DynamicData(nameof(VersionsSupportingPropDefGuid))]
+		public async Task PropDefType_AttributeOnBadType_Match(ReferenceAssemblies assemblies)
 		{
 			const string test = @"
 using EPiServer.Core;
@@ -53,13 +54,12 @@ namespace Tests
 				.WithLocation(0)
 				.WithArguments("C");
 
-			// Core_11 uses a version of Optimizely from before the GUID parameter was added
-			//await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected0);
-			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_12, expected0);
+			await VerifyCS.VerifyAnalyzerAsync(test, assemblies, expected0);
 		}
 
 		[TestMethod]
-		public async Task PropDefType_Abstract_MissingAttribute_NoMatch()
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task PropDefType_Abstract_MissingAttribute_NoMatch(ReferenceAssemblies assemblies)
 		{
 			const string test = @"
 using EPiServer.Core;
@@ -71,12 +71,12 @@ namespace Tests
     }
 }";
 
-			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
-			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_12);
+			await VerifyCS.VerifyAnalyzerAsync(test, assemblies);
 		}
 
 		[TestMethod]
-		public async Task PropDefType_Abstract_WithAttribute_Match()
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task PropDefType_Abstract_WithAttribute_Match(ReferenceAssemblies assemblies)
 		{
 			const string test = @"
 using EPiServer.Core;
@@ -94,12 +94,12 @@ namespace Tests
 				.WithLocation(0)
 				.WithArguments("C");
 
-			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected0);
-			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_12, expected0);
+			await VerifyCS.VerifyAnalyzerAsync(test, assemblies, expected0);
 		}
 
 		[TestMethod]
-		public async Task PropDefType_MissingAttribute_Match()
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task PropDefType_MissingAttribute_Match(ReferenceAssemblies assemblies)
 		{
 			const string test = @"
 using EPiServer.Core;
@@ -115,12 +115,17 @@ namespace Tests
 				.WithLocation(0)
 				.WithArguments("C");
 
-			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected0);
-			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_12, expected0);
+			await VerifyCS.VerifyAnalyzerAsync(test, assemblies, expected0);
 		}
 
 		[TestMethod]
-		public async Task PropDefType_MissingGuid_Match()
+		[DataRow(OptiVersion.v10, false)]
+		[DataRow(OptiVersion.v11, false)]
+		[DataRow(OptiVersion.v11_High, true)]
+		[DataRow(OptiVersion.v12, true)]
+		[DataRow(OptiVersion.v12_High, true)]
+		[DataRow(OptiVersion.v13, true)]
+		public async Task PropDefType_MissingGuid_Match(OptiVersion version, bool meetsMinVersionCriteria)
 		{
 			const string test = @"
 using EPiServer.Core;
@@ -138,13 +143,16 @@ namespace Tests
 				.WithLocation(0)
 				.WithArguments("C");
 
-			// Core_11 uses a version of Optimizely from before the GUID parameter was added
-			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
-			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_12, expected0);
+			// Guid support was added during the version 11 cycle
+			if (meetsMinVersionCriteria)
+				await VerifyCS.VerifyAnalyzerAsync(test, RefAssembliesForVersion(version), expected0);
+			else
+				await VerifyCS.VerifyAnalyzerAsync(test, RefAssembliesForVersion(version));
 		}
 
 		[TestMethod]
-		public async Task PropDefType_EmptyGuid_Match()
+		[DynamicData(nameof(VersionsSupportingPropDefGuid))]
+		public async Task PropDefType_EmptyGuid_Match(ReferenceAssemblies assemblies)
 		{
 			const string test = @"
 using EPiServer.Core;
@@ -162,13 +170,12 @@ namespace Tests
 				.WithLocation(0)
 				.WithArguments("C");
 
-			// Core_11 uses a version of Optimizely from before the GUID parameter was added
-			//await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected0);
-			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_12, expected0);
+			await VerifyCS.VerifyAnalyzerAsync(test, assemblies, expected0);
 		}
 
 		[TestMethod]
-		public async Task PropDefType_InvalidGuid_Match()
+		[DynamicData(nameof(VersionsSupportingPropDefGuid))]
+		public async Task PropDefType_InvalidGuid_Match(ReferenceAssemblies assemblies)
 		{
 			const string test = @"
 using EPiServer.Core;
@@ -188,11 +195,12 @@ namespace Tests
 
 			// Core_11 uses a version of Optimizely from before the GUID parameter was added
 			//await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected0);
-			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_12, expected0);
+			await VerifyCS.VerifyAnalyzerAsync(test, assemblies, expected0);
 		}
 
 		[TestMethod]
-		public async Task PropDefType_ReusedGuid_Match()
+		[DynamicData(nameof(VersionsSupportingPropDefGuid))]
+		public async Task PropDefType_ReusedGuid_Match(ReferenceAssemblies assemblies)
 		{
 			const string test = @"
 using EPiServer.Core;
@@ -219,43 +227,46 @@ namespace Tests
 				.WithLocation(1)
 				.WithArguments("C2", "C1, C2");
 
-			// Core_11 uses a version of Optimizely from before the GUID parameter was added
-			//await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected0, expected1);
-			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_12, expected0, expected1);
+			await VerifyCS.VerifyAnalyzerAsync(test, assemblies, expected0, expected1);
 		}
 
 		[TestMethod]
-		public async Task PropDefType_AddAttribute_CodeFix()
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task PropDefType_AddAttribute_CodeFix(ReferenceAssemblies assemblies)
 		{
+			// This test disables SOA1032, it's a follow-up error after the fix has been applied.
+			// Code fix test does not like follow-up errors and this error only applies for certain Optimizely versions
 			const string test = @"
 using EPiServer.Core;
 
+#pragma warning disable SOA1032
 namespace Tests
 {
     public class {|#0:C|} : PropertyLongString
     {
     }
+#pragma warning restore SOA1032
 }";
 
 			const string fix = @"
 using EPiServer.Core;
 using EPiServer.PlugIn;
 
+#pragma warning disable SOA1032
 namespace Tests
 {
     [PropertyDefinitionTypePlugIn]
     public class C : PropertyLongString
     {
     }
+#pragma warning restore SOA1032
 }";
 
 			var expected = VerifyCS.Diagnostic(PropertyDefinitionTypePlugInAnalyzer.MissingAttributeDiagnosticId)
 				.WithLocation(0)
 				.WithArguments("C");
 
-			await VerifyCS.VerifyCodeFixAsync(test, PackageCollections.Core_11, expected, fix);
-			// Do not run for CMS 12, test will fail with follow-up diagnostic for attribute has no GUID
-			//await VerifyCS.VerifyCodeFixAsync(test, PackageCollections.Core_12, expected, fix);
+			await VerifyCS.VerifyCodeFixAsync(test, assemblies, expected, fix);
 		}
 	}
 }

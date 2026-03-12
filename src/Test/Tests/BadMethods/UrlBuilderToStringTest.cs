@@ -1,26 +1,22 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.CodeAnalysis.Testing;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Stekeblad.Optimizely.Analyzers.Analyzers.BadMethods;
-using Stekeblad.Optimizely.Analyzers.Analyzers.ScheduledJobs;
-using Stekeblad.Optimizely.Analyzers.Test.Util;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using VerifyCS = Stekeblad.Optimizely.Analyzers.Test.CSharpCodeFixVerifier<
-    Stekeblad.Optimizely.Analyzers.Analyzers.BadMethods.UrlBuilderToStringAnalyzer,
-    Stekeblad.Optimizely.Analyzers.CodeFixes.BadMethods.UrlBuilderToStringCodeFixProvider>;
+	Stekeblad.Optimizely.Analyzers.Analyzers.BadMethods.UrlBuilderToStringAnalyzer,
+	Stekeblad.Optimizely.Analyzers.CodeFixes.BadMethods.UrlBuilderToStringCodeFixProvider>;
 
 namespace Stekeblad.Optimizely.Analyzers.Test.Tests.BadMethods
 {
-    [TestClass]
-    public class UrlBuilderToStringTest
-    {
-        [TestMethod]
-        public async Task ReplaceUrlBuilderToStringWithCastTest()
-        {
-            const string test =
-                @"using EPiServer;
+	[TestClass]
+	public class UrlBuilderToStringTest : MyTestClassBase
+	{
+		[TestMethod]
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task ReplaceUrlBuilderToStringWithCastTest(ReferenceAssemblies assemblies)
+		{
+			const string test =
+				@"using EPiServer;
 namespace test
 {
     public class C
@@ -33,8 +29,8 @@ namespace test
     }
 }";
 
-            const string fixTest =
-                @"using EPiServer;
+			const string fixTest =
+				@"using EPiServer;
 namespace test
 {
     public class C
@@ -47,12 +43,10 @@ namespace test
     }
 }";
 
-            var expected = VerifyCS.Diagnostic(UrlBuilderToStringAnalyzer.DiagnosticID)
-                .WithLocation(0);
+			var expected = VerifyCS.Diagnostic(UrlBuilderToStringAnalyzer.DiagnosticID)
+				.WithLocation(0);
 
-            await VerifyCS.VerifyCodeFixAsync(test, PackageCollections.Core_10, expected, fixTest);
-            await VerifyCS.VerifyCodeFixAsync(test, PackageCollections.Core_11, expected, fixTest);
-            await VerifyCS.VerifyCodeFixAsync(test, PackageCollections.Core_12, expected, fixTest);
-        }
-    }
+			await VerifyCS.VerifyCodeFixAsync(test, assemblies, expected, fixTest);
+		}
+	}
 }

@@ -1,23 +1,28 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.CodeAnalysis.Testing;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Stekeblad.Optimizely.Analyzers.Analyzers.ScheduledJobs;
-using Stekeblad.Optimizely.Analyzers.Test.Util;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using JobHasNoAttributeVerifier = Stekeblad.Optimizely.Analyzers.Test.CSharpCodeFixVerifier<
-    Stekeblad.Optimizely.Analyzers.Analyzers.ScheduledJobs.UseScheduledPluginAttributeAnalyzer,
-    Stekeblad.Optimizely.Analyzers.CodeFixes.ScheduledJobs.JobHasNoAttributeCodeFixProvider>;
+	Stekeblad.Optimizely.Analyzers.Analyzers.ScheduledJobs.UseScheduledPluginAttributeAnalyzer,
+	Stekeblad.Optimizely.Analyzers.CodeFixes.ScheduledJobs.JobHasNoAttributeCodeFixProvider>;
 using JobHasNoBaseVerifier = Stekeblad.Optimizely.Analyzers.Test.CSharpCodeFixVerifier<
-    Stekeblad.Optimizely.Analyzers.Analyzers.ScheduledJobs.JobHasBaseClassAnalyzer,
-    Stekeblad.Optimizely.Analyzers.CodeFixes.ScheduledJobs.JobHasBaseClassCodeFixProvider>;
+	Stekeblad.Optimizely.Analyzers.Analyzers.ScheduledJobs.JobHasBaseClassAnalyzer,
+	Stekeblad.Optimizely.Analyzers.CodeFixes.ScheduledJobs.JobHasBaseClassCodeFixProvider>;
 
 namespace Stekeblad.Optimizely.Analyzers.Test.Tests.ScheduledJobs
 {
-    [TestClass]
-    public class ScheduledJobTest
-    {
-        [TestMethod]
-        public async Task JobWithCompleteDeclaration_NoMatch()
-        {
-            const string test = @"
+	[TestClass]
+	public class ScheduledJobTest : MyTestClassBase
+	{
+		public static readonly IEnumerable<TestDataRow<ReferenceAssemblies>> VersionsSupportingSchedJobGuid =
+			[Epi11, Epi11_High, Opti12, Opti12_High, Opti13];
+
+		[TestMethod]
+		[DynamicData(nameof(VersionsSupportingSchedJobGuid))]
+		public async Task JobWithCompleteDeclaration_NoMatch(ReferenceAssemblies assemblies)
+		{
+			const string test = @"
 				using EPiServer.PlugIn;
 				using EPiServer.Scheduler;
 				
@@ -30,12 +35,13 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.ScheduledJobs
 					}
 				}";
 
-            await JobHasNoAttributeVerifier.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
-            await JobHasNoBaseVerifier.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
-        }
+			await JobHasNoAttributeVerifier.VerifyAnalyzerAsync(test, assemblies);
+			await JobHasNoBaseVerifier.VerifyAnalyzerAsync(test, assemblies);
+		}
 
 		[TestMethod]
-		public async Task JobWithCompleteDeclaration_guidConstant_NoMatch()
+		[DynamicData(nameof(VersionsSupportingSchedJobGuid))]
+		public async Task JobWithCompleteDeclaration_guidConstant_NoMatch(ReferenceAssemblies assemblies)
 		{
 			const string test = @"
 				using EPiServer.PlugIn;
@@ -51,14 +57,15 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.ScheduledJobs
 					}
 				}";
 
-			await JobHasNoAttributeVerifier.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
-			await JobHasNoBaseVerifier.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
+			await JobHasNoAttributeVerifier.VerifyAnalyzerAsync(test, assemblies);
+			await JobHasNoBaseVerifier.VerifyAnalyzerAsync(test, assemblies);
 		}
 
 		[TestMethod]
-        public async Task CompleteJobButImplementingInterface_NoMatch()
-        {
-            const string test = @"
+		[DynamicData(nameof(VersionsSupportingSchedJobGuid))]
+		public async Task CompleteJobButImplementingInterface_NoMatch(ReferenceAssemblies assemblies)
+		{
+			const string test = @"
 				using EPiServer.PlugIn;
 				using EPiServer.Scheduler.Internal;
 				using System;
@@ -73,13 +80,14 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.ScheduledJobs
 					}
 				}";
 
-            await JobHasNoBaseVerifier.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
-        }
+			await JobHasNoBaseVerifier.VerifyAnalyzerAsync(test, assemblies);
+		}
 
-        [TestMethod]
-        public async Task MultipleValidJobDefinitions_NoMatch()
-        {
-            const string test = @"
+		[TestMethod]
+		[DynamicData(nameof(VersionsSupportingSchedJobGuid))]
+		public async Task MultipleValidJobDefinitions_NoMatch(ReferenceAssemblies assemblies)
+		{
+			const string test = @"
 				using EPiServer.PlugIn;
 				using EPiServer.Scheduler;
 				
@@ -104,14 +112,15 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.ScheduledJobs
 					}
 				}";
 
-            await JobHasNoBaseVerifier.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
-        }
+			await JobHasNoBaseVerifier.VerifyAnalyzerAsync(test, assemblies);
+		}
 
-        [TestMethod]
-        public async Task JobWithoutAttribute_Match()
-        {
-            const string test =
-                @"using EPiServer.Scheduler;
+		[TestMethod]
+		[DynamicData(nameof(VersionsSupportingSchedJobGuid))]
+		public async Task JobWithoutAttribute_Match(ReferenceAssemblies assemblies)
+		{
+			const string test =
+				@"using EPiServer.Scheduler;
 				
 				namespace tests
 				{
@@ -121,17 +130,23 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.ScheduledJobs
 					}
 				}";
 
-            var expected = JobHasNoAttributeVerifier.Diagnostic(UseScheduledPluginAttributeAnalyzer.MissingAttributeDiagnosticId)
-                .WithLocation(0)
-                .WithArguments("MyTestScheduledJob");
+			var expected = JobHasNoAttributeVerifier.Diagnostic(UseScheduledPluginAttributeAnalyzer.MissingAttributeDiagnosticId)
+				.WithLocation(0)
+				.WithArguments("MyTestScheduledJob");
 
-            await JobHasNoAttributeVerifier.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected);
-        }
+			await JobHasNoAttributeVerifier.VerifyAnalyzerAsync(test, assemblies, expected);
+		}
 
-        [TestMethod]
-        public async Task ScheduledPluginAttributeWithoutGuid_Match()
-        {
-            const string test = @"
+		[TestMethod]
+		[DataRow(OptiVersion.v10, true)]
+		[DataRow(OptiVersion.v11, false)]
+		[DataRow(OptiVersion.v11_High, false)]
+		[DataRow(OptiVersion.v12, false)]
+		[DataRow(OptiVersion.v12_High, false)]
+		[DataRow(OptiVersion.v13, false)]
+		public async Task ScheduledPluginAttributeWithoutGuid_Match(OptiVersion optiVersion, bool skipGuidTest)
+		{
+			const string test = @"
 				using EPiServer.PlugIn;
 				using EPiServer.Scheduler;
 				
@@ -144,22 +159,24 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.ScheduledJobs
 					}
 				}";
 
-            var expected = JobHasNoAttributeVerifier.Diagnostic(UseScheduledPluginAttributeAnalyzer.MissingGuidDiagnosticId)
-                .WithLocation(0)
-                .WithArguments("MyTestScheduledJob");
+			var expected = JobHasNoAttributeVerifier.Diagnostic(UseScheduledPluginAttributeAnalyzer.MissingGuidDiagnosticId)
+				.WithLocation(0)
+				.WithArguments("MyTestScheduledJob");
 
-            // PackageCollections.Core_10 uses the oldest available 10.x release, the GUID attribute was added in 10.3
-            // and that test should therefore not report an error
-            await JobHasNoAttributeVerifier.VerifyAnalyzerAsync(test, PackageCollections.Core_10);
-            await JobHasNoAttributeVerifier.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected);
-            await JobHasNoAttributeVerifier.VerifyAnalyzerAsync(test, PackageCollections.Core_12, expected);
-        }
+			// PackageCollections.Core_10 uses the oldest available 10.x release, the GUID attribute was added in 10.3
+			// and that test should therefore not report an error
+			if (skipGuidTest)
+				await JobHasNoAttributeVerifier.VerifyAnalyzerAsync(test, RefAssembliesForVersion(optiVersion));
+			else
+				await JobHasNoAttributeVerifier.VerifyAnalyzerAsync(test, RefAssembliesForVersion(optiVersion), expected);
+		}
 
-        [TestMethod]
-        public async Task JobWithoutBaseClass_Match()
-        {
-            const string test =
-                @"using EPiServer.PlugIn;
+		[TestMethod]
+		[DynamicData(nameof(VersionsSupportingSchedJobGuid))]
+		public async Task JobWithoutBaseClass_Match(ReferenceAssemblies assemblies)
+		{
+			const string test =
+				@"using EPiServer.PlugIn;
 				
 				namespace tests
 				{
@@ -170,17 +187,18 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.ScheduledJobs
 					}
 				}";
 
-            var expected = JobHasNoBaseVerifier.Diagnostic(JobHasBaseClassAnalyzer.DiagnosticId)
-                .WithLocation(0)
-                .WithArguments("MyTestScheduledJob");
+			var expected = JobHasNoBaseVerifier.Diagnostic(JobHasBaseClassAnalyzer.DiagnosticId)
+				.WithLocation(0)
+				.WithArguments("MyTestScheduledJob");
 
-            await JobHasNoBaseVerifier.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected);
-        }
+			await JobHasNoBaseVerifier.VerifyAnalyzerAsync(test, assemblies, expected);
+		}
 
-        [TestMethod]
-        public async Task ScheduledPluginAttributeWithEmptyGuid_Match()
-        {
-            const string test = @"
+		[TestMethod]
+		[DynamicData(nameof(VersionsSupportingSchedJobGuid))]
+		public async Task ScheduledPluginAttributeWithEmptyGuid_Match(ReferenceAssemblies assemblies)
+		{
+			const string test = @"
 				using EPiServer.PlugIn;
 				using EPiServer.Scheduler;
 				
@@ -193,17 +211,18 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.ScheduledJobs
 					}
 				}";
 
-            var expected = JobHasNoAttributeVerifier.Diagnostic(UseScheduledPluginAttributeAnalyzer.InvalidGuidDiagnosticId)
-                .WithLocation(0)
-                .WithArguments("MyTestScheduledJob");
+			var expected = JobHasNoAttributeVerifier.Diagnostic(UseScheduledPluginAttributeAnalyzer.InvalidGuidDiagnosticId)
+				.WithLocation(0)
+				.WithArguments("MyTestScheduledJob");
 
-            await JobHasNoAttributeVerifier.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected);
-        }
+			await JobHasNoAttributeVerifier.VerifyAnalyzerAsync(test, assemblies, expected);
+		}
 
-        [TestMethod]
-        public async Task ScheduledPluginAttributeWithInvalidGuid_Match()
-        {
-            const string test = @"
+		[TestMethod]
+		[DynamicData(nameof(VersionsSupportingSchedJobGuid))]
+		public async Task ScheduledPluginAttributeWithInvalidGuid_Match(ReferenceAssemblies assemblies)
+		{
+			const string test = @"
 				using EPiServer.PlugIn;
 				using EPiServer.Scheduler;
 				
@@ -216,17 +235,18 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.ScheduledJobs
 					}
 				}";
 
-            var expected = JobHasNoAttributeVerifier.Diagnostic(UseScheduledPluginAttributeAnalyzer.InvalidGuidDiagnosticId)
-                .WithLocation(0)
-                .WithArguments("MyTestScheduledJob");
+			var expected = JobHasNoAttributeVerifier.Diagnostic(UseScheduledPluginAttributeAnalyzer.InvalidGuidDiagnosticId)
+				.WithLocation(0)
+				.WithArguments("MyTestScheduledJob");
 
-            await JobHasNoAttributeVerifier.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected);
-        }
+			await JobHasNoAttributeVerifier.VerifyAnalyzerAsync(test, assemblies, expected);
+		}
 
-        [TestMethod]
-        public async Task ScheduledPluginAttributeWithReusedGuid_Match()
-        {
-            const string test = @"
+		[TestMethod]
+		[DynamicData(nameof(VersionsSupportingSchedJobGuid))]
+		public async Task ScheduledPluginAttributeWithReusedGuid_Match(ReferenceAssemblies assemblies)
+		{
+			const string test = @"
 				using EPiServer.PlugIn;
 				using EPiServer.Scheduler;
 				
@@ -245,19 +265,20 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.ScheduledJobs
 					}
 				}";
 
-            var expected0 = JobHasNoAttributeVerifier.Diagnostic(UseScheduledPluginAttributeAnalyzer.GuidReusedDiagnosticId)
-                .WithLocation(0)
-                .WithArguments("MyTestScheduledJob", "MySecondJob, MyTestScheduledJob");
+			var expected0 = JobHasNoAttributeVerifier.Diagnostic(UseScheduledPluginAttributeAnalyzer.GuidReusedDiagnosticId)
+				.WithLocation(0)
+				.WithArguments("MyTestScheduledJob", "MySecondJob, MyTestScheduledJob");
 
-            var expected1 = JobHasNoAttributeVerifier.Diagnostic(UseScheduledPluginAttributeAnalyzer.GuidReusedDiagnosticId)
-                .WithLocation(1)
-                .WithArguments("MySecondJob", "MySecondJob, MyTestScheduledJob");
+			var expected1 = JobHasNoAttributeVerifier.Diagnostic(UseScheduledPluginAttributeAnalyzer.GuidReusedDiagnosticId)
+				.WithLocation(1)
+				.WithArguments("MySecondJob", "MySecondJob, MyTestScheduledJob");
 
-            await JobHasNoAttributeVerifier.VerifyAnalyzerAsync(test, PackageCollections.Core_11, new[] { expected0, expected1 });
-        }
+			await JobHasNoAttributeVerifier.VerifyAnalyzerAsync(test, assemblies, expected0, expected1);
+		}
 
 		[TestMethod]
-		public async Task AbstractJobWithoutAttribute_NoMatch()
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task AbstractJobWithoutAttribute_NoMatch(ReferenceAssemblies assemblies)
 		{
 			const string test = @"
 				using EPiServer.PlugIn;
@@ -270,12 +291,13 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.ScheduledJobs
 					}
 				}";
 
-			await JobHasNoAttributeVerifier.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
-			await JobHasNoBaseVerifier.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
+			await JobHasNoAttributeVerifier.VerifyAnalyzerAsync(test, assemblies);
+			await JobHasNoBaseVerifier.VerifyAnalyzerAsync(test, assemblies);
 		}
 
 		[TestMethod]
-		public async Task AbstractJobWithAttribute_Match()
+		[DynamicData(nameof(VersionsSupportingSchedJobGuid))]
+		public async Task AbstractJobWithAttribute_Match(ReferenceAssemblies assemblies)
 		{
 			const string test = @"
 				using EPiServer.PlugIn;
@@ -293,12 +315,13 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.ScheduledJobs
 				.WithLocation(0)
 				.WithArguments("MyTestScheduledJob");
 
-			await JobHasNoAttributeVerifier.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected0);
-			await JobHasNoBaseVerifier.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
+			await JobHasNoAttributeVerifier.VerifyAnalyzerAsync(test, assemblies, expected0);
+			await JobHasNoBaseVerifier.VerifyAnalyzerAsync(test, assemblies);
 		}
 
 		[TestMethod]
-		public async Task AbstractJobSharingGuidWithConcreateJob_Match()
+		[DynamicData(nameof(VersionsSupportingSchedJobGuid))]
+		public async Task AbstractJobSharingGuidWithConcreateJob_Match(ReferenceAssemblies assemblies)
 		{
 			const string test = @"
 				using EPiServer.PlugIn;
@@ -328,12 +351,13 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.ScheduledJobs
 				.WithLocation(1)
 				.WithArguments("MyRealTestScheduledJob", "MyAbstractTestScheduledJob, MyRealTestScheduledJob");
 
-			await JobHasNoAttributeVerifier.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected0, expected1);
-			await JobHasNoBaseVerifier.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
+			await JobHasNoAttributeVerifier.VerifyAnalyzerAsync(test, assemblies, expected0, expected1);
+			await JobHasNoBaseVerifier.VerifyAnalyzerAsync(test, assemblies);
 		}
 
 		[TestMethod]
-		public async Task JobWithInvalidName_Match()
+		[DynamicData(nameof(VersionsSupportingSchedJobGuid))]
+		public async Task JobWithInvalidName_Match(ReferenceAssemblies assemblies)
 		{
 			const string test = @"
 				using EPiServer.PlugIn;
@@ -384,9 +408,9 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.ScheduledJobs
 				.WithLocation(3)
 				.WithArguments("NullLangPath");
 
-			await JobHasNoAttributeVerifier.VerifyAnalyzerAsync(test, PackageCollections.Core_11,
+			await JobHasNoAttributeVerifier.VerifyAnalyzerAsync(test, assemblies,
 				expected0, expected1, expected2, expected3);
-			await JobHasNoBaseVerifier.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
+			await JobHasNoBaseVerifier.VerifyAnalyzerAsync(test, assemblies);
 		}
 	}
 }

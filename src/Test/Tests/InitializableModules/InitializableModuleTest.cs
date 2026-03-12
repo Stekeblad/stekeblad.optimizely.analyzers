@@ -1,22 +1,23 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.CodeAnalysis.Testing;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Stekeblad.Optimizely.Analyzers.Analyzers.InitializableModules;
-using Stekeblad.Optimizely.Analyzers.Test.Util;
 using System.Threading.Tasks;
 using VerifyAttributeCS = Stekeblad.Optimizely.Analyzers.Test.CSharpCodeFixVerifier<
-    Stekeblad.Optimizely.Analyzers.Analyzers.InitializableModules.InitializableModuleMissingAttributeAnalyzer,
+	Stekeblad.Optimizely.Analyzers.Analyzers.InitializableModules.InitializableModuleMissingAttributeAnalyzer,
 	Stekeblad.Optimizely.Analyzers.CodeFixes.InitializableModules.InitializableModuleMissingAttributeAnalyzerCodeFixProvider>;
 using VerifyInterfaceCS = Stekeblad.Optimizely.Analyzers.Test.CSharpAnalyzerVerifier<
-    Stekeblad.Optimizely.Analyzers.Analyzers.InitializableModules.InitializableModuleMissingInterfaceAnalyzer>;
+	Stekeblad.Optimizely.Analyzers.Analyzers.InitializableModules.InitializableModuleMissingInterfaceAnalyzer>;
 
 namespace Stekeblad.Optimizely.Analyzers.Test.Tests.InitializableModules
 {
-    [TestClass]
-    public class InitializableModuleTest
-    {
-        [TestMethod]
-        public async Task InitializableAttributeNoInterface_Match()
-        {
-            const string test = @"
+	[TestClass]
+	public class InitializableModuleTest : MyTestClassBase
+	{
+		[TestMethod]
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task InitializableAttributeNoInterface_Match(ReferenceAssemblies assemblies)
+		{
+			const string test = @"
 				using EPiServer.Framework;
 				using EPiServer.Framework.Initialization;
 
@@ -30,16 +31,17 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.InitializableModules
 					}
 				}";
 
-            var expected = VerifyInterfaceCS.Diagnostic(InitializableModuleMissingInterfaceAnalyzer.DiagnosticId)
-                .WithLocation(0)
-                .WithArguments("TestModule", "InitializableModuleAttribute");
-            await VerifyInterfaceCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected);
-        }
+			var expected = VerifyInterfaceCS.Diagnostic(InitializableModuleMissingInterfaceAnalyzer.DiagnosticId)
+				.WithLocation(0)
+				.WithArguments("TestModule", "InitializableModuleAttribute");
+			await VerifyInterfaceCS.VerifyAnalyzerAsync(test, assemblies, expected);
+		}
 
-        [TestMethod]
-        public async Task DependencyAttributeNoInterface_Match()
-        {
-            const string test = @"
+		[TestMethod]
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task DependencyAttributeNoInterface_Match(ReferenceAssemblies assemblies)
+		{
+			const string test = @"
 				using EPiServer.Framework;
 				using EPiServer.Framework.Initialization;
 				using EPiServer.ServiceLocation;
@@ -55,16 +57,17 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.InitializableModules
 					}
 				}";
 
-            var expected = VerifyInterfaceCS.Diagnostic(InitializableModuleMissingInterfaceAnalyzer.DiagnosticId)
-                .WithLocation(0)
-                .WithArguments("TestModule", "ModuleDependencyAttribute");
-            await VerifyInterfaceCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected);
-        }
+			var expected = VerifyInterfaceCS.Diagnostic(InitializableModuleMissingInterfaceAnalyzer.DiagnosticId)
+				.WithLocation(0)
+				.WithArguments("TestModule", "ModuleDependencyAttribute");
+			await VerifyInterfaceCS.VerifyAnalyzerAsync(test, assemblies, expected);
+		}
 
-        [TestMethod]
-        public async Task IInitInterfaceInitModuleAttr_NoMatch()
-        {
-            const string test = @"
+		[TestMethod]
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task IInitInterfaceInitModuleAttr_NoMatch(ReferenceAssemblies assemblies)
+		{
+			const string test = @"
 				using EPiServer.Framework;
 				using EPiServer.Framework.Initialization;
 
@@ -78,13 +81,14 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.InitializableModules
 					}
 				}";
 
-            await VerifyAttributeCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
-        }
+			await VerifyAttributeCS.VerifyAnalyzerAsync(test, assemblies);
+		}
 
-        [TestMethod]
-        public async Task IConfigurableInterfaceInitModuleAttr_NoMatch()
-        {
-            const string test = @"
+		[TestMethod]
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task IConfigurableInterfaceInitModuleAttr_NoMatch(ReferenceAssemblies assemblies)
+		{
+			const string test = @"
 				using EPiServer.Framework;
 				using EPiServer.Framework.Initialization;
 				using EPiServer.ServiceLocation;
@@ -100,13 +104,14 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.InitializableModules
 					}
 				}";
 
-            await VerifyAttributeCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
-        }
+			await VerifyAttributeCS.VerifyAnalyzerAsync(test, assemblies);
+		}
 
-        [TestMethod]
-        public async Task IInitInterfaceModuleDependAttr_NoMatch()
-        {
-            const string test = @"
+		[TestMethod]
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task IInitInterfaceModuleDependAttr_NoMatch(ReferenceAssemblies assemblies)
+		{
+			const string test = @"
 				using EPiServer.Framework;
 				using EPiServer.Framework.Initialization;
 				using EPiServer.ServiceLocation;
@@ -121,13 +126,14 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.InitializableModules
 					}
 				}";
 
-            await VerifyAttributeCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
-        }
+			await VerifyAttributeCS.VerifyAnalyzerAsync(test, assemblies);
+		}
 
-        [TestMethod]
-        public async Task IConfigurableInterfaceModuleDependAttr_NoMatch()
-        {
-            const string test = @"
+		[TestMethod]
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task IConfigurableInterfaceModuleDependAttr_NoMatch(ReferenceAssemblies assemblies)
+		{
+			const string test = @"
 				using EPiServer.Framework;
 				using EPiServer.Framework.Initialization;
 				using EPiServer.ServiceLocation;
@@ -143,13 +149,14 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.InitializableModules
 					}
 				}";
 
-            await VerifyAttributeCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
-        }
+			await VerifyAttributeCS.VerifyAnalyzerAsync(test, assemblies);
+		}
 
-        [TestMethod]
-        public async Task IInitInterfaceAbstract_NoMatch()
-        {
-            const string test = @"
+		[TestMethod]
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task IInitInterfaceAbstract_NoMatch(ReferenceAssemblies assemblies)
+		{
+			const string test = @"
 				using EPiServer.Framework;
 				using EPiServer.Framework.Initialization;
 				using EPiServer.ServiceLocation;
@@ -164,13 +171,14 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.InitializableModules
 					}
 				}";
 
-            await VerifyAttributeCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
-        }
+			await VerifyAttributeCS.VerifyAnalyzerAsync(test, assemblies);
+		}
 
-        [TestMethod]
-        public async Task IConfigurableInterfaceNoAttr_Match()
-        {
-            const string test = @"
+		[TestMethod]
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task IConfigurableInterfaceNoAttr_Match(ReferenceAssemblies assemblies)
+		{
+			const string test = @"
 				using EPiServer.Framework;
 				using EPiServer.Framework.Initialization;
 				using EPiServer.ServiceLocation;
@@ -185,16 +193,17 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.InitializableModules
 					}
 				}";
 
-            var expected = VerifyAttributeCS.Diagnostic(InitializableModuleMissingAttributeAnalyzer.DiagnosticId)
-                .WithLocation(0)
-                .WithArguments("TestModule");
-            await VerifyAttributeCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected);
-        }
+			var expected = VerifyAttributeCS.Diagnostic(InitializableModuleMissingAttributeAnalyzer.DiagnosticId)
+				.WithLocation(0)
+				.WithArguments("TestModule");
+			await VerifyAttributeCS.VerifyAnalyzerAsync(test, assemblies, expected);
+		}
 
-        [TestMethod]
-        public async Task IInitInterfaceNoAttr_Match()
-        {
-            const string test = @"
+		[TestMethod]
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task IInitInterfaceNoAttr_Match(ReferenceAssemblies assemblies)
+		{
+			const string test = @"
 				using EPiServer.Framework;
 				using EPiServer.Framework.Initialization;
 
@@ -207,16 +216,17 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.InitializableModules
 					}
 				}";
 
-            var expected = VerifyAttributeCS.Diagnostic(InitializableModuleMissingAttributeAnalyzer.DiagnosticId)
-                .WithLocation(0)
-                .WithArguments("TestModule");
-            await VerifyAttributeCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected);
-        }
+			var expected = VerifyAttributeCS.Diagnostic(InitializableModuleMissingAttributeAnalyzer.DiagnosticId)
+				.WithLocation(0)
+				.WithArguments("TestModule");
+			await VerifyAttributeCS.VerifyAnalyzerAsync(test, assemblies, expected);
+		}
 
-        [TestMethod]
-        public async Task ModuleDependency_EmptyDependencyList_NoMatch()
-        {
-            const string test = @"
+		[TestMethod]
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task ModuleDependency_EmptyDependencyList_NoMatch(ReferenceAssemblies assemblies)
+		{
+			const string test = @"
 				using EPiServer.Framework;
 				using EPiServer.Framework.Initialization;
 				using EPiServer.ServiceLocation;
@@ -231,13 +241,14 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.InitializableModules
 					}
 				}";
 
-            await VerifyAttributeCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
-        }
+			await VerifyAttributeCS.VerifyAnalyzerAsync(test, assemblies);
+		}
 
-        [TestMethod]
-        public async Task ModuleDependency_MultipleDependencies_NoMatch()
-        {
-            const string test = @"
+		[TestMethod]
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task ModuleDependency_MultipleDependencies_NoMatch(ReferenceAssemblies assemblies)
+		{
+			const string test = @"
 				using EPiServer.Framework;
 				using EPiServer.Framework.Initialization;
 				using EPiServer.ServiceLocation;
@@ -252,13 +263,14 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.InitializableModules
 					}
 				}";
 
-            await VerifyAttributeCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11);
-        }
+			await VerifyAttributeCS.VerifyAnalyzerAsync(test, assemblies);
+		}
 
-        [TestMethod]
-        public async Task ModuleDependency_SingleBadDependency_Match()
-        {
-            const string test = @"
+		[TestMethod]
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task ModuleDependency_SingleBadDependency_Match(ReferenceAssemblies assemblies)
+		{
+			const string test = @"
 				using EPiServer.Framework;
 				using EPiServer.Framework.Initialization;
 				using EPiServer.ServiceLocation;
@@ -274,16 +286,17 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.InitializableModules
 					}
 				}";
 
-            var expected = VerifyAttributeCS.Diagnostic(InitializableModuleMissingAttributeAnalyzer.BadTypeDiagnosticId)
-                .WithLocation(0)
-                .WithArguments("TestModule", "SelectOneAttribute");
-            await VerifyAttributeCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected);
-        }
+			var expected = VerifyAttributeCS.Diagnostic(InitializableModuleMissingAttributeAnalyzer.BadTypeDiagnosticId)
+				.WithLocation(0)
+				.WithArguments("TestModule", "SelectOneAttribute");
+			await VerifyAttributeCS.VerifyAnalyzerAsync(test, assemblies, expected);
+		}
 
-        [TestMethod]
-        public async Task ModuleDependency_TwoDependencyAttributesOneBeingBad_Match()
-        {
-            const string test = @"
+		[TestMethod]
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task ModuleDependency_TwoDependencyAttributesOneBeingBad_Match(ReferenceAssemblies assemblies)
+		{
+			const string test = @"
 				using EPiServer.Framework;
 				using EPiServer.Framework.Initialization;
 				using EPiServer.ServiceLocation;
@@ -300,16 +313,17 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.InitializableModules
 					}
 				}";
 
-            var expected = VerifyAttributeCS.Diagnostic(InitializableModuleMissingAttributeAnalyzer.BadTypeDiagnosticId)
-                .WithLocation(0)
-                .WithArguments("TestModule", "SelectOneAttribute");
-            await VerifyAttributeCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected);
-        }
+			var expected = VerifyAttributeCS.Diagnostic(InitializableModuleMissingAttributeAnalyzer.BadTypeDiagnosticId)
+				.WithLocation(0)
+				.WithArguments("TestModule", "SelectOneAttribute");
+			await VerifyAttributeCS.VerifyAnalyzerAsync(test, assemblies, expected);
+		}
 
-        [TestMethod]
-        public async Task ModuleDependency_DependencyListContainsBadDependency_Match()
-        {
-            const string test = @"
+		[TestMethod]
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task ModuleDependency_DependencyListContainsBadDependency_Match(ReferenceAssemblies assemblies)
+		{
+			const string test = @"
 				using EPiServer.Framework;
 				using EPiServer.Framework.Initialization;
 				using EPiServer.ServiceLocation;
@@ -325,14 +339,15 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.InitializableModules
 					}
 				}";
 
-            var expected = VerifyAttributeCS.Diagnostic(InitializableModuleMissingAttributeAnalyzer.BadTypeDiagnosticId)
-                .WithLocation(0)
-                .WithArguments("TestModule", "SelectOneAttribute");
-            await VerifyAttributeCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected);
-        }
+			var expected = VerifyAttributeCS.Diagnostic(InitializableModuleMissingAttributeAnalyzer.BadTypeDiagnosticId)
+				.WithLocation(0)
+				.WithArguments("TestModule", "SelectOneAttribute");
+			await VerifyAttributeCS.VerifyAnalyzerAsync(test, assemblies, expected);
+		}
 
 		[TestMethod]
-		public async Task AttributeOnAbstract_Match()
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task AttributeOnAbstract_Match(ReferenceAssemblies assemblies)
 		{
 			const string test = @"
 				using EPiServer.Framework;
@@ -353,11 +368,12 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.InitializableModules
 			var expected = VerifyAttributeCS.Diagnostic(InitializableModuleMissingAttributeAnalyzer.AttributeOnAbstractDiagnosticId)
 				.WithLocation(0)
 				.WithArguments("TestModule");
-			await VerifyAttributeCS.VerifyAnalyzerAsync(test, PackageCollections.Core_11, expected);
+			await VerifyAttributeCS.VerifyAnalyzerAsync(test, assemblies, expected);
 		}
 
 		[TestMethod]
-		public async Task FixTest_AddAttribute_InitModule()
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task FixTest_AddAttribute_InitModule(ReferenceAssemblies assemblies)
 		{
 			const string test = @"
 using EPiServer.Framework;
@@ -389,11 +405,12 @@ namespace tests
 			var expected = VerifyAttributeCS.Diagnostic(InitializableModuleMissingAttributeAnalyzer.DiagnosticId)
 				.WithLocation(0)
 				.WithArguments("TestModule");
-			await VerifyAttributeCS.VerifyCodeFixAsync(test, PackageCollections.Core_11, expected, fixTest, expected.Id + "a");
+			await VerifyAttributeCS.VerifyCodeFixAsync(test, assemblies, expected, fixTest, expected.Id + "a");
 		}
 
 		[TestMethod]
-		public async Task FixTest_AddAttribute_ModuleDependency()
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task FixTest_AddAttribute_ModuleDependency(ReferenceAssemblies assemblies)
 		{
 			const string test = @"
 using EPiServer.Framework;
@@ -425,7 +442,7 @@ namespace tests
 			var expected = VerifyAttributeCS.Diagnostic(InitializableModuleMissingAttributeAnalyzer.DiagnosticId)
 				.WithLocation(0)
 				.WithArguments("TestModule");
-			await VerifyAttributeCS.VerifyCodeFixAsync(test, PackageCollections.Core_11, expected, fixTest, expected.Id + "b");
+			await VerifyAttributeCS.VerifyCodeFixAsync(test, assemblies, expected, fixTest, expected.Id + "b");
 		}
 	}
 }

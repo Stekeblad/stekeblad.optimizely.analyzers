@@ -1,19 +1,20 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.CodeAnalysis.Testing;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Stekeblad.Optimizely.Analyzers.Analyzers.Content;
-using Stekeblad.Optimizely.Analyzers.Test.Util;
 using System.Threading.Tasks;
 using VerifyCS = Stekeblad.Optimizely.Analyzers.Test.CSharpAnalyzerVerifier<
-    Stekeblad.Optimizely.Analyzers.Analyzers.Content.MediaDescriptorAttributeAnalyzer>;
+	Stekeblad.Optimizely.Analyzers.Analyzers.Content.MediaDescriptorAttributeAnalyzer>;
 
 namespace Stekeblad.Optimizely.Analyzers.Test.Tests.Content
 {
-    [TestClass]
-    public class MediaDescriptorAttributeTest
-    {
-        [TestMethod]
-        public async Task NormalPageTypeDeclaration_NoMatch()
-        {
-            const string test = @"
+	[TestClass]
+	public class MediaDescriptorAttributeTest : MyTestClassBase
+	{
+		[TestMethod]
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task NormalPageTypeDeclaration_NoMatch(ReferenceAssemblies assemblies)
+		{
+			const string test = @"
                 using EPiServer.DataAnnotations;
 
                 namespace tests
@@ -22,13 +23,14 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.Content
                     public class ArticlePage : EPiServer.Core.PageData {}
                 }";
 
-            await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_12);
-        }
+			await VerifyCS.VerifyAnalyzerAsync(test, assemblies);
+		}
 
-        [TestMethod]
-        public async Task PageTypeDeclarationWithMediaDescriptor_Match()
-        {
-            const string test = @"
+		[TestMethod]
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task PageTypeDeclarationWithMediaDescriptor_Match(ReferenceAssemblies assemblies)
+		{
+			const string test = @"
                 using EPiServer.DataAnnotations;
                 using EPiServer.Framework.DataAnnotations;
 
@@ -39,16 +41,17 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.Content
                     public class ArticlePage : EPiServer.Core.PageData {}
                 }";
 
-            var expected = VerifyCS.Diagnostic(MediaDescriptorAttributeAnalyzer.MediaDescriptorNotExpectedDiagnosticId)
-                .WithLocation(0);
+			var expected = VerifyCS.Diagnostic(MediaDescriptorAttributeAnalyzer.MediaDescriptorNotExpectedDiagnosticId)
+				.WithLocation(0);
 
-            await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_12, expected);
-        }
+			await VerifyCS.VerifyAnalyzerAsync(test, assemblies, expected);
+		}
 
-        [TestMethod]
-        public async Task NormalTypeDeclarationWithMediaDescriptor_Match()
-        {
-            const string test = @"
+		[TestMethod]
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task NormalTypeDeclarationWithMediaDescriptor_Match(ReferenceAssemblies assemblies)
+		{
+			const string test = @"
                 using EPiServer.DataAnnotations;
                 using EPiServer.Framework.DataAnnotations;
 
@@ -58,16 +61,17 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.Content
                     public class FileMetaModel {}
                 }";
 
-            var expected = VerifyCS.Diagnostic(MediaDescriptorAttributeAnalyzer.MediaDescriptorNotExpectedDiagnosticId)
-                .WithLocation(0);
+			var expected = VerifyCS.Diagnostic(MediaDescriptorAttributeAnalyzer.MediaDescriptorNotExpectedDiagnosticId)
+				.WithLocation(0);
 
-            await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_12, expected);
-        }
+			await VerifyCS.VerifyAnalyzerAsync(test, assemblies, expected);
+		}
 
-        [TestMethod]
-        public async Task GoodMediaTypeWithUnknownExtensions_NoMatch()
-        {
-            const string test = @"
+		[TestMethod]
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task GoodMediaTypeWithUnknownExtensions_NoMatch(ReferenceAssemblies assemblies)
+		{
+			const string test = @"
             using EPiServer.DataAnnotations;
             using EPiServer.Framework.DataAnnotations;
 
@@ -78,13 +82,14 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.Content
                 public class OneTwoThreeFile : EPiServer.Core.MediaData {}
            }";
 
-            await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_12);
-        }
+			await VerifyCS.VerifyAnalyzerAsync(test, assemblies);
+		}
 
-        [TestMethod]
-        public async Task MissingMediaDescriptorAttribute_Match()
-        {
-            const string test = @"
+		[TestMethod]
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task MissingMediaDescriptorAttribute_Match(ReferenceAssemblies assemblies)
+		{
+			const string test = @"
                 using EPiServer.DataAnnotations;
                 using EPiServer.Framework.DataAnnotations;
 
@@ -94,17 +99,18 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.Content
                     public class {|#0:GenericFile|} : EPiServer.Core.MediaData {}
                 }";
 
-            var expected = VerifyCS.Diagnostic(MediaDescriptorAttributeAnalyzer.UseMediaDescriptorDiagnosticId)
-                .WithLocation(0)
-                .WithArguments("GenericFile");
+			var expected = VerifyCS.Diagnostic(MediaDescriptorAttributeAnalyzer.UseMediaDescriptorDiagnosticId)
+				.WithLocation(0)
+				.WithArguments("GenericFile");
 
-            await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_12, expected);
-        }
+			await VerifyCS.VerifyAnalyzerAsync(test, assemblies, expected);
+		}
 
-        [TestMethod]
-        public async Task GoodFileTypeCombos_NoMatch()
-        {
-            const string test = @"
+		[TestMethod]
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task GoodFileTypeCombos_NoMatch(ReferenceAssemblies assemblies)
+		{
+			const string test = @"
                 using EPiServer.DataAnnotations;
                 using EPiServer.Framework.DataAnnotations;
 
@@ -123,13 +129,14 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.Content
                     public class Mp4File : EPiServer.Core.VideoData {}
                 }";
 
-            await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_12);
-        }
+			await VerifyCS.VerifyAnalyzerAsync(test, assemblies);
+		}
 
-        [TestMethod]
-        public async Task BadFileTypeCombos_Match()
-        {
-            const string test = @"
+		[TestMethod]
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task BadFileTypeCombos_Match(ReferenceAssemblies assemblies)
+		{
+			const string test = @"
                 using EPiServer.DataAnnotations;
                 using EPiServer.Framework.DataAnnotations;
 
@@ -148,38 +155,39 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.Content
                     public class VideoFile : EPiServer.Core.VideoData {}
                 }";
 
-            var expected0 = VerifyCS.Diagnostic(MediaDescriptorAttributeAnalyzer.UnexpectedMediaBaseTypeDiagnosticId)
-                .WithLocation(0)
-                .WithArguments("JPEG", "inheriting from ImageData");
+			var expected0 = VerifyCS.Diagnostic(MediaDescriptorAttributeAnalyzer.UnexpectedMediaBaseTypeDiagnosticId)
+				.WithLocation(0)
+				.WithArguments("JPEG", "inheriting from ImageData");
 
-            var expected1 = VerifyCS.Diagnostic(MediaDescriptorAttributeAnalyzer.UnexpectedMediaBaseTypeDiagnosticId)
-                .WithLocation(1)
-                .WithArguments("MOV", "inheriting from VideoData");
+			var expected1 = VerifyCS.Diagnostic(MediaDescriptorAttributeAnalyzer.UnexpectedMediaBaseTypeDiagnosticId)
+				.WithLocation(1)
+				.WithArguments("MOV", "inheriting from VideoData");
 
-            var expected2 = VerifyCS.Diagnostic(MediaDescriptorAttributeAnalyzer.UnexpectedMediaBaseTypeDiagnosticId)
-                .WithLocation(2)
-                .WithArguments("DOC", "not inheriting from ImageData");
+			var expected2 = VerifyCS.Diagnostic(MediaDescriptorAttributeAnalyzer.UnexpectedMediaBaseTypeDiagnosticId)
+				.WithLocation(2)
+				.WithArguments("DOC", "not inheriting from ImageData");
 
-            var expected3 = VerifyCS.Diagnostic(MediaDescriptorAttributeAnalyzer.UnexpectedMediaBaseTypeDiagnosticId)
-                .WithLocation(3)
-                .WithArguments("MKV", "inheriting from VideoData");
+			var expected3 = VerifyCS.Diagnostic(MediaDescriptorAttributeAnalyzer.UnexpectedMediaBaseTypeDiagnosticId)
+				.WithLocation(3)
+				.WithArguments("MKV", "inheriting from VideoData");
 
-            var expected4 = VerifyCS.Diagnostic(MediaDescriptorAttributeAnalyzer.UnexpectedMediaBaseTypeDiagnosticId)
-                .WithLocation(4)
-                .WithArguments("ZIP", "not inheriting from VideoData");
+			var expected4 = VerifyCS.Diagnostic(MediaDescriptorAttributeAnalyzer.UnexpectedMediaBaseTypeDiagnosticId)
+				.WithLocation(4)
+				.WithArguments("ZIP", "not inheriting from VideoData");
 
-            var expected5 = VerifyCS.Diagnostic(MediaDescriptorAttributeAnalyzer.UnexpectedMediaBaseTypeDiagnosticId)
-                .WithLocation(5)
-                .WithArguments("GIF", "inheriting from ImageData");
+			var expected5 = VerifyCS.Diagnostic(MediaDescriptorAttributeAnalyzer.UnexpectedMediaBaseTypeDiagnosticId)
+				.WithLocation(5)
+				.WithArguments("GIF", "inheriting from ImageData");
 
-            await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_12,
-                expected0, expected1, expected2, expected3, expected4, expected5);
-        }
+			await VerifyCS.VerifyAnalyzerAsync(test, assemblies,
+				expected0, expected1, expected2, expected3, expected4, expected5);
+		}
 
-        [TestMethod]
-        public async Task ExtensionReusedOnSameType_NoMatch()
-        {
-            const string test = @"
+		[TestMethod]
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task ExtensionReusedOnSameType_NoMatch(ReferenceAssemblies assemblies)
+		{
+			const string test = @"
                 using EPiServer.DataAnnotations;
                 using EPiServer.Framework.DataAnnotations;
 
@@ -195,13 +203,14 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.Content
                     public class ReusedOverMultipleAttributesFile : EPiServer.Core.ImageData {}
                 }";
 
-            await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_12);
-        }
+			await VerifyCS.VerifyAnalyzerAsync(test, assemblies);
+		}
 
-        [TestMethod]
-        public async Task ExtensionReusedOnMultipleTypes_Match()
-        {
-            const string test = @"
+		[TestMethod]
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task ExtensionReusedOnMultipleTypes_Match(ReferenceAssemblies assemblies)
+		{
+			const string test = @"
                 using EPiServer.DataAnnotations;
                 using EPiServer.Framework.DataAnnotations;
 
@@ -216,21 +225,22 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.Content
                     public class OfficeFile : EPiServer.Core.MediaData {}
                 }";
 
-            var expected0 = VerifyCS.Diagnostic(MediaDescriptorAttributeAnalyzer.ExtensionReusedDiagnosticId)
-                .WithLocation(0)
-                .WithArguments("DOCX", "GenericFile, OfficeFile");
+			var expected0 = VerifyCS.Diagnostic(MediaDescriptorAttributeAnalyzer.ExtensionReusedDiagnosticId)
+				.WithLocation(0)
+				.WithArguments("DOCX", "GenericFile, OfficeFile");
 
-            var expected1 = VerifyCS.Diagnostic(MediaDescriptorAttributeAnalyzer.ExtensionReusedDiagnosticId)
-                .WithLocation(1)
-                .WithArguments("DOCX", "GenericFile, OfficeFile");
+			var expected1 = VerifyCS.Diagnostic(MediaDescriptorAttributeAnalyzer.ExtensionReusedDiagnosticId)
+				.WithLocation(1)
+				.WithArguments("DOCX", "GenericFile, OfficeFile");
 
-            await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_12, expected0, expected1);
-        }
+			await VerifyCS.VerifyAnalyzerAsync(test, assemblies, expected0, expected1);
+		}
 
-        [TestMethod]
-        public async Task AbstractMediaTypeWithoutAttribute_NoMatch()
-        {
-            const string test = @"
+		[TestMethod]
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task AbstractMediaTypeWithoutAttribute_NoMatch(ReferenceAssemblies assemblies)
+		{
+			const string test = @"
                 using EPiServer.DataAnnotations;
                 using EPiServer.Framework.DataAnnotations;
 
@@ -240,13 +250,14 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.Content
                     public abstract class GenericFile : EPiServer.Core.MediaData {}
                 }";
 
-            await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_12);
-        }
+			await VerifyCS.VerifyAnalyzerAsync(test, assemblies);
+		}
 
-        [TestMethod]
-        public async Task DontForgetExtensionsStringArrayParameter_Match()
-        {
-            const string test = @"
+		[TestMethod]
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task DontForgetExtensionsStringArrayParameter_Match(ReferenceAssemblies assemblies)
+		{
+			const string test = @"
                 using EPiServer.DataAnnotations;
                 using EPiServer.Framework.DataAnnotations;
 
@@ -265,26 +276,27 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.Content
                     public class VideoFile : EPiServer.Core.VideoData {}
                 }";
 
-            var expected0 = VerifyCS.Diagnostic(MediaDescriptorAttributeAnalyzer.ExtensionReusedDiagnosticId)
-                .WithLocation(0)
-                .WithArguments("ABC", "AbcFile, VideoFile");
+			var expected0 = VerifyCS.Diagnostic(MediaDescriptorAttributeAnalyzer.ExtensionReusedDiagnosticId)
+				.WithLocation(0)
+				.WithArguments("ABC", "AbcFile, VideoFile");
 
-            var expected1 = VerifyCS.Diagnostic(MediaDescriptorAttributeAnalyzer.ExtensionReusedDiagnosticId)
-                .WithLocation(1)
-                .WithArguments("ABC", "AbcFile, VideoFile");
+			var expected1 = VerifyCS.Diagnostic(MediaDescriptorAttributeAnalyzer.ExtensionReusedDiagnosticId)
+				.WithLocation(1)
+				.WithArguments("ABC", "AbcFile, VideoFile");
 
-            var expected2 = VerifyCS.Diagnostic(MediaDescriptorAttributeAnalyzer.UnexpectedMediaBaseTypeDiagnosticId)
-                .WithLocation(2)
-                .WithArguments("JPG", "inheriting from ImageData");
+			var expected2 = VerifyCS.Diagnostic(MediaDescriptorAttributeAnalyzer.UnexpectedMediaBaseTypeDiagnosticId)
+				.WithLocation(2)
+				.WithArguments("JPG", "inheriting from ImageData");
 
-            await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_12,
-                expected0, expected1, expected2);
-        }
+			await VerifyCS.VerifyAnalyzerAsync(test, assemblies,
+				expected0, expected1, expected2);
+		}
 
-        [TestMethod]
-        public async Task NoParametersOnMediaDescriptorAttribute_Match()
-        {
-            const string test = @"
+		[TestMethod]
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task NoParametersOnMediaDescriptorAttribute_Match(ReferenceAssemblies assemblies)
+		{
+			const string test = @"
                 using EPiServer.DataAnnotations;
                 using EPiServer.Framework.DataAnnotations;
 
@@ -299,13 +311,13 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.Content
                     public class BFile : EPiServer.Core.MediaData {}
                 }";
 
-            var expected0 = VerifyCS.Diagnostic(MediaDescriptorAttributeAnalyzer.MissingMediaDescriptorArgumentsDiagnosticId)
-                .WithLocation(0);
+			var expected0 = VerifyCS.Diagnostic(MediaDescriptorAttributeAnalyzer.MissingMediaDescriptorArgumentsDiagnosticId)
+				.WithLocation(0);
 
-            var expected1 = VerifyCS.Diagnostic(MediaDescriptorAttributeAnalyzer.MissingMediaDescriptorArgumentsDiagnosticId)
-                .WithLocation(1);
+			var expected1 = VerifyCS.Diagnostic(MediaDescriptorAttributeAnalyzer.MissingMediaDescriptorArgumentsDiagnosticId)
+				.WithLocation(1);
 
-            await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_12, expected0, expected1);
-        }
-    }
+			await VerifyCS.VerifyAnalyzerAsync(test, assemblies, expected0, expected1);
+		}
+	}
 }

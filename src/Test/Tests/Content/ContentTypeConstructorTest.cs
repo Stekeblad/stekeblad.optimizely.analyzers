@@ -1,6 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.CodeAnalysis.Testing;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Stekeblad.Optimizely.Analyzers.Analyzers.Content;
-using Stekeblad.Optimizely.Analyzers.Test.Util;
 using System.Threading.Tasks;
 using VerifyCS = Stekeblad.Optimizely.Analyzers.Test.CSharpCodeFixVerifier<
 	Stekeblad.Optimizely.Analyzers.Analyzers.Content.ContentTypeConstructorAnalyzer,
@@ -9,10 +9,11 @@ using VerifyCS = Stekeblad.Optimizely.Analyzers.Test.CSharpCodeFixVerifier<
 namespace Stekeblad.Optimizely.Analyzers.Test.Tests.Content
 {
 	[TestClass]
-	public class ContentTypeConstructorTest
+	public class ContentTypeConstructorTest : MyTestClassBase
 	{
 		[TestMethod]
-		public async Task EmptyConstructor_NoMatch()
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task EmptyConstructor_NoMatch(ReferenceAssemblies assemblies)
 		{
 			const string test =
 				@"using EPiServer.Core;
@@ -26,11 +27,12 @@ namespace test
     }
 }";
 
-			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_12);
+			await VerifyCS.VerifyAnalyzerAsync(test, assemblies);
 		}
 
 		[TestMethod]
-		public async Task ConstructorWithDI_Match()
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task ConstructorWithDI_Match(ReferenceAssemblies assemblies)
 		{
 			const string test =
 				@"using EPiServer.Core;
@@ -50,11 +52,12 @@ namespace test
 			var expected = VerifyCS.Diagnostic(ContentTypeConstructorAnalyzer.ConstructorParametersDiagnosticID)
 				.WithLocation(0);
 
-			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_12, expected);
+			await VerifyCS.VerifyAnalyzerAsync(test, assemblies, expected);
 		}
 
 		[TestMethod]
-		public async Task ConstructorSettingDefaultValues_Match()
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task ConstructorSettingDefaultValues_Match(ReferenceAssemblies assemblies)
 		{
 			const string test =
 				@"using EPiServer.Core;
@@ -81,11 +84,12 @@ namespace test
 			var expected = VerifyCS.Diagnostic(ContentTypeConstructorAnalyzer.ConstructorInitializationDiagnosticID)
 				.WithLocation(0);
 
-			await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_12, expected);
+			await VerifyCS.VerifyAnalyzerAsync(test, assemblies, expected);
 		}
 
 		[TestMethod]
-		public async Task ConstructorSettingDefaultValues_FixTest()
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task ConstructorSettingDefaultValues_FixTest(ReferenceAssemblies assemblies)
 		{
 			const string test =
 				@"using EPiServer.Core;
@@ -142,9 +146,7 @@ namespace test
 			var expected = VerifyCS.Diagnostic(ContentTypeConstructorAnalyzer.ConstructorInitializationDiagnosticID)
 				.WithLocation(0);
 
-			await VerifyCS.VerifyCodeFixAsync(test, PackageCollections.Core_10, expected, fixTest);
-			await VerifyCS.VerifyCodeFixAsync(test, PackageCollections.Core_11, expected, fixTest);
-			await VerifyCS.VerifyCodeFixAsync(test, PackageCollections.Core_12, expected, fixTest);
+			await VerifyCS.VerifyCodeFixAsync(test, assemblies, expected, fixTest);
 		}
 	}
 }

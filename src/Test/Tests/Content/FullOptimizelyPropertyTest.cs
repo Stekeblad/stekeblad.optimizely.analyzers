@@ -1,20 +1,21 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.CodeAnalysis.Testing;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Stekeblad.Optimizely.Analyzers.Analyzers.Content;
-using Stekeblad.Optimizely.Analyzers.Test.Util;
 using System.Threading.Tasks;
 using VerifyCS = Stekeblad.Optimizely.Analyzers.Test.CSharpCodeFixVerifier<
-    Stekeblad.Optimizely.Analyzers.Analyzers.Content.FullOptimizelyPropertyAnalyzer,
-    Stekeblad.Optimizely.Analyzers.CodeFixes.Content.FullOptimizelyPropertyCodeFixProvider>;
+	Stekeblad.Optimizely.Analyzers.Analyzers.Content.FullOptimizelyPropertyAnalyzer,
+	Stekeblad.Optimizely.Analyzers.CodeFixes.Content.FullOptimizelyPropertyCodeFixProvider>;
 
 namespace Stekeblad.Optimizely.Analyzers.Test.Tests.Content
 {
-    [TestClass]
-    public class FullOptimizelyPropertyTest
-    {
-        [TestMethod]
-        public async Task NoOptiProperties_NoMatch()
-        {
-            const string test = @"
+	[TestClass]
+	public class FullOptimizelyPropertyTest : MyTestClassBase
+	{
+		[TestMethod]
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task NoOptiProperties_NoMatch(ReferenceAssemblies assemblies)
+		{
+			const string test = @"
 				namespace Tests
 				{
 					public class Test
@@ -35,13 +36,14 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.Content
 					}
 				}";
 
-            await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_12);
-        }
+			await VerifyCS.VerifyAnalyzerAsync(test, assemblies);
+		}
 
-        [TestMethod]
-        public async Task OptiPropertyWithLambdaGetterAndSetter_NoMatch()
-        {
-            const string test = @"
+		[TestMethod]
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task OptiPropertyWithLambdaGetterAndSetter_NoMatch(ReferenceAssemblies assemblies)
+		{
+			const string test = @"
 				namespace tests
 				{
 					public class ArticlePage : EPiServer.Core.PageData
@@ -54,13 +56,14 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.Content
 					}
 				}";
 
-            await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_12);
-        }
+			await VerifyCS.VerifyAnalyzerAsync(test, assemblies);
+		}
 
-        [TestMethod]
-        public async Task OptiPropertyWithBodyGetterAndSetter_NoMatch()
-        {
-            const string test = @"
+		[TestMethod]
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task OptiPropertyWithBodyGetterAndSetter_NoMatch(ReferenceAssemblies assemblies)
+		{
+			const string test = @"
 				namespace tests
 				{
 					public class ArticlePage : EPiServer.Core.PageData
@@ -79,13 +82,14 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.Content
 					}
 				}";
 
-            await VerifyCS.VerifyAnalyzerAsync(test, PackageCollections.Core_12);
-        }
+			await VerifyCS.VerifyAnalyzerAsync(test, assemblies);
+		}
 
-        [TestMethod]
-        public async Task OptiPropertyWithBodyGetterAndSetterBody_Match()
-        {
-            const string test = @"
+		[TestMethod]
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task OptiPropertyWithBodyGetterAndSetterBody_Match(ReferenceAssemblies assemblies)
+		{
+			const string test = @"
 using EPiServer.Core;
 
 namespace tests
@@ -96,7 +100,7 @@ namespace tests
     }
 }";
 
-            const string fixTest = @"
+			const string fixTest = @"
 using EPiServer.Core;
 
 namespace tests
@@ -119,10 +123,10 @@ namespace tests
     }
 }";
 
-            var expected = VerifyCS.Diagnostic(FullOptimizelyPropertyAnalyzer.FullOptimizelyPropertyDiagnosticId)
-                .WithLocation(0);
+			var expected = VerifyCS.Diagnostic(FullOptimizelyPropertyAnalyzer.FullOptimizelyPropertyDiagnosticId)
+				.WithLocation(0);
 
-            await VerifyCS.VerifyCodeFixAsync(test, PackageCollections.Core_12, expected, fixTest);
-        }
-    }
+			await VerifyCS.VerifyCodeFixAsync(test, assemblies, expected, fixTest);
+		}
+	}
 }

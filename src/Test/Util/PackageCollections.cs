@@ -19,6 +19,12 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Util
 				new PackageIdentity("EPiServer.CMS.Core", "11.1.0"),
 				new PackageIdentity("EPiServer.CMS.UI.Core", "11.1.0")));
 
+		public static readonly ReferenceAssemblies Core_11_High = ReferenceAssemblies.NetFramework.Net48.Default
+			.WithNuGetConfigFilePath(GetNugetConfigPath())
+			.AddPackages(ImmutableArray.Create(
+				new PackageIdentity("EPiServer.CMS.Core", "11.21.5"),
+				new PackageIdentity("EPiServer.CMS.UI.Core", "11.37.5")));
+
 		public static readonly ReferenceAssemblies Core_12 = ReferenceAssemblies.Net.Net60
 			.WithNuGetConfigFilePath(GetNugetConfigPath())
 			.AddPackages(ImmutableArray.Create(
@@ -28,8 +34,8 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Util
 		public static readonly ReferenceAssemblies Core_12_High = ReferenceAssemblies.Net.Net80
 			.WithNuGetConfigFilePath(GetNugetConfigPath())
 			.AddPackages(ImmutableArray.Create(
-				new PackageIdentity("EPiServer.CMS.Core", "12.21.6"),
-				new PackageIdentity("EPiServer.CMS.UI.Core", "12.30.0")));
+				new PackageIdentity("EPiServer.CMS.Core", "12.23.1"),
+				new PackageIdentity("EPiServer.CMS.UI.Core", "12.34.2")));
 
 		public static readonly ReferenceAssemblies Core_13 = ReferenceAssemblies.Net.Net100
 			.WithNuGetConfigFilePath(GetNugetConfigPath())
