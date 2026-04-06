@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using System.Threading;
 using System.Threading.Tasks;
+using static Stekeblad.Optimizely.Analyzers.Test.Tests.MyTestClassBase;
 
 namespace Stekeblad.Optimizely.Analyzers.Test
 {
@@ -33,5 +34,8 @@ namespace Stekeblad.Optimizely.Analyzers.Test
 			test.ExpectedDiagnostics.AddRange(expected);
 			await test.RunAsync(CancellationToken.None);
 		}
+
+		public static async Task VerifyAnalyzerAsync(string source, OptiVersion optiVersion, params DiagnosticResult[] expected)
+			=> await VerifyAnalyzerAsync(source, RefAssembliesForVersion(optiVersion), expected);
 	}
 }

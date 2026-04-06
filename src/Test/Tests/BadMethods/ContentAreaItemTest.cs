@@ -47,9 +47,9 @@ namespace Tests
 
 			// The code should be free from errors if criteria is not met
 			if (meetsMinVersionCriteria)
-				await VerifyCS.VerifyAnalyzerAsync(test, RefAssembliesForVersion(version), expected0, expected1);
+				await VerifyCS.VerifyAnalyzerAsync(test, version, expected0, expected1);
 			else
-				await VerifyCS.VerifyAnalyzerAsync(test, RefAssembliesForVersion(version));
+				await VerifyCS.VerifyAnalyzerAsync(test, version);
 
 		}
 
@@ -80,7 +80,7 @@ namespace Tests
 			var expected = VerifyCS.Diagnostic(ContentAreaItemAnalyzer.ContentAreaItemDiagnosticId)
 				.WithLocation(0);
 
-			await VerifyCS.VerifyAnalyzerAsync(test, RefAssembliesForVersion(version), expected);
+			await VerifyCS.VerifyAnalyzerAsync(test, version, expected);
 		}
 
 		[TestMethod]

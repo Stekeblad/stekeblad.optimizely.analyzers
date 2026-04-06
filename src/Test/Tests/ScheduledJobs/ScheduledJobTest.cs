@@ -166,9 +166,9 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.ScheduledJobs
 			// PackageCollections.Core_10 uses the oldest available 10.x release, the GUID attribute was added in 10.3
 			// and that test should therefore not report an error
 			if (skipGuidTest)
-				await JobHasNoAttributeVerifier.VerifyAnalyzerAsync(test, RefAssembliesForVersion(optiVersion));
+				await JobHasNoAttributeVerifier.VerifyAnalyzerAsync(test, optiVersion);
 			else
-				await JobHasNoAttributeVerifier.VerifyAnalyzerAsync(test, RefAssembliesForVersion(optiVersion), expected);
+				await JobHasNoAttributeVerifier.VerifyAnalyzerAsync(test, optiVersion, expected);
 		}
 
 		[TestMethod]

@@ -145,9 +145,9 @@ namespace Tests
 
 			// Guid support was added during the version 11 cycle
 			if (meetsMinVersionCriteria)
-				await VerifyCS.VerifyAnalyzerAsync(test, RefAssembliesForVersion(version), expected0);
+				await VerifyCS.VerifyAnalyzerAsync(test, version, expected0);
 			else
-				await VerifyCS.VerifyAnalyzerAsync(test, RefAssembliesForVersion(version));
+				await VerifyCS.VerifyAnalyzerAsync(test, version);
 		}
 
 		[TestMethod]

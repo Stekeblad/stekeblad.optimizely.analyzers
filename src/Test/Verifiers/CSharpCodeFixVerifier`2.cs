@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using System.Threading;
 using System.Threading.Tasks;
+using static Stekeblad.Optimizely.Analyzers.Test.Tests.MyTestClassBase;
 
 namespace Stekeblad.Optimizely.Analyzers.Test
 {
@@ -37,6 +38,9 @@ namespace Stekeblad.Optimizely.Analyzers.Test
 			await test.RunAsync(CancellationToken.None);
 		}
 
+		public static async Task VerifyAnalyzerAsync(string source, OptiVersion optiVersion, params DiagnosticResult[] expected)
+			=> await VerifyAnalyzerAsync(source, RefAssembliesForVersion(optiVersion), expected);
+
 		/// <inheritdoc cref="CodeFixVerifier{TAnalyzer, TCodeFix, TTest, TVerifier}.VerifyCodeFixAsync(string, string)"/>
 		public static async Task VerifyCodeFixAsync(string source, ReferenceAssemblies projectDependencies, string fixedSource)
 			=> await VerifyCodeFixAsync(source, projectDependencies, DiagnosticResult.EmptyDiagnosticResults, fixedSource);
@@ -47,7 +51,14 @@ namespace Stekeblad.Optimizely.Analyzers.Test
 			DiagnosticResult expected,
 			string fixedSource,
 			string fixEquivalenceKey = null)
-			=> await VerifyCodeFixAsync(source, projectDependencies, new[] { expected }, fixedSource, fixEquivalenceKey);
+			=> await VerifyCodeFixAsync(source, projectDependencies, [expected], fixedSource, fixEquivalenceKey);
+
+		public static async Task VerifyCodeFixAsync(string source,
+			OptiVersion optiVersion,
+			DiagnosticResult expected,
+			string fixedSource,
+			string fixEquivalenceKey = null)
+			=> await VerifyCodeFixAsync(source, RefAssembliesForVersion(optiVersion), [expected], fixedSource, fixEquivalenceKey);
 
 		/// <inheritdoc cref="CodeFixVerifier{TAnalyzer, TCodeFix, TTest, TVerifier}.VerifyCodeFixAsync(string, DiagnosticResult[], string)"/>
 		public static async Task VerifyCodeFixAsync(string source,
@@ -60,11 +71,19 @@ namespace Stekeblad.Optimizely.Analyzers.Test
 			{
 				TestCode = source,
 				FixedCode = fixedSource,
-				ReferenceAssemblies = projectDependencies
+				ReferenceAssemblies = projectDependencies,
+				CodeActionEquivalenceKey = fixEquivalenceKey
 			};
+
 			test.ExpectedDiagnostics.AddRange(expected);
-			test.CodeActionEquivalenceKey = fixEquivalenceKey;
 			await test.RunAsync(CancellationToken.None);
 		}
+
+		public static async Task VerifyCodeFixAsync(string source,
+			OptiVersion optiVersion,
+			DiagnosticResult[] expected,
+			string fixedSource,
+			string fixEquivalenceKey = null)
+			=> await VerifyCodeFixAsync(source, RefAssembliesForVersion(optiVersion), expected, fixedSource, fixEquivalenceKey);
 	}
 }
