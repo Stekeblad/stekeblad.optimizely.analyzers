@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using VerifyCS = Stekeblad.Optimizely.Analyzers.Test.CSharpAnalyzerVerifier<
 	Stekeblad.Optimizely.Analyzers.Analyzers.BadMethods.ContentRepositoryGetDefaultAnalyzer>;
 
-namespace Stekeblad.Optimizely.Analyzers.Test.Tests.Content
+namespace Stekeblad.Optimizely.Analyzers.Test.Tests.BadMethods
 {
 	[TestClass]
 	public class ContentRepositoryGetDefaultTest : MyTestClassBase
