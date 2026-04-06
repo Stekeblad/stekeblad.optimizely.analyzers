@@ -40,8 +40,8 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Util
 		public static readonly ReferenceAssemblies Core_13 = ReferenceAssemblies.Net.Net100
 			.WithNuGetConfigFilePath(GetNugetConfigPath())
 			.AddPackages(ImmutableArray.Create(
-				new PackageIdentity("EPiServer.CMS.Core", "13.0.0-preview3"),
-				new PackageIdentity("EPiServer.CMS.UI.Core", "13.0.0-preview3")));
+				new PackageIdentity("EPiServer.CMS.Core", "13.0.0"),
+				new PackageIdentity("EPiServer.CMS.UI.Core", "13.0.0")));
 
 		private static string GetNugetConfigPath()
 		{
