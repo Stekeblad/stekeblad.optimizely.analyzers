@@ -182,3 +182,17 @@ SOA1038 | DefiningContent | Warning | [Don't register abstract ContentType](http
 SOA1039 | Scheduled jobs  | Error | [Don't register abstract ScheduledJob](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1039.md)
 SOA1040 | InitializationModules | Error | [Don't register abstract Initialization module](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1040.md)
 SOA1041 | Scheduled job | Warning | [ScheduledJob has no name](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1041.md)
+
+## Release 1.10.0
+
+### New Rules
+
+Rule ID | Category | Severity | Notes
+--------|----------|----------|-------
+SOA1042 | Defining content | Error | [The given content type cannot be instantiated](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1042.md)
+
+### Changed Rules
+
+Rule ID | New Category | New Severity | Old Category | Old Severity | Notes
+--------|--------------|--------------|--------------|--------------|-------
+SOA1005 | InitializationModules | Error | InitializationModules | Warning | [Implement either IInitializableModule or IConfigurableModule](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1005.md)

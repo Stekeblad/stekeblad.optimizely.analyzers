@@ -9,8 +9,8 @@
 
   <PropertyGroup>
     <PackageId>Stekeblad.Optimizely.Analyzers</PackageId>
-    <PackageVersion>1.9.0</PackageVersion>
-    <Version>1.9.0</Version>
+    <PackageVersion>1.10.0</PackageVersion>
+    <Version>1.10.0</Version>
     <Authors>Stekeblad</Authors>
     <PackageProjectUrl>https://github.com/Stekeblad/stekeblad.optimizely.analyzers</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Stekeblad/stekeblad.optimizely.analyzers</RepositoryUrl>
