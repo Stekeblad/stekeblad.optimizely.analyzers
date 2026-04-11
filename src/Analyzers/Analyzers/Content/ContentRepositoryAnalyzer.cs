@@ -35,12 +35,23 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.Content
 				INamedTypeSymbol contentTypeAttributeSymbol = startContext.Compilation.GetTypeByMetadataName(
 					 "EPiServer.DataAnnotations.ContentTypeAttribute");
 
-				if (iContentRepositorySymbol != null && contentTypeAttributeSymbol != null)
+				INamedTypeSymbol contentFolderSymbol = startContext.Compilation.GetTypeByMetadataName(
+					 "EPiServer.Core.ContentFolder");
+
+				INamedTypeSymbol contentAssetFolderSymbol = startContext.Compilation.GetTypeByMetadataName(
+					 "EPiServer.Core.ContentAssetFolder");
+
+				if (iContentRepositorySymbol != null
+					&& contentTypeAttributeSymbol != null
+					&& contentFolderSymbol != null
+					&& contentAssetFolderSymbol != null)
 				{
 					startContext.RegisterOperationAction(
 						nodeContext => AnalyzeContentRepoMethodCalls(nodeContext,
 							iContentRepositorySymbol,
-							contentTypeAttributeSymbol),
+							contentTypeAttributeSymbol,
+							contentFolderSymbol,
+							contentAssetFolderSymbol),
 						OperationKind.Invocation);
 				}
 			});
@@ -48,7 +59,9 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.Content
 
 		private static void AnalyzeContentRepoMethodCalls(OperationAnalysisContext context,
 			INamedTypeSymbol iContentRepositorySymbol,
-			INamedTypeSymbol contentTypeAttributeSymbol)
+			INamedTypeSymbol contentTypeAttributeSymbol,
+			INamedTypeSymbol contentFolderSymbol,
+			INamedTypeSymbol contentAssetFolderSymbol)
 		{
 			var operation = (IInvocationOperation)context.Operation;
 
@@ -63,13 +76,22 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.Content
 				var contentTypeSymbol = getDefaultSymbol.TypeArguments.FirstOrDefault();
 
 				// GetDefault need exactly one type argument, nullcheck in case we can get here for non-compiling code
-				// or custom extension methods without type argument
-				if (contentTypeSymbol is null)
+				// or custom extension methods without type argument.
+				// If contentTypeSymbol is a type parameter, we can not be sure about the actual type and should not report a diagnostic
+				if (contentTypeSymbol is null || contentTypeSymbol.TypeKind == TypeKind.TypeParameter)
 					return;
 
 				if (contentTypeSymbol.IsAbstract
 					|| !contentTypeSymbol.HasAttributeDerivedFrom(contentTypeAttributeSymbol))
 				{
+					// ContentFolder and ContentAssetFolder lack the ContentTypeAttribute
+					// but can be instantiated, so we need to make an exception for them
+					if (contentTypeSymbol.EqualsSymbol(contentFolderSymbol)
+						|| contentTypeSymbol.EqualsSymbol(contentAssetFolderSymbol))
+					{
+						return;
+					}
+
 					// We do not need to check the inheritance of contentTypeSymbol, GetDefault restricts the type parameter to IContentData
 					// Further, we do not need to check if contentTypeSymbol is an interface, ContentTypeAttribute is not allowed on interfaces.
 					Location location = GetLocation(operation.Syntax);

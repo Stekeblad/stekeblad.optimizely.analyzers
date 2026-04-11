@@ -128,5 +128,67 @@ namespace Stekeblad.Optimizely.Analyzers.Test.Tests.Content
 				.WithArguments("IContentWithHeading");
 			await VerifyCS.VerifyAnalyzerAsync(test, assemblies, expected);
 		}
+
+		[TestMethod]
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task GetDefault_ContentAssetsFolder_NoMatch(ReferenceAssemblies assemblies)
+		{
+			// ContentAssetFolder can be instantiated but it is actually not decorated with ContentTypeAttribute
+			const string test = @"
+				namespace tests
+				{
+					public static class ContentCreator
+					{
+						public static EPiServer.Core.ContentAssetFolder CreateAssetsFolder(EPiServer.Core.ContentReference parent,
+							EPiServer.IContentRepository contentRepo)
+						{
+							return contentRepo.GetDefault<EPiServer.Core.ContentAssetFolder>(parent);
+						}
+					}
+				}";
+
+			await VerifyCS.VerifyAnalyzerAsync(test, assemblies);
+		}
+
+		[TestMethod]
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task GetDefault_ContentFolder_NoMatch(ReferenceAssemblies assemblies)
+		{
+			// ContentFolder can be instantiated but it is actually not decorated with ContentTypeAttribute
+			const string test = @"
+				namespace tests
+				{
+					public static class ContentCreator
+					{
+						public static EPiServer.Core.ContentFolder CreateFolder(EPiServer.Core.ContentReference parent,
+							EPiServer.IContentRepository contentRepo)
+						{
+							return contentRepo.GetDefault<EPiServer.Core.ContentFolder>(parent);
+						}
+					}
+				}";
+
+			await VerifyCS.VerifyAnalyzerAsync(test, assemblies);
+		}
+
+		[TestMethod]
+		[DynamicData(nameof(AllOptimizelyTargets))]
+		public async Task GetDefault_IgnoreWhenGeneric_NoMatch(ReferenceAssemblies assemblies)
+		{
+			const string test = @"
+				using EPiServer.Core;
+				namespace tests
+				{
+					public static class ContentCreator
+					{
+						public static T CreateBelowStart<T>(this EPiServer.IContentRepository contentRepo) where T : PageData
+						{
+							return contentRepo.GetDefault<T>(ContentReference.StartPage);
+						}
+					}
+				}";
+
+			await VerifyCS.VerifyAnalyzerAsync(test, assemblies);
+		}
 	}
 }

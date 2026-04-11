@@ -196,3 +196,7 @@ SOA1042 | Defining content | Error | [The given content type cannot be instantia
 Rule ID | New Category | New Severity | Old Category | Old Severity | Notes
 --------|--------------|--------------|--------------|--------------|-------
 SOA1005 | InitializationModules | Error | InitializationModules | Warning | [Implement either IInitializableModule or IConfigurableModule](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1005.md)
+
+## Release 1.10.1
+
+Fixed some edge cases for [SOA1042 The given content type cannot be instantiated](https://github.com/Stekeblad/stekeblad.optimizely.analyzers/blob/master/doc/Analyzers/SOA1042.md),
