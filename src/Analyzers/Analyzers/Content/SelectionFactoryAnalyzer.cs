@@ -85,11 +85,11 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.Content
 				INamedTypeSymbol iSelectionQuerySymbol = startContext.Compilation.GetTypeByMetadataName(
 					"EPiServer.Shell.ObjectEditing.ISelectionQuery");
 
-                INamedTypeSymbol systemInt32Symbol = startContext.Compilation.GetSpecialType(SpecialType.System_Int32);
+				INamedTypeSymbol systemInt32Symbol = startContext.Compilation.GetSpecialType(SpecialType.System_Int32);
 
-                INamedTypeSymbol systemStringSymbol = startContext.Compilation.GetSpecialType(SpecialType.System_String);
+				INamedTypeSymbol systemStringSymbol = startContext.Compilation.GetSpecialType(SpecialType.System_String);
 
-                if (selectOneAttrSymbol != null)
+				if (selectOneAttrSymbol != null)
 				{
 					startContext.RegisterSymbolAction(
 						nodeContext => AnalyzeProperty(nodeContext,
@@ -148,17 +148,17 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.Content
 			// Check if a nullable type and get the inner/real type
 			if (nullable && typeSymbol.Arity == 1)
 			{
-                typeSymbol = typeSymbol.TypeArguments[0] as INamedTypeSymbol;
+				typeSymbol = typeSymbol.TypeArguments[0] as INamedTypeSymbol;
 				nullable = true;
 			}
 
-            if (typeSymbol.TypeKind != TypeKind.Enum
-                && !SymbolEqualityComparer.Default.Equals(typeSymbol, systemStringSymbol)
-				&& !SymbolEqualityComparer.Default.Equals(typeSymbol, systemInt32Symbol))
+			if (typeSymbol.TypeKind != TypeKind.Enum
+				&& !typeSymbol.EqualsSymbol(systemStringSymbol)
+				&& !typeSymbol.EqualsSymbol(systemInt32Symbol))
 			{
 				var name = typeSymbol.Name + (nullable ? "?" : string.Empty);
 
-                var diagnostic = Diagnostic.Create(UnsupportedPropTypeRule, aProp.Locations[0], aProp.Name, name,
+				var diagnostic = Diagnostic.Create(UnsupportedPropTypeRule, aProp.Locations[0], aProp.Name, name,
 					(selectOneAttr ?? selectManyAttr ?? autoSuggestionAttr).AttributeClass.Name);
 				context.ReportDiagnostic(diagnostic);
 				return;
@@ -175,8 +175,8 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.Content
 					// the SelectionFactoryType property to have a default value. If the attribute used is a custom one
 					// and does not have the parameter this is likely the cause
 					// https://docs.developers.optimizely.com/content-cloud/v12.0.0-content-cloud/docs/single-or-multiple-list-options#creating-your-own-attributes
-					if (SymbolEqualityComparer.Default.Equals(oneOrManyAttr.AttributeClass, selectOneAttrSymbol)
-						|| SymbolEqualityComparer.Default.Equals(oneOrManyAttr.AttributeClass, selectManyAttrSymbol))
+					if (oneOrManyAttr.AttributeClass.EqualsSymbol(selectOneAttrSymbol)
+						|| oneOrManyAttr.AttributeClass.EqualsSymbol(selectManyAttrSymbol))
 					{
 						var diagnostic = Diagnostic.Create(MissingFactoryTypeParamRule, oneOrManyAttr.GetLocation(),
 							oneOrManyAttr.AttributeClass.Name, aProp.Name);

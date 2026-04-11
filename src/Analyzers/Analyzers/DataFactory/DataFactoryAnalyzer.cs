@@ -36,12 +36,12 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.DataFactory
 			var operation = (IInvocationOperation)context.Operation;
 
 			// Finds calls to DataFactory instance method both referenced directly through the static accessor and
-			//when first assigning a DataFactory instance to a variable (like "var df = DataFactory.Instance")
+			// when first assigning a DataFactory instance to a variable (like "var df = DataFactory.Instance")
 			// Finds calls to extension methods using DataFactory if referenced like DataFactory.Instance.Copy(...)
 			// but not when using a DataFactory variable like df.Copy(...)
 			// Will however also create false positives for non-Optimizely DataFactory.Instance method invocations
 			// if the called method is in the switch block below.
-			if (!SymbolEqualityComparer.Default.Equals(operation.TargetMethod?.ContainingType, dataFactorySymbol)
+			if (!dataFactorySymbol.EqualsSymbol(operation.TargetMethod?.ContainingType)
 				&& !operation.Syntax.ToString().Contains("DataFactory.Instance"))
 			{
 				return;

@@ -76,7 +76,7 @@ namespace Stekeblad.Optimizely.Analyzers.Extensions
 
 			for (int i = 0; i < attributes.Length; i++)
 			{
-				if (SymbolEqualityComparer.Default.Equals(attributeToFind, attributes[i].AttributeClass))
+				if (attributeToFind.EqualsSymbol(attributes[i].AttributeClass))
 				{
 					foundAttribute = attributes[i];
 					return true;
@@ -135,7 +135,7 @@ namespace Stekeblad.Optimizely.Analyzers.Extensions
 
 			for (int i = 0; i < attributes.Length; i++)
 			{
-				if (SymbolEqualityComparer.Default.Equals(attributeToFind, attributes[i].AttributeClass))
+				if (attributeToFind.EqualsSymbol(attributes[i].AttributeClass))
 				{
 					(foundAttributes ?? (foundAttributes = new List<AttributeData>())).Add(attributes[i]);
 				}
@@ -174,7 +174,7 @@ namespace Stekeblad.Optimizely.Analyzers.Extensions
 			if (prop.DeclaredAccessibility == Accessibility.Public
 				&& !prop.IsImplicitlyDeclared // skip autogen props
 				&& !prop.IsStatic // must be instance member
-				//&& (prop.IsVirtual || prop.IsOverride) // ensured by SOA1003 ContentPropertyMustBeVirtual
+								  //&& (prop.IsVirtual || prop.IsOverride) // ensured by SOA1003 ContentPropertyMustBeVirtual
 				&& prop.SetMethod != null // Property must have a setter
 				&& !prop.SetMethod.IsInitOnly
 				&& prop.SetMethod.DeclaredAccessibility == Accessibility.Public // setter must be public
@@ -190,6 +190,17 @@ namespace Stekeblad.Optimizely.Analyzers.Extensions
 
 			// not a content property
 			return false;
+		}
+
+		/// <summary>
+		/// Wrapper around <see cref="SymbolEqualityComparer.Default.Equals">SymbolEqualityComparer.Default.Equals</see>
+		/// </summary>
+		/// <param name="x">The first symbol to compare</param>
+		/// <param name="y">The second symbol to compare</param>
+		/// <returns>True if the symbols are equivalent</returns>
+		public static bool EqualsSymbol(this ISymbol x, ISymbol y)
+		{
+			return SymbolEqualityComparer.Default.Equals(x, y);
 		}
 	}
 }

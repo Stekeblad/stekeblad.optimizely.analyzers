@@ -2,7 +2,6 @@
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 using Stekeblad.Optimizely.Analyzers.Extensions;
-using System;
 using System.Collections.Immutable;
 
 namespace Stekeblad.Optimizely.Analyzers.Analyzers.BadMethods
@@ -57,7 +56,7 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.BadMethods
 			// Let's not create any diagnostics for "try casts" (that means "x as IContent" and "x is IContent content" casts)
 			// and only complain on forceful casts "(IContent)x" that can throw exceptions at runtime
 			if (!operation.IsTryCast
-				&& SymbolEqualityComparer.Default.Equals(resultingType, iContentSymbol)
+				&& resultingType.EqualsSymbol(iContentSymbol)
 				&& sourceType.IsDerivedFrom(blockDataSymbol))
 			{
 				var diagnostic = Diagnostic.Create(BlockToContentCastRule, operation.Syntax.GetLocation());

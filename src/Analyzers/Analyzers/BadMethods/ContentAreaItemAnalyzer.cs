@@ -54,7 +54,7 @@ namespace Stekeblad.Optimizely.Analyzers.Analyzers.BadMethods
 			var typeWithTheProperty = referencedProperty.ContainingType;
 
 			// If the property is not on a variable of type ContentAreaItem, abort
-			if (!SymbolEqualityComparer.Default.Equals(typeWithTheProperty, caItemSymbol))
+			if (!typeWithTheProperty.EqualsSymbol(caItemSymbol))
 				return;
 
 			// Only report on get operations, not on assignments to the properties further down

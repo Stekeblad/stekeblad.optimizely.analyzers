@@ -13,11 +13,11 @@ namespace Stekeblad.Optimizely.Analyzers.Extensions
 			{
 				// Sealed types can not be inherited, avoid checking inheritance chain
 				if (baseTypeSymbol.IsSealed)
-					return SymbolEqualityComparer.Default.Equals(analyzedSymbol, baseTypeSymbol);
+					return analyzedSymbol.EqualsSymbol(baseTypeSymbol);
 
 				do
 				{
-					if (SymbolEqualityComparer.Default.Equals(analyzedSymbol, baseTypeSymbol))
+					if (analyzedSymbol.EqualsSymbol(baseTypeSymbol))
 						return true;
 
 					analyzedSymbol = analyzedSymbol.BaseType;
