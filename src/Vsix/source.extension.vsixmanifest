@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
-  <Metadata>
-    <Identity Id="Stekeblad.Optimizely.Analyzers.41be7d9a-0896-45f0-9ee1-c0c3d376927f"
-              Version="1.10.0"
-              Language="en-US"
-              Publisher="Stekeblad"/>
-    <DisplayName>Analyzers For Optimizely CMS</DisplayName>
-    <Description xml:space="preserve">
+    <Metadata>
+        <Identity Id="Stekeblad.Optimizely.Analyzers.41be7d9a-0896-45f0-9ee1-c0c3d376927f"
+                  Version="1.10.1"
+                  Language="en-US"
+                  Publisher="Stekeblad"/>
+        <DisplayName>Analyzers For Optimizely CMS</DisplayName>
+        <Description xml:space="preserve">
       Avoid some easy misstakes when building Optimizely sites with these analyzers.
 
       We have all at least once forgotten to add virtual to a page or block property and not realising it before Optimizely is trying to start up, with this extension you will quickly get warnings in your IDE pointing out this and many other misstake so they can be fixed before you even try to start the website. All analyzers comes with documentation.
@@ -15,25 +15,25 @@
       
       Note that analyzers from extensions have some limitations, consider installing the nuget package instead.
     </Description>
-    <MoreInfo>https://github.com/Stekeblad/stekeblad.optimizely.analyzers</MoreInfo>
-    <Tags>analyzers, codefix, optimizely, episerver, stekeblad</Tags>
-  </Metadata>
-  <Installation>
-    <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[17.0,18.0)">
-      <ProductArchitecture>amd64</ProductArchitecture>
-    </InstallationTarget>
-  </Installation>
-  <Dependencies>
-    <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
-  </Dependencies>
-  <Assets>
-    <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="Stekeblad.Optimizely.Analyzers" Path="|Stekeblad.Optimizely.Analyzers|"/>
-    <Asset Type="Microsoft.VisualStudio.Analyzer" d:Source="Project" d:ProjectName="Stekeblad.Optimizely.Analyzers" Path="|Stekeblad.Optimizely.Analyzers|"/>
-    <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="Stekeblad.Optimizely.Analyzers.CodeFixes" Path="|Stekeblad.Optimizely.Analyzers.CodeFixes|"/>
-    <Asset Type="Microsoft.VisualStudio.Analyzer" d:Source="Project" d:ProjectName="Stekeblad.Optimizely.Analyzers.CodeFixes" Path="|Stekeblad.Optimizely.Analyzers.CodeFixes|"/>
-  </Assets>
-  <Prerequisites>
-    <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[15.0,)" DisplayName="Visual Studio core editor" />
-    <Prerequisite Id="Microsoft.VisualStudio.Component.Roslyn.LanguageServices" Version="[15.0,)" DisplayName="Roslyn Language Services" />
-  </Prerequisites>
+        <MoreInfo>https://github.com/Stekeblad/stekeblad.optimizely.analyzers</MoreInfo>
+        <Tags>analyzers, codefix, optimizely, episerver, stekeblad</Tags>
+    </Metadata>
+    <Installation>
+        <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[17.0,18.0)">
+            <ProductArchitecture>amd64</ProductArchitecture>
+        </InstallationTarget>
+    </Installation>
+    <Dependencies>
+        <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
+    </Dependencies>
+    <Assets>
+        <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="Stekeblad.Optimizely.Analyzers" Path="|Stekeblad.Optimizely.Analyzers|"/>
+        <Asset Type="Microsoft.VisualStudio.Analyzer" d:Source="Project" d:ProjectName="Stekeblad.Optimizely.Analyzers" Path="|Stekeblad.Optimizely.Analyzers|"/>
+        <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="Stekeblad.Optimizely.Analyzers.CodeFixes" Path="|Stekeblad.Optimizely.Analyzers.CodeFixes|"/>
+        <Asset Type="Microsoft.VisualStudio.Analyzer" d:Source="Project" d:ProjectName="Stekeblad.Optimizely.Analyzers.CodeFixes" Path="|Stekeblad.Optimizely.Analyzers.CodeFixes|"/>
+    </Assets>
+    <Prerequisites>
+        <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[15.0,)" DisplayName="Visual Studio core editor" />
+        <Prerequisite Id="Microsoft.VisualStudio.Component.Roslyn.LanguageServices" Version="[15.0,)" DisplayName="Roslyn Language Services" />
+    </Prerequisites>
 </PackageManifest>
